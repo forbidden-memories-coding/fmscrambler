@@ -25,3 +25,8 @@ Feel free to recommend the tool to your friends, play it, contribute here, strea
 If you wish to donate something to me, you can do so using the donation page on my Gaming4Good profile: https://www.gamingforgood.net/s/duke1102#donate
 
 On rare occasions I also stream random stuff on Twitch. Maybe in the future I'll show some coding for the Scrambler there or other future projects I have in mind!
+
+### Download for precompiled binaries
+You can find a precompiled binary under this direct link => https://github.com/duke1102/fmscrambler/releases/download/0.1/fmscrambler_0.1-alpha.zip
+
+Or by clicking on the "Releases" menu point.
