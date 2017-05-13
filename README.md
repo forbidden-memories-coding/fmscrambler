@@ -1,20 +1,27 @@
 # YGO! FM Scrambler (fmscrambler)
+Version 0.1 Alpha out now!
 
 ### What is this?
 This is a simple tool for the Playstation One (PSX) game called "Yu-Gi-Oh! Forbidden Memories" that has some randomization functions to make the game fun, specifically (but not limited to) when racing with other people via SpeedRunsLive.
 
 ### What is included?
 Right now the only functionality is to scramble the fusions in game, making an outcome for very funny and weird fusions possible.
-You can provide a custom Seed for the Random Number Generator, as well as some other optional parameters. (Write a Log of the changed Fusions, Backup)
+You can provide a custom Seed for the Random Number Generator, as well as some other optional parameters.
+(Write a Log of the changed Fusions)
+
+The "000" Glitch Fusions option is especially fun to use! It allows for fusion combinations with an ID over 722 to be created, resulting in weird glitchy fusions. Cards named like "Hiding Card Shop" or "Pegasus" can be seen. Sometimes with a ridiculous Attack/Defense.
 
 Examples of Fusions would be:
 - Shadow Specter + Little D. = Meteor B. Dragon
 - Dark Hole + Kuriboh = Raigeki
 - Yamatano Dragon Scroll + Elf's Light = Blue Eyes Ultimate Dragon
 
-### Where is the tool?
-Be patient my children's card game player! So far I have only given a super super early alpha build of the tool to a few select people on the YGO! FM Speedrun Discord Server. Reason for that is the current state of the program... it's unpolished, next to zero error handling, not user friendly.
-But don't be sad! In the next few days you will get your hands on it, right on this repository. The source code is also open source, so you are welcome to collaborate and do pull requests if you code in any functionality or made a fix for some bug!
+Read through the README.txt for further information on how to use the tool!
 
-### What can I do until then?
-Be happy! Enjoy FM! You are also very welcome to open some Tickets in the "Issues" section with any Feedback for Feature Ideas and so on!
+### Enjoying the tool? Like to support me?
+I'm always happy to see people enjoying the stuff I made, gives me motivation to work on things like this.
+Feel free to recommend the tool to your friends, play it, contribute here, stream it over on Twitch and so on.
+
+If you wish to donate something to me, you can do so using the donation page on my Gaming4Good profile: https://www.gamingforgood.net/s/duke1102#donate
+
+On rare occasions I also stream random stuff on Twitch. Maybe in the future I'll show some coding for the Scrambler there or other future projects I have in mind!
