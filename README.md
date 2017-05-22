@@ -22,11 +22,11 @@ Read through the README.txt for further information on how to use the tool!
 I'm always happy to see people enjoying the stuff I made, gives me motivation to work on things like this.
 Feel free to recommend the tool to your friends, play it, contribute here, stream it over on Twitch and so on.
 
-If you wish to donate something to me, you can do so using the donation page on my Gaming4Good profile: https://www.gamingforgood.net/s/duke1102#donate
+If you wish to donate something to me, you can do so using the donation page on my Gaming4Good profile: [https://www.gamingforgood.net/s/duke1102#donate](https://www.gamingforgood.net/s/duke1102#donate)
 
 On rare occasions I also stream random stuff on Twitch. Maybe in the future I'll show some coding for the Scrambler there or other future projects I have in mind!
 
 ### Download for precompiled binaries
-You can find a precompiled binary under this direct link => https://github.com/duke1102/fmscrambler/releases/download/0.1/fmscrambler_0.1-alpha.zip
+You can find a precompiled binary under this direct link => [Download](https://github.com/duke1102/fmscrambler/releases/download/0.1/fmscrambler_0.1-alpha.zip)
 
 Or by clicking on the "Releases" menu point.
