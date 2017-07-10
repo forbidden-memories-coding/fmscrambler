@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScramblerUI", "ScramblerUI\ScramblerUI.csproj", "{901FF073-53C9-445C-9968-2861515EDCE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMLib", "FMLib\FMLib.csproj", "{3C072965-BA16-46BC-B037-28BCA02A96FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{901FF073-53C9-445C-9968-2861515EDCE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{901FF073-53C9-445C-9968-2861515EDCE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{901FF073-53C9-445C-9968-2861515EDCE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C072965-BA16-46BC-B037-28BCA02A96FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C072965-BA16-46BC-B037-28BCA02A96FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C072965-BA16-46BC-B037-28BCA02A96FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C072965-BA16-46BC-B037-28BCA02A96FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

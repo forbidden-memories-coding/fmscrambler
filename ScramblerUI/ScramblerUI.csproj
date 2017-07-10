@@ -14,6 +14,7 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -38,6 +39,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -54,9 +56,7 @@
   <PropertyGroup>
     <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup>
-    <NoWin32Manifest>true</NoWin32Manifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <ManifestCertificateThumbprint>91497DA18809C5CBD1B4348157B587E2106408B1</ManifestCertificateThumbprint>
   </PropertyGroup>
@@ -64,11 +64,15 @@
     <ManifestKeyFile>ScramblerUI_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
+    <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\MahApps.Metro.dll</HintPath>
@@ -105,20 +109,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="helper\FileHandler.cs" />
-    <Compile Include="helper\ImagePatcher.cs" />
-    <Compile Include="helper\NumberHandler.cs" />
-    <Compile Include="helper\Static.cs" />
+    <Compile Include="Utility\FileHandler.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="models\Card.cs" />
-    <Compile Include="models\Fusion.cs" />
-    <Compile Include="models\IsoFile.cs" />
-    <Compile Include="models\Ritual.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -158,13 +155,16 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="helper\CharacterTable.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="app.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="simonico.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FMLib\FMLib.csproj">
+      <Project>{3c072965-ba16-46bc-b037-28bca02a96fd}</Project>
+      <Name>FMLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

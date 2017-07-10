@@ -5,6 +5,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using FMLib.Helper;
 using FMScrambler.helper;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
@@ -16,18 +17,18 @@ namespace FMScrambler
     /// </summary>
     public partial class MainWindow
     {
+        private bool isPasteEvent = false;
+        private string prevSeedText;
 
         public MainWindow()
         {
             InitializeComponent();
-            
         }
 
         private void btn_loadiso_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog {Title = "Location of SLUS_014.11", Filter = "SLUS_014.11 | SLUS_014.11"};
-
- 
+     
             if (dlg.ShowDialog() == true)
             {
                 Static.SLUSPath = dlg.FileName;
@@ -49,11 +50,11 @@ namespace FMScrambler
                     Static.WAPath = Path.GetDirectoryName(dlg.FileName) + "\\DATA\\WA_MRG.MRG";
                     btn_perform.IsEnabled = true;
                 }
+                #if DEBUG
                 Console.WriteLine("Load SL "+Static.SLUSPath);
                 Console.WriteLine("Load WA " + Static.WAPath);
-            }
-
- 
+                #endif
+            }      
         }
 
         public void setActionLabel(string text)
@@ -64,17 +65,18 @@ namespace FMScrambler
         private void btn_perform_Click(object sender, RoutedEventArgs e)
         {
             sync_Scramble();
-
         }
 
         private void sync_Scramble()
         {
-            var cardCount = (Static.glitchFusions) ? 1400 : 722;
+            int cardCount = (Static.glitchFusions) ? 1400 : 722;
             Static.setCardCount(cardCount);
+
             FileHandler fileHandler = new FileHandler();
 
             MessageBox.Show("Done scrambling, you may proceed with patching your game ISO now. A logfile was created in the tools directory as well.",
                        "Done scrambling.", MessageBoxButton.OK, MessageBoxImage.Information);
+
             fileHandler.LoadSlus(lbl_path.Content.ToString());
             fileHandler.ScrambleFusions(int.Parse(txt_seed.Text));
 
@@ -91,7 +93,7 @@ namespace FMScrambler
 
         private void txt_seed_Loaded(object sender, RoutedEventArgs e)
         {
-            var rnd = new Random();        
+            Random rnd = new Random();        
             txt_seed.Text = rnd.Next(10000, 214748364).ToString();
         }
 
@@ -130,8 +132,12 @@ namespace FMScrambler
 
             if (dlg.ShowDialog() == true)
             {
+                #if DEBUG
                 Console.WriteLine(dlg.FileName);
+                #endif
+
                 ImagePatcher patcher = new ImagePatcher(dlg.FileName);
+
                 if (patcher.PatchImage() == 1)
                     MessageBox.Show("Image successfully patched! Have fun playing!", "Done patching.",
                         MessageBoxButton.OK, MessageBoxImage.Information);
@@ -139,6 +145,32 @@ namespace FMScrambler
                     MessageBox.Show("Error patching Image. Not Forbidden Memories or wrong version.", "Error patching.",
                         MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void txt_seed_Initialized(object sender, EventArgs e)
+        {
+            Random rnd = new Random();
+            txt_seed.Text = rnd.Next(10000, 214748364).ToString();
+        }
+
+        private void txt_seed_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (Key.V == e.Key && Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                prevSeedText = txt_seed.Text;
+                isPasteEvent = true;
+            }
+        }
+
+        private void txt_seed_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (isPasteEvent)
+            {
+                txt_seed.Text = prevSeedText;
+                isPasteEvent = false;
+            }
+            if (txt_seed.Text.StartsWith("0"))
+                txt_seed.Text = $"1{txt_seed.Text.Substring(1)}";
         }
     }
 }
