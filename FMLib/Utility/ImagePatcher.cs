@@ -47,12 +47,10 @@ namespace FMLib.Helper
 
             foreach (GameFile k in GameFile)
             {
-                #if DEBUG
                 Console.WriteLine(k.Name);
                 Console.WriteLine(k.Offset.ToString("X"));
                 Console.WriteLine(k.Size.ToString("X"));
                 Console.WriteLine("p = "+ ((k.Name == "SLUS_014.11") ? Static.SLUSPath : Static.WAPath));
-                #endif
     
                 // Choose which File to use based on the name of the Item in the loop
                 string p = (k.Name == "SLUS_014.11") ? Static.SLUSPath : Static.WAPath;

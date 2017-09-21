@@ -50,8 +50,8 @@ namespace FMLib.Models
         /// <summary>
         /// Guardian Star of the Card as Integer Array of size 2
         /// </summary>
-        public int[] GuardianStar { get; set; }
-
+        public int GuardianStar1 { get; set; }
+        public int GuardianStar2 { get; set; }
         /// <summary>
         /// Fusions of the Card as a List
         /// </summary>

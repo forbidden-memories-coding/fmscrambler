@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using FMLib.Helper;
 using FMScrambler.helper;
+using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 
@@ -171,6 +172,18 @@ namespace FMScrambler
             }
             if (txt_seed.Text.StartsWith("0"))
                 txt_seed.Text = $"1{txt_seed.Text.Substring(1)}";
+        }
+
+        private void chk_atkdefenabled_Checked(object sender, RoutedEventArgs e)
+        {
+            Static.randomATKDEF = true;
+            grp_atkdef.IsEnabled = true;
+        }
+
+        private void chk_atkdefenabled_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Static.randomATKDEF = false;
+            grp_atkdef.IsEnabled = false;
         }
     }
 }

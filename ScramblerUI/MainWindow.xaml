@@ -6,14 +6,13 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:FMScrambler"
         mc:Ignorable="d"
-        Title="YGO! FM Fusion Scrambler Tool" Height="371" Width="673" ResizeMode="NoResize" GlowBrush="Black" OverlayBrush="Black" Icon="simonico.png" Controls:ControlsHelper.ContentCharacterCasing="Upper">
+        Title="YGO! FM Fusion Scrambler Tool" Height="523.667" Width="673" ResizeMode="NoResize" GlowBrush="Black" OverlayBrush="Black" Icon="simonico.png" Controls:ControlsHelper.ContentCharacterCasing="Upper">
     <Controls:MetroWindow.BorderBrush>
         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
     </Controls:MetroWindow.BorderBrush>
     <Grid UseLayoutRounding="False">
-        <Label x:Name="lbl_copyleft" Content="Made by duke1102 - http://github.com/duke1102/fmscrambler" VerticalAlignment="Top" FontSize="11" HorizontalContentAlignment="Center" Margin="5,313,342,0"/>
-        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="300" Margin="10,10,0,0" VerticalAlignment="Top" Width="647" Background="#FF3CACDC" BorderBrush="#FF3CACDC" Foreground="{x:Null}">
-            <TabItem Header="Fusions" BorderBrush="Black" Margin="3,-4,-32,4" Foreground="Black">
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="460" Margin="10,10,0,0" VerticalAlignment="Top" Width="647" Background="#FF3CACDC" BorderBrush="#FF3CACDC" Foreground="{x:Null}">
+            <TabItem Header="Scramble" BorderBrush="Black" Margin="3,-4,-32,4" Foreground="Black">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="White"/>
@@ -29,24 +28,33 @@
                             <Label x:Name="lbl_path" Content="None specified." HorizontalAlignment="Left" Margin="51,50,0,0" VerticalAlignment="Top" Width="528"/>
                             <CheckBox x:Name="ch_glitch" Content="&quot;000&quot; Glitch Fusions" HorizontalAlignment="Center" Margin="334,31,7,0" Width="270" Checked="ch_glitch_Checked" Unchecked="ch_glitch_Unchecked" FontFamily="Segoe UI" FontSize="13" HorizontalContentAlignment="Center" VerticalAlignment="Top" ToolTip="Allow glitchy fusions with an ID over 722."/>
                             <Button x:Name="btn_patchiso" Content="Patch ISO" Margin="161,11,304,33" Controls:ControlsHelper.ContentCharacterCasing="Upper" Controls:ButtonHelper.CornerRadius="8" Padding="0" FontSize="11" ToolTip="Patch an image of the game with the scrambled fusions. (Can be iso, bin, img, etc.)" Click="btn_patchiso_Click" IsEnabled="False"/>
+                            <CheckBox x:Name="chk_atkdefenabled" Content="Enable ATK/DEF scramble" HorizontalAlignment="Center" Margin="334,54,7,0" VerticalAlignment="Top" Checked="chk_atkdefenabled_Checked" Unchecked="chk_atkdefenabled_Unchecked" Width="270" FontFamily="Segoe UI" FontSize="13" HorizontalContentAlignment="Center"/>
                         </Grid>
                     </GroupBox>
-                    <GroupBox x:Name="grp_rando" Header="Seed Options" HorizontalAlignment="Left" Height="115" Margin="10,134,0,0" VerticalAlignment="Top" Width="299" Controls:ControlsHelper.HeaderFontWeight="Medium" Controls:ControlsHelper.HeaderMargin="0" Controls:ControlsHelper.HeaderFontSize="13">
+                    <GroupBox x:Name="grp_rando" Header="Seed Options" HorizontalAlignment="Left" Height="115" Margin="10,134,0,0" VerticalAlignment="Top" Width="621" Controls:ControlsHelper.HeaderFontWeight="Medium" Controls:ControlsHelper.HeaderMargin="0" Controls:ControlsHelper.HeaderFontSize="13">
                         <Grid Margin="0,0,-2,3">
                             <TextBox x:Name="txt_seed" MaxLength="9" TextWrapping="Wrap" FontWeight="Bold" TextAlignment="Center" Margin="2,8,8,36" VerticalContentAlignment="Center" Controls:TextBoxHelper.WatermarkAlignment="Justify" PreviewTextInput="NumberValidationTextBox" ToolTip="Seed" Initialized="txt_seed_Initialized" PreviewKeyDown="txt_seed_PreviewKeyDown" TextChanged="txt_seed_TextChanged"/>
                             <Button x:Name="button" Content="Generate Random" Height="26" VerticalAlignment="Top" Margin="2,46,8,0" Controls:ButtonHelper.CornerRadius="8" FontSize="11" FontWeight="Bold" Padding="0" Click="button_Click" ToolTip="Generate a random Seed."/>
                         </Grid>
                     </GroupBox>
-                    <GroupBox x:Name="grp_action" Header="Action" HorizontalAlignment="Left" Height="115" Margin="314,134,0,0" VerticalAlignment="Top" Width="317" Background="#CC119EDA" Controls:ControlsHelper.HeaderFontSize="13" Controls:ControlsHelper.HeaderFontWeight="Medium">
+                    <GroupBox x:Name="grp_action" Header="Action" HorizontalAlignment="Left" Height="146" Margin="314,254,0,0" VerticalAlignment="Top" Width="317" Background="#CC119EDA" Controls:ControlsHelper.HeaderFontSize="13" Controls:ControlsHelper.HeaderFontWeight="Medium">
                         <Grid Margin="0,0,-2,-2">
-                            <Button x:Name="btn_perform" Content="Randomize!" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="287" Height="26" FontWeight="Bold" Controls:ButtonHelper.CornerRadius="8" Padding="0" FontSize="12" Click="btn_perform_Click" IsEnabled="False" ToolTip="Start the scrambling process."/>
-                            <Label x:Name="lbl_statusdesc" Content="Status:" HorizontalAlignment="Left" Margin="10,46,0,7" VerticalAlignment="Center" Width="46" Height="24" VerticalContentAlignment="Center" Padding="0"/>
-                            <Label x:Name="lbl_status" Content="Waiting." HorizontalAlignment="Left" Margin="61,47,0,8" VerticalAlignment="Center" Width="236" Height="22" Padding="0" VerticalContentAlignment="Center"/>
+                            <Button x:Name="btn_perform" Content="Randomize!" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="287" Height="48" FontWeight="Bold" Controls:ButtonHelper.CornerRadius="8" Padding="0" FontSize="12" Click="btn_perform_Click" IsEnabled="False" ToolTip="Start the scrambling process."/>
+                            <Label x:Name="lbl_statusdesc" Content="Status:" HorizontalAlignment="Left" Margin="10,76,0,8" VerticalAlignment="Center" Width="46" Height="24" VerticalContentAlignment="Center" Padding="0"/>
+                            <Label x:Name="lbl_status" Content="Waiting." HorizontalAlignment="Left" Margin="61,76,0,10" VerticalAlignment="Center" Width="236" Height="22" Padding="0" VerticalContentAlignment="Center"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="grp_atkdef" Header="ATK/DEF Options" HorizontalAlignment="Left" Height="146" Margin="10,254,0,0" VerticalAlignment="Top" Width="299" Controls:ControlsHelper.HeaderFontSize="13" Controls:ControlsHelper.HeaderFontWeight="Medium" IsEnabled="False">
+                        <Grid HorizontalAlignment="Left" Height="109" VerticalAlignment="Top" Width="289" Margin="0,0,-2,-3" UseLayoutRounding="False" >
+                            <Controls:RangeSlider x:Name="rs_atk" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,27,0,0" Width="274" Maximum="5100" SmallChange="1" LargeChange="10" AutoToolTipPlacement="TopLeft" ExtendedMode="True" UpperValue="9999" Height="23" MinRangeWidth="1" MinRange="1"/>
+                            <Label Content="Attack Value" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,1,0,0" Width="88"/>
+                            <Controls:RangeSlider x:Name="rs_def" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,81,0,0" Width="274" Maximum="5100" SmallChange="1" LargeChange="10" AutoToolTipPlacement="TopLeft" ExtendedMode="True" UpperValue="9999" Height="23" MinRangeWidth="1" MinRange="1"/>
+                            <Label Content="Defense Value" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,55,0,0" Width="88"/>
                         </Grid>
                     </GroupBox>
                 </Grid>
             </TabItem>
-            <TabItem Header="Credits / Help" Height="39" VerticalAlignment="Top" Margin="35,-4,-35,0">
+            <TabItem Header="Credits / Help" Height="39" VerticalAlignment="Top" Margin="37,-4,-37,0">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="White" Offset="0"/>
@@ -58,7 +66,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Label x:Name="lbl_copyleft_Copy" Content="" VerticalAlignment="Top" FontSize="11" HorizontalContentAlignment="Center" Margin="0,313,10,0" HorizontalAlignment="Right" Width="196"/>
+        <Label x:Name="lbl_copyleft" Content="Made by duke1102 - http://github.com/duke1102/fmscrambler" FontSize="11" HorizontalContentAlignment="Center" Margin="10,470,337,-10"/>
 
     </Grid>
 </Controls:MetroWindow>

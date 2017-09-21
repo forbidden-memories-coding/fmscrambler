@@ -30,6 +30,10 @@ namespace FMLib.Helper
         public static bool highID = false;
 
         /// <summary>
+        /// 
+        /// </summary>
+        public static bool randomATKDEF = false;
+        /// <summary>
         /// Count of Cards as Integer
         /// </summary>
         public static int cardCount;

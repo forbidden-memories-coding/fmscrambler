@@ -11,11 +11,10 @@ namespace FMScrambler.helper
 {
     public class FileHandler
     {
-
-        public void LoadSlus (string filepath)
+        public void LoadSlus(string filepath)
         {
             StringReader strReader = new StringReader(File.ReadAllText(@"./CharacterTable.txt"));
-            
+
             string input;
 
             while ((input = strReader.ReadLine()) != null)
@@ -33,19 +32,18 @@ namespace FMScrambler.helper
             }
 
             MemoryStream memStream = new MemoryStream(File.ReadAllBytes(Static.SLUSPath)) {Position = 1854020L};
-            
+
             for (int i = 0; i < 722; ++i)
             {
                 int int32 = memStream.extractPiece(0, 4, -1).extractInt32(0);
                 Static.Cards[i] = new Card();
                 Static.Cards[i].Id = i + 2;
-
             }
             for (int j = 0; j < 722; ++j)
             {
-                memStream.Position = (long)(1859586 + j * 2);
-                int num = (int)memStream.extractPiece(0, 2, -1).extractUInt16(0) & (int)ushort.MaxValue;
-                memStream.Position = (long)(1861632 + num - 24576);
+                memStream.Position = (long) (1859586 + j * 2);
+                int num = (int) memStream.extractPiece(0, 2, -1).extractUInt16(0) & (int) ushort.MaxValue;
+                memStream.Position = (long) (1861632 + num - 24576);
                 Static.Cards[j].Name = memStream.GetText(Static.Dict);
             }
 
@@ -55,7 +53,8 @@ namespace FMScrambler.helper
             for (int i = 0; i < 722; ++i)
             {
                 memStream2.Position = (long) (2 + i * 2);
-                memStream2.Position = (long)((int)memStream2.extractPiece(0, 2, -1).extractUInt16(0) & (int)ushort.MaxValue);
+                memStream2.Position = (long) ((int) memStream2.extractPiece(0, 2, -1).extractUInt16(0) &
+                                              (int) ushort.MaxValue);
                 if (memStream2.Position != 0L)
                 {
                     int num1 = memStream2.ReadByte();
@@ -78,11 +77,11 @@ namespace FMScrambler.helper
                         int num14 = 6;
                         int num15 = (num3 >> num14 & 3) << 8 | num7;
 
-                        Static.Cards[i].Fusions.Add(new Fusion(i+1, num9 - 1, num11 - 1));
+                        Static.Cards[i].Fusions.Add(new Fusion(i + 1, num9 - 1, num11 - 1));
                         --num2;
 
                         if (num2 <= 0) continue;
-                        Static.Cards[i].Fusions.Add(new Fusion(i+1, num13-1, num15-1));
+                        Static.Cards[i].Fusions.Add(new Fusion(i + 1, num13 - 1, num15 - 1));
                         --num2;
                     }
                 }
@@ -94,40 +93,61 @@ namespace FMScrambler.helper
 
         public void ScrambleFusions(int seed)
         {
-            
-            Random rand = new Random(seed);
+            Random randFusion = new Random(seed);
+            Random randVal = new Random(seed);
 
             if (!File.Exists($@"scramblelog_#{seed}.log")) File.CreateText($"scramblelog_#{seed}.log").Close();
+
             StreamWriter logStream = new StreamWriter($@"scramblelog_#{seed}.log");
+
             logStream.WriteLine("@@ YU-GI-OH! Forbidden Memories Fusion Scrambler Log Output @@");
-            logStream.WriteLine($"@@ Version {Meta.majorVersion}.{Meta.minorVersion}.{Meta.patchVersion} {Meta.versionInfo} @@");
+            logStream.WriteLine(
+                $"@@ Version {Meta.majorVersion}.{Meta.minorVersion}.{Meta.patchVersion} {Meta.versionInfo} @@");
             logStream.WriteLine($"@@ Seed: #{seed} @@");
             logStream.WriteLine($"@@ Start time: {DateTime.Now} @@");
 
-            var mainWin = Application.Current.Windows.Cast<Window>().FirstOrDefault(window => window is MainWindow) as MainWindow;
+            var mainWin =
+                Application.Current.Windows.Cast<Window>().FirstOrDefault(window => window is MainWindow) as MainWindow;
 
             for (int i = 0; i < 722; i++)
-            {       
-                if (mainWin != null) mainWin.lbl_status.Content = "Scrambling Card #" + i + 1 + " of 722.";
+            {
+                if (mainWin != null) mainWin.lbl_status.Content = $"Scrambling Card #{i + 1} of 722.";
                 for (int j = 0; j < Static.Cards[i].Fusions.Count; j++)
-               {
-                   Static.Cards[i].Fusions[j].Cards2 = rand.Next((Static.highID) ? 1 : i, Static.cardCount);
-                   Static.Cards[i].Fusions[j].Result = rand.Next((Static.highID) ? 1 : i, Static.cardCount);
-                   logStream.WriteLine("=> " +
-                       (Static.Cards[i].Fusions[j].Cards1 > 721 ? "(!) GLITCHCARD (!)" : Static.Cards[Static.Cards[i].Fusions[j].Cards1].Name)
-                       +" ("+
-                       (Static.Cards[i].Fusions[j].Cards1+1)
-                       +") + " +
-                       (Static.Cards[i].Fusions[j].Cards2 > 721 ? "(!) GLITCHCARD (!)" : Static.Cards[Static.Cards[i].Fusions[j].Cards2].Name)
-                       + " ("+ 
-                       Static.Cards[i].Fusions[j].Cards2
-                       + ") = " +
-                       (Static.Cards[i].Fusions[j].Result > 721 ? "(!) GLITCHCARD (!)" : Static.Cards[Static.Cards[i].Fusions[j].Result].Name)
-                       + " ("+ 
-                       Static.Cards[i].Fusions[j].Result
-                       +")");
-               }
-               
+                {
+                    if (mainWin != null && Static.randomATKDEF)
+                    {
+                        // ATK/DEF RANDOMIZING
+                        Static.Cards[i].Attack = randVal.Next(Convert.ToInt32(mainWin.rs_atk.LowerValue),
+                            Convert.ToInt32(mainWin.rs_atk.UpperValue));
+
+                        Static.Cards[i].Defense = randVal.Next(Convert.ToInt32(mainWin.rs_def.LowerValue),
+                            Convert.ToInt32(mainWin.rs_def.UpperValue));
+                    }
+
+                    // FUSION RANDOMIZING
+                    Static.Cards[i].Fusions[j].Cards2 = randFusion.Next((Static.highID) ? 1 : i, Static.cardCount);
+                    Static.Cards[i].Fusions[j].Result = randFusion.Next((Static.highID) ? 1 : i, Static.cardCount);
+
+                    logStream.WriteLine("=> " +
+                                        (Static.Cards[i].Fusions[j].Cards1 > 721
+                                            ? "(!) GLITCHCARD (!)"
+                                            : Static.Cards[Static.Cards[i].Fusions[j].Cards1].Name)
+                                        + " (" +
+                                        (Static.Cards[i].Fusions[j].Cards1 + 1)
+                                        + ") + " +
+                                        (Static.Cards[i].Fusions[j].Cards2 > 721
+                                            ? "(!) GLITCHCARD (!)"
+                                            : Static.Cards[Static.Cards[i].Fusions[j].Cards2].Name)
+                                        + " (" +
+                                        Static.Cards[i].Fusions[j].Cards2
+                                        + ") = " +
+                                        (Static.Cards[i].Fusions[j].Result > 721
+                                            ? "(!) GLITCHCARD (!)"
+                                            : Static.Cards[Static.Cards[i].Fusions[j].Result].Name)
+                                        + " (" +
+                                        Static.Cards[i].Fusions[j].Result
+                                        + ")");
+                }
             }
 
             FileStream fileStream = new FileStream(Static.WAPath, FileMode.Open);
@@ -164,25 +184,26 @@ namespace FMScrambler.helper
                     }
                     for (int i = 0; i < card.Fusions.Count; ++i)
                     {
-                        int num2 = card.Fusions[i].Cards2 + 1 & (int)byte.MaxValue;
-                        int num3 = card.Fusions[i].Result + 1 & (int)byte.MaxValue;
+                        int num2 = card.Fusions[i].Cards2 + 1 & (int) byte.MaxValue;
+                        int num3 = card.Fusions[i].Result + 1 & (int) byte.MaxValue;
                         int num4 = 0;
                         int num5 = 0;
                         int num6 = card.Fusions[i].Cards2 + 1 >> 8 & 3 | (card.Fusions[i].Result + 1 >> 8 & 3) << 2;
                         if (i < card.Fusions.Count - 1)
                         {
-                            num4 = card.Fusions[i + 1].Cards2 + 1 & (int)byte.MaxValue;
-                            num5 = card.Fusions[i + 1].Result + 1 & (int)byte.MaxValue;
-                            num6 |= (card.Fusions[i + 1].Cards2 + 1 >> 8 & 3) << 4 | (card.Fusions[i + 1].Result + 1 >> 8 & 3) << 6;
+                            num4 = card.Fusions[i + 1].Cards2 + 1 & (int) byte.MaxValue;
+                            num5 = card.Fusions[i + 1].Result + 1 & (int) byte.MaxValue;
+                            num6 |= (card.Fusions[i + 1].Cards2 + 1 >> 8 & 3) << 4 |
+                                    (card.Fusions[i + 1].Result + 1 >> 8 & 3) << 6;
                             ++i;
                         }
-                        memStream2.WriteByte((byte)(num6 & (int)byte.MaxValue));
-                        memStream2.WriteByte((byte)(num2 & (int)byte.MaxValue));
-                        memStream2.WriteByte((byte)(num3 & (int)byte.MaxValue));
+                        memStream2.WriteByte((byte) (num6 & (int) byte.MaxValue));
+                        memStream2.WriteByte((byte) (num2 & (int) byte.MaxValue));
+                        memStream2.WriteByte((byte) (num3 & (int) byte.MaxValue));
                         if (num4 != 0 || num5 != 0)
                         {
-                            memStream2.WriteByte((byte)(num4 & (int)byte.MaxValue));
-                            memStream2.WriteByte((byte)(num5 & (int)byte.MaxValue));
+                            memStream2.WriteByte((byte) (num4 & (int) byte.MaxValue));
+                            memStream2.WriteByte((byte) (num5 & (int) byte.MaxValue));
                         }
                     }
                 }
@@ -200,7 +221,22 @@ namespace FMScrambler.helper
             memStream2.Close();
             memStream1.Close();
 
-            logStream.WriteLine("@@ Done scrambling at " + DateTime.Now+" @@");
+            using (FileStream fileStreamSl = new FileStream(Static.SLUSPath, FileMode.Open))
+            {
+                fileStreamSl.Position = 1854020L;
+                using (MemoryStream memoryStream = new MemoryStream(2888))
+                {
+                    for (int i = 0; i < 722; i++)
+                    {
+                        int value = (Static.Cards[i].Attack / 10 & 511) | (Static.Cards[i].Defense / 10 & 511) << 9 |
+                                    (Static.Cards[i].GuardianStar2 & 15) << 18 |
+                                    (Static.Cards[i].GuardianStar1 & 15) << 22 | (Static.Cards[i].Type & 31) << 26;
+                        memoryStream.Write(value.int32ToByteArray(), 0, 4);
+                    }
+                    fileStreamSl.Write(memoryStream.ToArray(), 0, 2888);
+                }
+            }
+            logStream.WriteLine("@@ Done scrambling at " + DateTime.Now + " @@");
             logStream.Close();
             if (mainWin != null) mainWin.lbl_status.Content = "Done scrambling!";
         }
