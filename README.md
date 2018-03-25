@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/duke1102/fmscrambler.svg?branch=master)](https://travis-ci.org/duke1102/fmscrambler)
+
 # YGO! FM Scrambler (fmscrambler)
 Version 0.1 Alpha out now!
 
