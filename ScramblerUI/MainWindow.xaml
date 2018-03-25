@@ -6,7 +6,7 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:FMScrambler"
         mc:Ignorable="d"
-        Title="YGO! FM Fusion Scrambler Tool" Height="523.667" Width="673" ResizeMode="NoResize" GlowBrush="Black" OverlayBrush="Black" Icon="simonico.png" Controls:ControlsHelper.ContentCharacterCasing="Upper">
+        Title="YGO! FM Fusion Scrambler Tool" Height="506.667" Width="673" ResizeMode="NoResize" GlowBrush="Black" OverlayBrush="Black" Icon="simonico.png" Controls:ControlsHelper.ContentCharacterCasing="Upper">
     <Controls:MetroWindow.BorderBrush>
         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
     </Controls:MetroWindow.BorderBrush>
@@ -25,9 +25,9 @@
                             <Button x:Name="btn_loadiso" Content="Load SLUS/MRG" Margin="10,10,455,34" Controls:ControlsHelper.ContentCharacterCasing="Upper" Controls:ButtonHelper.CornerRadius="8" Padding="0" FontSize="11" Click="btn_loadiso_Click" ToolTip="Load the SLUS_014.11 and WA_MRG.MRG. Will automatically try to load the WA_MRG.MRG if existing in the DATA folder."/>
                             <CheckBox x:Name="ch_illegal" Content="Allow ID 2 lower than ID 1" HorizontalAlignment="Center" Margin="334,8,7,0" Width="270" Unchecked="ch_illegal_Unchecked" Checked="ch_illegal_Checked" FontFamily="Segoe UI" FontSize="13" HorizontalContentAlignment="Center" VerticalAlignment="Top" ToolTip="Allows the Card ID of the second Fusion Material to be lower than the first Card ID."/>
                             <Label x:Name="lbl_pathdesc" Content="Path:" HorizontalAlignment="Left" Margin="9,50,0,0" VerticalAlignment="Top" Width="37"/>
-                            <Label x:Name="lbl_path" Content="None specified." HorizontalAlignment="Left" Margin="51,50,0,0" VerticalAlignment="Top" Width="528"/>
+                            <Label x:Name="lbl_path" Content="None specified." HorizontalAlignment="Left" Margin="51,50,0,0" VerticalAlignment="Top" Width="278"/>
                             <CheckBox x:Name="ch_glitch" Content="&quot;000&quot; Glitch Fusions" HorizontalAlignment="Center" Margin="334,31,7,0" Width="270" Checked="ch_glitch_Checked" Unchecked="ch_glitch_Unchecked" FontFamily="Segoe UI" FontSize="13" HorizontalContentAlignment="Center" VerticalAlignment="Top" ToolTip="Allow glitchy fusions with an ID over 722."/>
-                            <Button x:Name="btn_patchiso" Content="Patch ISO" Margin="161,11,304,33" Controls:ControlsHelper.ContentCharacterCasing="Upper" Controls:ButtonHelper.CornerRadius="8" Padding="0" FontSize="11" ToolTip="Patch an image of the game with the scrambled fusions. (Can be iso, bin, img, etc.)" Click="btn_patchiso_Click" IsEnabled="False"/>
+                            <Button x:Name="btn_patchiso" Margin="161,11,304,33" Controls:ControlsHelper.ContentCharacterCasing="Upper" Controls:ButtonHelper.CornerRadius="8" Padding="0" FontSize="11" ToolTip="Patch an image of the game with the scrambled fusions. (Can be iso, bin, img, etc.)" Click="btn_patchiso_Click" IsEnabled="False" Content="PATCH ISO"/>
                             <CheckBox x:Name="chk_atkdefenabled" Content="Enable ATK/DEF scramble" HorizontalAlignment="Center" Margin="334,54,7,0" VerticalAlignment="Top" Checked="chk_atkdefenabled_Checked" Unchecked="chk_atkdefenabled_Unchecked" Width="270" FontFamily="Segoe UI" FontSize="13" HorizontalContentAlignment="Center"/>
                         </Grid>
                     </GroupBox>
@@ -41,20 +41,20 @@
                         <Grid Margin="0,0,-2,-2">
                             <Button x:Name="btn_perform" Content="Randomize!" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="287" Height="48" FontWeight="Bold" Controls:ButtonHelper.CornerRadius="8" Padding="0" FontSize="12" Click="btn_perform_Click" IsEnabled="False" ToolTip="Start the scrambling process."/>
                             <Label x:Name="lbl_statusdesc" Content="Status:" HorizontalAlignment="Left" Margin="10,76,0,8" VerticalAlignment="Center" Width="46" Height="24" VerticalContentAlignment="Center" Padding="0"/>
-                            <Label x:Name="lbl_status" Content="Waiting." HorizontalAlignment="Left" Margin="61,76,0,10" VerticalAlignment="Center" Width="236" Height="22" Padding="0" VerticalContentAlignment="Center"/>
+                            <Label x:Name="lbl_status" Content="Waiting." HorizontalAlignment="Left" Margin="61,77,0,9" VerticalAlignment="Center" Width="236" Height="22" Padding="0" VerticalContentAlignment="Center"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox x:Name="grp_atkdef" Header="ATK/DEF Options" HorizontalAlignment="Left" Height="146" Margin="10,254,0,0" VerticalAlignment="Top" Width="299" Controls:ControlsHelper.HeaderFontSize="13" Controls:ControlsHelper.HeaderFontWeight="Medium" IsEnabled="False">
                         <Grid HorizontalAlignment="Left" Height="109" VerticalAlignment="Top" Width="289" Margin="0,0,-2,-3" UseLayoutRounding="False" >
-                            <Controls:RangeSlider x:Name="rs_atk" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,27,0,0" Width="274" Maximum="5100" SmallChange="1" LargeChange="10" AutoToolTipPlacement="TopLeft" ExtendedMode="True" UpperValue="9999" Height="23" MinRangeWidth="1" MinRange="1"/>
+                            <Controls:RangeSlider x:Name="rs_atk" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,27,0,0" Width="274" Maximum="9999" SmallChange="10" LargeChange="10" AutoToolTipPlacement="TopLeft" ExtendedMode="True" UpperValue="9999" Height="23" MinRangeWidth="10" MinRange="10" TickFrequency="10" IsMoveToPointEnabled="True"/>
                             <Label Content="Attack Value" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,1,0,0" Width="88"/>
-                            <Controls:RangeSlider x:Name="rs_def" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,81,0,0" Width="274" Maximum="5100" SmallChange="1" LargeChange="10" AutoToolTipPlacement="TopLeft" ExtendedMode="True" UpperValue="9999" Height="23" MinRangeWidth="1" MinRange="1"/>
+                            <Controls:RangeSlider x:Name="rs_def" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,81,0,0" Width="274" Maximum="9999" SmallChange="10" LargeChange="10" AutoToolTipPlacement="TopLeft" ExtendedMode="True" UpperValue="9999" Height="23" MinRangeWidth="10" MinRange="10" TickFrequency="10"/>
                             <Label Content="Defense Value" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,55,0,0" Width="88"/>
                         </Grid>
                     </GroupBox>
                 </Grid>
             </TabItem>
-            <TabItem Header="Credits / Help" Height="39" VerticalAlignment="Top" Margin="37,-4,-37,0">
+            <TabItem Header="More" Height="39" VerticalAlignment="Top" Margin="37,-4,-37,0">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="White" Offset="0"/>
@@ -62,11 +62,43 @@
                     </LinearGradientBrush>
                 </TabItem.Background>
                 <Grid Background="#FFE5E5E5">
-                    <TextBlock x:Name="txtb_credits" HorizontalAlignment="Left" Height="235" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="621" TextAlignment="Center" LineHeight="10" FontSize="11"><Run Text="This tool was created by "/><Run FontWeight="Bold" Text="duke1102 "/><Run Text="for the Playstation game &quot;Yu-Gi-Oh! Forbidden Memories&quot; (NTSC, USA version)."/><LineBreak/><Run Text="This software is licensed under an "/><Run FontWeight="Bold" Text="MIT license"/><Run Text=", you can find a copy in the folder of the tool under "/><Run FontWeight="Bold" Text="&quot;LICENSE&quot;"/><Run Text="."/><LineBreak/><Run/><LineBreak/><Run FontSize="10" Text="Credits to "/><Run FontWeight="Bold" FontSize="10" Text="Neto Rpg "/><Run FontSize="10" Text="and "/><Run FontWeight="Bold" FontSize="10" Text="RyuuzakiL5"/><Run FontSize="10" Text=" for their "/><Run FontWeight="Bold" FontSize="10" Text="FM Tool ALPHA"/><Run FontSize="10" Text=", "/><LineBreak/><Run FontSize="10" Text="which helped me out a whole lot with reading/manipulating the game files."/><LineBreak/><Run FontSize="10" Text="Show them some love!"/><LineBreak/><Run FontSize="10"/><LineBreak/><Run FontSize="10" Text="You can find precompiled binaries and the source code of this tool at Github."/><LineBreak/><Run FontWeight="Bold" FontStyle="Italic" FontSize="10" Text="http://github.com/duke1102/fmscrambler"/><LineBreak/><Run FontSize="10"/><LineBreak/><Run FontSize="10" Text="Feel free to comment, leave feedback, bug reports, fork or contribute!"/><LineBreak/><Run FontSize="10"/><LineBreak/><Run FontSize="10"/><LineBreak/><Run FontSize="10" Text="Special thanks to the Yu-Gi-Oh! Forbidden Memories Speedrun Community, especially the Discord Server. "/><Run FontWeight="Bold" FontSize="10" Text="You guys are awesome!"/><LineBreak/><Run FontWeight="Bold" FontSize="10"/><LineBreak/><Run FontWeight="Bold" FontSize="10" Text="Thanks for feedback/playtesting goes to Totozigemm, GenericMadScientist, Xer_91 and gfc_marcus."/></TextBlock>
+                    <GroupBox x:Name="grp_more1" Header="More 1" HorizontalAlignment="Left" Height="123" Margin="10,10,0,0" VerticalAlignment="Top" Width="199" Background="#CC119EDA" Controls:ControlsHelper.HeaderFontSize="13" Controls:ControlsHelper.HeaderFontWeight="Medium">
+                        <Grid Margin="0,0,-2,-2"/>
+                    </GroupBox>
+                    <GroupBox x:Name="grp_more1_Copy" Header="More 2" HorizontalAlignment="Left" Height="123" Margin="214,10,0,0" VerticalAlignment="Top" Width="199" Background="#CC119EDA" Controls:ControlsHelper.HeaderFontSize="13" Controls:ControlsHelper.HeaderFontWeight="Medium">
+                        <Grid Margin="0,0,-2,-2">
+                            <CheckBox Content="Randomize Card Drops" HorizontalAlignment="Left" Margin="0,1,0,0" VerticalAlignment="Top"/>
+                            <CheckBox Content="Randomize Duelist Decks" HorizontalAlignment="Left" Margin="0,21,0,0" VerticalAlignment="Top"/>
+                            <CheckBox Content="Add #000 to Pools" HorizontalAlignment="Left" Margin="0,41,0,0" VerticalAlignment="Top" />
+                        </Grid>
+                    </GroupBox>
+                    <CheckBox Content="Randomize Attributes" HorizontalAlignment="Left" Margin="0,1,0,0" VerticalAlignment="Top" />
+                    <CheckBox Content="Randomize Types" HorizontalAlignment="Left" Margin="0,21,0,0" VerticalAlignment="Top" />
+                    <CheckBox Content="Randomize Guardian Stars" HorizontalAlignment="Left" Margin="0,41,0,0" VerticalAlignment="Top" />
+                    <CheckBox Content="Allow Glitch Guardian Stars" HorizontalAlignment="Left" Margin="0,61,0,0" VerticalAlignment="Top" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Credits / Help" Height="39" VerticalAlignment="Top" Margin="42,-4,-42,0">
+                <TabItem.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="White" Offset="0"/>
+                        <GradientStop Color="#FFE5E5E5" Offset="1"/>
+                    </LinearGradientBrush>
+                </TabItem.Background>
+                <Grid Background="#FFE5E5E5">
+                    <TextBlock x:Name="txtb_credits1" HorizontalAlignment="Left" Height="235" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="621" TextAlignment="Center" LineHeight="10" FontSize="11"><Run Text="This tool was created by "/><Run FontWeight="Bold" Text="duke1102 "/><Run Text="for the Playstation game &quot;Yu-Gi-Oh! Forbidden Memories&quot; (NTSC, USA version)."/><LineBreak/><Run Text="This software is licensed under an "/><Run FontWeight="Bold" Text="MIT license"/><Run Text=", you can find a copy in the folder of the tool under "/><Run FontWeight="Bold" Text="&quot;LICENSE&quot;"/><Run Text="."/><LineBreak/><Run/><LineBreak/><Run FontSize="10" Text="Credits to "/><Run FontWeight="Bold" FontSize="10" Text="Neto Rpg "/><Run FontSize="10" Text="and "/><Run FontWeight="Bold" FontSize="10" Text="RyuuzakiL5"/><Run FontSize="10" Text=" for their "/><Run FontWeight="Bold" FontSize="10" Text="FM Tool ALPHA"/><Run FontSize="10" Text=", "/><LineBreak/><Run FontSize="10" Text="which helped me out a whole lot with reading/manipulating the game files."/><LineBreak/><Run FontSize="10" Text="Show them some love!"/><LineBreak/><Run FontSize="10"/><LineBreak/><Run FontSize="10" Text="You can find precompiled binaries and the source code of this tool at Github."/><LineBreak/><Run FontWeight="Bold" FontStyle="Italic" FontSize="10" Text="http://github.com/duke1102/fmscrambler"/><LineBreak/><Run FontSize="10"/><LineBreak/><Run FontSize="10" Text="Feel free to comment, leave feedback, bug reports, fork or contribute!"/><LineBreak/><Run FontSize="10"/><LineBreak/><Run FontSize="10"/><LineBreak/><Run FontSize="10" Text="Special thanks to the Yu-Gi-Oh! Forbidden Memories Speedrun Community, especially the Discord Server. "/><Run FontWeight="Bold" FontSize="10" Text="You guys are awesome!"/><LineBreak/><Run FontWeight="Bold" FontSize="10"/><LineBreak/><Run FontWeight="Bold" FontSize="10" Text="Thanks for feedback/playtesting goes to Totozigemm, GenericMadScientist, Xer_91 and gfc_marcus."/></TextBlock>
                 </Grid>
             </TabItem>
         </TabControl>
-        <Label x:Name="lbl_copyleft" Content="Made by duke1102 - http://github.com/duke1102/fmscrambler" FontSize="11" HorizontalContentAlignment="Center" Margin="10,470,337,-10"/>
+        <Label x:Name="lbl_copyleft" Content="Made by duke1102" FontSize="11" HorizontalContentAlignment="Center" Margin="425,10,10,451" VerticalContentAlignment="Center" Padding="0" Width="232"/>
+        <Label x:Name="lbl_copyleft_Copy" Content="http://github.com/duke1102/fmscrambler" FontSize="11" HorizontalContentAlignment="Center" Margin="425,27,10,434" VerticalContentAlignment="Center" Height="17" Padding="0" Width="232"/>
+        <Canvas x:Name="pgr_back" Background="#C1000000" Visibility="Hidden">
+            <Controls:ProgressRing x:Name="pgr1" HorizontalAlignment="Center" VerticalAlignment="Center" Height="211" Width="231" OpacityMask="Black" Canvas.Left="209" Canvas.Top="103">
+                <Controls:ProgressRing.Effect>
+                    <DropShadowEffect ShadowDepth="24" BlurRadius="28"/>
+                </Controls:ProgressRing.Effect>
+            </Controls:ProgressRing>
+        </Canvas>
 
     </Grid>
 </Controls:MetroWindow>

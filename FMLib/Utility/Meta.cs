@@ -1,4 +1,4 @@
-﻿namespace FMLib.Helper
+﻿namespace FMLib.Utility
 {
     /// <summary>  
     ///  Meta Information about the Library

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using FMLib.Models;
 
-namespace FMLib.Helper
+namespace FMLib.Utility
 {
     /// <summary>
     /// Static Variables for application wide useage
@@ -43,6 +43,7 @@ namespace FMLib.Helper
         /// </summary>
         public static Card[] Cards = new Card[722];
 
+        public static Duelist[] Duelist = new Duelist[39];
         /// <summary>
         /// Method to set the Card Count
         /// </summary>

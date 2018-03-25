@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace FMLib.Helper
+namespace FMLib.Utility
 {
     /// <summary>
     /// Helper class for Number Operations
@@ -17,7 +17,7 @@ namespace FMLib.Helper
         /// <returns></returns>
         public static int extractInt32(this byte[] bytes, int index = 0)
         {
-            return (int)bytes[index + 3] << 24 | (int)bytes[index + 2] << 16 | (int)bytes[index + 1] << 8 | (int)bytes[index + 0];
+            return bytes[index + 3] << 24 | bytes[index + 2] << 16 | bytes[index + 1] << 8 | bytes[index + 0];
         }
 
         /// <summary>
@@ -31,7 +31,10 @@ namespace FMLib.Helper
         public static byte[] extractPiece(this FileStream ms, int offset, int length, int changeOffset = -1)
         {
             if (changeOffset > -1)
-                ms.Position = (long)changeOffset;
+            {
+                ms.Position = changeOffset;
+            }
+
             byte[] buffer = new byte[length];
             ms.Read(buffer, 0, length);
             return buffer;
@@ -48,7 +51,10 @@ namespace FMLib.Helper
         public static byte[] extractPiece(this MemoryStream ms, int offset, int length, int changeOffset = -1)
         {
             if (changeOffset > -1)
-                ms.Position = (long)changeOffset;
+            {
+                ms.Position = changeOffset;
+            }
+
             byte[] buffer = new byte[length];
             ms.Read(buffer, 0, length);
             return buffer;
@@ -66,7 +72,9 @@ namespace FMLib.Helper
             int offset1 = offset > -1 ? offset : 0;
             int count = length > -1 ? length : data.Length;
             using (FileStream fileStream = File.Create(path))
+            {
                 fileStream.Write(data, offset1, count);
+            }
         }
 
         /// <summary>
@@ -78,7 +86,10 @@ namespace FMLib.Helper
         {
             byte[] numArray = new byte[4];
             for (int index = 0; index < 4; ++index)
-                numArray[index] = (byte)(value >> index * 8 & (int)byte.MaxValue);
+            {
+                numArray[index] = (byte)(value >> index * 8 & byte.MaxValue);
+            }
+
             return numArray;
         }
 
@@ -90,7 +101,7 @@ namespace FMLib.Helper
         /// <returns></returns>
         public static ushort extractUInt16(this byte[] bytes, int index = 0)
         {
-            return (ushort)((uint)bytes[index + 1] << 8 | (uint)bytes[index + 0]);
+            return (ushort)((uint)bytes[index + 1] << 8 | bytes[index + 0]);
         }
 
         /// <summary>
@@ -112,7 +123,10 @@ namespace FMLib.Helper
         {
             byte[] numArray = new byte[2];
             for (int index = 0; index < 2; ++index)
-                numArray[index] = (byte)((int)value >> index * 8 & (int)byte.MaxValue);
+            {
+                numArray[index] = (byte)(value >> index * 8 & byte.MaxValue);
+            }
+
             return numArray;
         }
 
@@ -128,7 +142,10 @@ namespace FMLib.Helper
         public static byte[] copyFrom(this byte[] self, byte[] data, int copyOffset, int length, int destinyOffset = 0)
         {
             for (int index = copyOffset; index < length; ++index)
+            {
                 self[destinyOffset + (index - copyOffset)] = data[index];
+            }
+
             return self;
 
         }
@@ -145,13 +162,23 @@ namespace FMLib.Helper
 
             while (true)
             {
-                byte b = ms.extractPiece(0, 1, -1)[0];
+                byte b = ms.extractPiece(0, 1)[0];
 
-                if (dic.ContainsKey(b)) text += dic[b].ToString();
-                else if (b == 254) text += "\r\n";
+                if (dic.ContainsKey(b))
+                {
+                    text += dic[b].ToString();
+                }
+                else if (b == 254)
+                {
+                    text += "\r\n";
+                }
                 else
                 {
-                    if (b == 255) break;
+                    if (b == 255)
+                    {
+                        break;
+                    }
+
                     text = text + "[" + b.ToString("X2") + "]";
                 }
             }

@@ -60,7 +60,7 @@ namespace FMLib.Models
         /// <summary>
         /// Equips of the Card as a List
         /// </summary>
-        public List<int> Equips { get; set; }
+        public List<int> Equips { get; set; } = new List<int>();
 
         /// <summary>
         /// Ritual of the Card as Ritual

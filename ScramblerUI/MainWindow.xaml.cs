@@ -5,8 +5,8 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using FMLib.Helper;
-using FMScrambler.helper;
+using FMLib.Utility;
+using FMScrambler.Utility;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
@@ -70,7 +70,7 @@ namespace FMScrambler
 
         private void sync_Scramble()
         {
-            int cardCount = (Static.glitchFusions) ? 1400 : 722;
+            int cardCount = Static.glitchFusions ? 1400 : 722;
             Static.setCardCount(cardCount);
 
             FileHandler fileHandler = new FileHandler();
@@ -82,7 +82,7 @@ namespace FMScrambler
             fileHandler.ScrambleFusions(int.Parse(txt_seed.Text));
 
             btn_patchiso.IsEnabled = true;
-            btn_perform.IsEnabled = false;
+            //btn_perform.IsEnabled = false;
 
         }
 
@@ -136,16 +136,22 @@ namespace FMScrambler
                 #if DEBUG
                 Console.WriteLine(dlg.FileName);
                 #endif
-
+                pgr_back.Visibility = Visibility.Visible;
                 ImagePatcher patcher = new ImagePatcher(dlg.FileName);
 
                 if (patcher.PatchImage() == 1)
+                {
                     MessageBox.Show("Image successfully patched! Have fun playing!", "Done patching.",
                         MessageBoxButton.OK, MessageBoxImage.Information);
+                }
                 else
+                {
                     MessageBox.Show("Error patching Image. Not Forbidden Memories or wrong version.", "Error patching.",
                         MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
+
+            pgr_back.Visibility = Visibility.Hidden;
         }
 
         private void txt_seed_Initialized(object sender, EventArgs e)
@@ -171,7 +177,9 @@ namespace FMScrambler
                 isPasteEvent = false;
             }
             if (txt_seed.Text.StartsWith("0"))
+            {
                 txt_seed.Text = $"1{txt_seed.Text.Substring(1)}";
+            }
         }
 
         private void chk_atkdefenabled_Checked(object sender, RoutedEventArgs e)
