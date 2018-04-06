@@ -46,6 +46,8 @@ namespace FMScrambler.Utility
                 Static.Cards[i] = new Card
                 {
                     Id = i + 1,
+                    Attack = (int32 & 511) * 10,
+                    Defense = (int32 >> 9 & 511) * 10,
                     GuardianStar2 = int32 >> 18 & 15,
                     GuardianStar1 = int32 >> 22 & 15,
                     Type = int32 >> 26 & 31
@@ -362,6 +364,29 @@ namespace FMScrambler.Utility
                 }
             }
 
+            if (!File.Exists($@"scramblelog_#{seed}.log"))
+            {
+                File.CreateText($"scramblelog_#{seed}.log").Close();
+            }
+
+            StreamWriter logStream = new StreamWriter($@"scramblelog_#{seed}.log");
+
+            logStream.WriteLine("== YU-GI-OH! Forbidden Memories Fusion Scrambler Log Output ==");
+            logStream.WriteLine($"== Version {Meta.majorVersion}.{Meta.minorVersion}.{Meta.patchVersion} ==");
+            logStream.WriteLine("====================================================================\r\n");
+            string glitchPlace = "Glitch!";
+            foreach (var c in Static.Cards)
+            {
+                logStream.WriteLine($"====================================================================");
+                logStream.WriteLine($"=> #{c.Id} {c.Name} ({c.Attack}/{c.Defense})");
+                logStream.WriteLine($"=> FUSIONS:");
+                foreach (var fus in c.Fusions)
+                {
+                    logStream.WriteLine($"    => {fus.Cards1} + {fus.Cards2} = {fus.Result}         ({(fus.Cards1 > 722 ? glitchPlace : Static.Cards.Single(card => card.Id == fus.Cards1).Name)} + {(fus.Cards2 > 722 ? glitchPlace : Static.Cards.Single(card => card.Id == fus.Cards2).Name)} = {(fus.Result > 722 ? glitchPlace : Static.Cards.Single(card => card.Id == fus.Result).Name)})");
+                }
+            }
+
+            logStream.Close();
             if (mainWin != null)
             {
                 mainWin.lbl_status.Content = "Done scrambling!";
