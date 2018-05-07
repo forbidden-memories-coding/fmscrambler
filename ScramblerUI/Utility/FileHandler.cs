@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using FMLib.Models;
 using FMLib.Utility;
-using Troschuetz.Random.Generators;
 
 namespace FMScrambler.Utility
 {
@@ -172,33 +171,47 @@ namespace FMScrambler.Utility
             {
                 foreach (var t in Static.Cards[i].Fusions)
                 {
-                    if (mainWin != null && Static.randomATKDEF)
+                    if (mainWin != null)
                     {
                         // ATK/DEF RANDOMIZING
-                        Static.Cards[i].Attack = randVal.Next(Convert.ToInt32(mainWin.rs_atk.LowerValue),
-                            Convert.ToInt32(mainWin.rs_atk.UpperValue));
+                        if (Static.randomATKDEF)
+                        {
+                            Static.Cards[i].Attack = randVal.Next(Convert.ToInt32(mainWin.rs_atk.LowerValue),
+                                Convert.ToInt32(mainWin.rs_atk.UpperValue));
 
-                        Static.Cards[i].Defense = randVal.Next(Convert.ToInt32(mainWin.rs_def.LowerValue),
-                            Convert.ToInt32(mainWin.rs_def.UpperValue));
+                            Static.Cards[i].Defense = randVal.Next(Convert.ToInt32(mainWin.rs_def.LowerValue),
+                                Convert.ToInt32(mainWin.rs_def.UpperValue));
+                        }
 
-                        Static.Cards[i].Attribute = randVal.Next(1, 15);
-                        Static.Cards[i].Level = randVal.Next(1, 12);
-                        Static.Cards[i].Description = "Trolololo";
-                        Static.Cards[i].GuardianStar1 = randVal.Next(1, 25);
-                        Static.Cards[i].GuardianStar2 = randVal.Next(1, 25);
-                        Static.Cards[i].Type = randVal.Next(1, 25);
+                        if (Static.glitchAttributes)
+                        {
+                            Static.Cards[i].Attribute = randVal.Next(1, 15);
+                        }
+                        //Static.Cards[i].Level = randVal.Next(1, 12);
+                        if (Static.randomGuardianStars)
+                        {
+                            Static.Cards[i].GuardianStar1 = randVal.Next(1, 25);
+                            Static.Cards[i].GuardianStar2 = randVal.Next(1, 25);
+                        }
+
+                        if (Static.randomTypes)
+                        {
+                            Static.Cards[i].Type = randVal.Next(1, 25);
+                        }
                         //logStream.WriteLine($"=> {Static.Cards[i].Name} {Static.Cards[i].Attack}/{Static.Cards[i].Defense}");
 
-                        for (int j = 0; j < randVal.Next(20); j++)
+                        if (Static.randomEquips)
                         {
-                            var rando = randVal.Next(1, 722);
-                            //Console.WriteLine($"rando: {rando}");
-                            Static.Cards[i].Equips.Add(rando);
-                            //logStream.WriteLine($"=> {Static.Cards[i].Name} can use as Equip: {Static.Cards[rando].Name}");
+                            for (int j = 0; j < randVal.Next(20); j++)
+                            {
+                                var rando = randVal.Next(1, 722);
+                                //Console.WriteLine($"rando: {rando}");
+                                Static.Cards[i].Equips.Add(rando);
+                                //logStream.WriteLine($"=> {Static.Cards[i].Name} can use as Equip: {Static.Cards[rando].Name}");
+                            }
                         }
-                        
-                    }
 
+                    }
 
                     // FUSION RANDOMIZING
                     t.Cards2 = randFusion.Next(Static.highID ? 1 : i, Static.cardCount);
@@ -206,16 +219,26 @@ namespace FMScrambler.Utility
 
                 }
             }
-            var drand = new NR3Generator();
-            foreach (Duelist t1 in Static.Duelist)
+
+            if (Static.randomCardDrops || Static.randomDecks)
             {
-                for (int ix = 0; ix < 2048; ix++)
+                foreach (Duelist t1 in Static.Duelist)
                 {
-                    t1.Deck[drand.Next(0, 722)]++;
-                    t1.Drop.BCDPow[drand.Next(0, 722)]++;
-                    t1.Drop.SAPow[drand.Next(0, 722)]++;
-                    t1.Drop.SATec[drand.Next(0, 722)]++;
-                    drand.Seed = (uint)DateTime.Now.Ticks;
+                    for (int ix = 0; ix < 2048; ix++)
+                    {
+                        if (Static.randomCardDrops)
+                        {
+                            t1.Drop.BCDPow[randVal.Next(0, 722)]++;
+                            t1.Drop.SAPow[randVal.Next(0, 722)]++;
+                            t1.Drop.SATec[randVal.Next(0, 722)]++;
+                        }
+
+                        if (Static.randomDecks)
+                        {
+                            t1.Deck[randVal.Next(0, 722)]++;
+
+                        }
+                    }
                 }
             }
 
@@ -296,70 +319,76 @@ namespace FMScrambler.Utility
             memStream2.Close();
             memStream1.Close();
 
-            using (var fileStreamSl = new FileStream(Static.SLUSPath, FileMode.Open))
+            if (Static.randomATKDEF || Static.randomGuardianStars || Static.randomTypes)
             {
-                fileStreamSl.Position = 1854020L;
-                using (var memoryStream = new MemoryStream(2888))
+                using (var fileStreamSl = new FileStream(Static.SLUSPath, FileMode.Open))
                 {
-                    for (var i = 0; i < 722; ++i)
+                    fileStreamSl.Position = 1854020L;
+                    using (var memoryStream = new MemoryStream(2888))
                     {
-                        var value = (Static.Cards[i].Attack / 10 & 511) | (Static.Cards[i].Defense / 10 & 511) << 9 |
-                                    (Static.Cards[i].GuardianStar2 & 15) << 18 |
-                                    (Static.Cards[i].GuardianStar1 & 15) << 22 | (Static.Cards[i].Type & 31) << 26;
-                        memoryStream.Write(value.int32ToByteArray(), 0, 4);
+                        for (var i = 0; i < 722; ++i)
+                        {
+                            var value = (Static.Cards[i].Attack / 10 & 511) | (Static.Cards[i].Defense / 10 & 511) << 9 |
+                                        (Static.Cards[i].GuardianStar2 & 15) << 18 |
+                                        (Static.Cards[i].GuardianStar1 & 15) << 22 | (Static.Cards[i].Type & 31) << 26;
+                            memoryStream.Write(value.int32ToByteArray(), 0, 4);
+                        }
+                        fileStreamSl.Write(memoryStream.ToArray(), 0, 2888);
                     }
-                    fileStreamSl.Write(memoryStream.ToArray(), 0, 2888);
                 }
             }
 
-            using (FileStream duelistStream = new FileStream(Static.WAPath, FileMode.Open))
+            if (Static.randomDecks || Static.randomCardDrops)
             {
-                for (int i = 0; i < 39; i++)
+                using (FileStream duelistStream = new FileStream(Static.WAPath, FileMode.Open))
                 {
-                    int num = 15314944 + 6144 * i;
-                    duelistStream.Position = num;
-                    using (MemoryStream memoryStream = new MemoryStream(1444))
+                    for (int i = 0; i < 39; i++)
                     {
-                        int[] array = Static.Duelist[i].Deck;
-                        foreach (var t in array)
+                        int num = 15314944 + 6144 * i;
+                        duelistStream.Position = num;
+                        using (MemoryStream memoryStream = new MemoryStream(1444))
                         {
-                            short value = (short)t;
-                            memoryStream.Write(value.int16ToByteArray(), 0, 2);
+                            int[] array = Static.Duelist[i].Deck;
+                            foreach (var t in array)
+                            {
+                                short value = (short)t;
+                                memoryStream.Write(value.int16ToByteArray(), 0, 2);
+                            }
+                            duelistStream.Write(memoryStream.ToArray(), 0, 1444);
                         }
-                        duelistStream.Write(memoryStream.ToArray(), 0, 1444);
-                    }
-                    duelistStream.Position = num + 1460;
-                    using (MemoryStream memoryStream2 = new MemoryStream(1444))
-                    {
-                        int[] array = Static.Duelist[i].Drop.SAPow;
-                        foreach (var t in array)
+                        duelistStream.Position = num + 1460;
+                        using (MemoryStream memoryStream2 = new MemoryStream(1444))
                         {
-                            short value2 = (short)t;
-                            memoryStream2.Write(value2.int16ToByteArray(), 0, 2);
+                            int[] array = Static.Duelist[i].Drop.SAPow;
+                            foreach (var t in array)
+                            {
+                                short value2 = (short)t;
+                                memoryStream2.Write(value2.int16ToByteArray(), 0, 2);
+                            }
+                            duelistStream.Write(memoryStream2.ToArray(), 0, 1444);
                         }
-                        duelistStream.Write(memoryStream2.ToArray(), 0, 1444);
-                    }
-                    duelistStream.Position = num + 2920;
-                    using (MemoryStream memoryStream3 = new MemoryStream(1444))
-                    {
-                        int[] array = Static.Duelist[i].Drop.BCDPow;
-                        foreach (var t in array)
+                        duelistStream.Position = num + 2920;
+                        using (MemoryStream memoryStream3 = new MemoryStream(1444))
                         {
-                            short value3 = (short)t;
-                            memoryStream3.Write(value3.int16ToByteArray(), 0, 2);
+                            int[] array = Static.Duelist[i].Drop.BCDPow;
+                            foreach (var t in array)
+                            {
+                                short value3 = (short)t;
+                                memoryStream3.Write(value3.int16ToByteArray(), 0, 2);
+                            }
+                            duelistStream.Write(memoryStream3.ToArray(), 0, 1444);
                         }
-                        duelistStream.Write(memoryStream3.ToArray(), 0, 1444);
-                    }
-                    duelistStream.Position = num + 4380;
-                    using (MemoryStream memoryStream4 = new MemoryStream(1444))
-                    {
-                        int[] array = Static.Duelist[i].Drop.SATec;
-                        foreach (var t in array)
+                        duelistStream.Position = num + 4380;
+                        using (MemoryStream memoryStream4 = new MemoryStream(1444))
                         {
-                            short value4 = (short)t;
-                            memoryStream4.Write(value4.int16ToByteArray(), 0, 2);
+                            int[] array = Static.Duelist[i].Drop.SATec;
+                            foreach (var t in array)
+                            {
+                                short value4 = (short)t;
+                                memoryStream4.Write(value4.int16ToByteArray(), 0, 2);
+                            }
+                            duelistStream.Write(memoryStream4.ToArray(), 0, 1444);
                         }
-                        duelistStream.Write(memoryStream4.ToArray(), 0, 1444);
                     }
                 }
             }

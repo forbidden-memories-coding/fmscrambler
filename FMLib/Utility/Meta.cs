@@ -16,7 +16,7 @@
         /// <summary>
         /// Patch Version Identifier as Integer
         /// </summary>
-        public static int patchVersion = 2;
+        public static int patchVersion = 3;
         /// <summary>
         /// Extra Version Info String
         /// </summary>

@@ -39,20 +39,17 @@ namespace FMScrambler_Proto
             while (memStream.Position < 1770321L)
             {
                 //Console.WriteLine(memStream.extractPiece(0, 2, -1).extractUInt16(0));
-                Console.WriteLine($"{memStream.Position}");
-                foreach (var x in memStream.extractPiece(0, 1))
-                {
-                    Console.WriteLine($">> {x}");
-                }
+                //Console.WriteLine($"{memStream.Position}");
+                //foreach (var x in memStream.extractPiece(0, 1))
+                //{
+                //    Console.WriteLine($">> {x}");
+                //}
                 aText += memStream.GetText(Static.Dict);
                 //Console.WriteLine($"Current Pos: {memStream.Position}");
                 memStream.Position += 1L;
             }
 
-            Console.WriteLine("========================");
-            Console.WriteLine("========================");
-            //Console.WriteLine(aText);
-            Console.WriteLine("========================");
+            Console.WriteLine(aText);
             char[] heS = new char[] { (char)250, (char)251 };
             var bText = aText.Split(heS, StringSplitOptions.None);
             Console.WriteLine(bText.Length);

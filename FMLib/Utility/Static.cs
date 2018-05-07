@@ -24,6 +24,22 @@ namespace FMLib.Utility
         /// </summary>
         public static bool glitchFusions = false;
 
+        public static bool randomAttributes = false;
+
+        public static bool randomGuardianStars = false;
+
+        public static bool randomCardDrops = false;
+
+        public static bool randomTypes = false;
+
+        public static bool glitchGuardianStars = false;
+
+        public static bool randomDecks = false;
+
+        public static bool glitchAttributes = false;
+
+        public static bool randomEquips = false;
+
         /// <summary>
         /// Option - Card ID higher than Card1 allowed? (true / false)
         /// </summary>

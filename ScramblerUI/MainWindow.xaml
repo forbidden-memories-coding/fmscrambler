@@ -6,7 +6,7 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:FMScrambler"
         mc:Ignorable="d"
-        Title="YGO! FM Fusion Scrambler Tool" Height="506.667" Width="673" ResizeMode="NoResize" GlowBrush="Black" OverlayBrush="Black" Icon="simonico.png" Controls:ControlsHelper.ContentCharacterCasing="Upper">
+        Title="YGO! FM Fusion Scrambler Tool" Height="506.667" Width="673" ResizeMode="NoResize" GlowBrush="Black" OverlayBrush="Black" Icon="simonico.png" Controls:ControlsHelper.ContentCharacterCasing="Upper" Initialized="MetroWindow_Initialized">
     <Controls:MetroWindow.BorderBrush>
         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
     </Controls:MetroWindow.BorderBrush>
@@ -53,15 +53,16 @@
                 <Grid Background="#FFE5E5E5">
                     <GroupBox x:Name="grp_more1" Header="More 1" HorizontalAlignment="Left" Height="175" Margin="10,10,0,0" VerticalAlignment="Top" Width="621" Background="#CC119EDA" Controls:ControlsHelper.HeaderFontSize="13" Controls:ControlsHelper.HeaderFontWeight="Medium">
                         <Grid Margin="0,0,-2,-2">
-                            <CheckBox Content="Randomize Attributes" HorizontalAlignment="Left" VerticalAlignment="Top" />
-                            <CheckBox Content="Randomize Types" HorizontalAlignment="Left" Margin="210,0,0,0" VerticalAlignment="Top" />
-                            <CheckBox Content="Randomize Guardian Stars" HorizontalAlignment="Left" Margin="0,23,0,0" VerticalAlignment="Top" />
-                            <CheckBox Content="Allow Glitch Guardian Stars" HorizontalAlignment="Left" Margin="210,23,0,0" VerticalAlignment="Top" />
-                            <CheckBox Content="Randomize Card Drops" HorizontalAlignment="Left" Margin="0,46,0,0" VerticalAlignment="Top"/>
-                            <CheckBox Content="Randomize Duelist Decks" HorizontalAlignment="Left" Margin="210,46,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="chk_randomattributes" Content="Randomize Attributes" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="chk_randomattributes_Checked" Unchecked="chk_randomattributes_Unchecked" />
+                            <CheckBox x:Name="chk_randomtypes" Content="Randomize Types" HorizontalAlignment="Left" Margin="210,0,0,0" VerticalAlignment="Top" Unchecked="chk_randomtypes_Unchecked" Checked="chk_randomtypes_Checked" />
+                            <CheckBox x:Name="chk_randomguardianstars" Content="Randomize Guardian Stars" HorizontalAlignment="Left" Margin="0,23,0,0" VerticalAlignment="Top" Unchecked="chk_randomguardianstars_Unchecked" Checked="chk_randomguardianstars_Checked" />
+                            <CheckBox x:Name="chk_glitchgs" Content="Allow Glitch Guardian Stars" HorizontalAlignment="Left" Margin="210,23,0,0" VerticalAlignment="Top" Checked="chk_glitchgs_Checked" Unchecked="chk_glitchgs_Unchecked" />
+                            <CheckBox x:Name="chk_randomdrops" Content="Randomize Card Drops" HorizontalAlignment="Left" Margin="0,46,0,0" VerticalAlignment="Top" Checked="chk_randomdrops_Checked" Unchecked="chk_randomdrops_Unchecked"/>
+                            <CheckBox x:Name="chk_randomdecks" Content="Randomize Duelist Decks" HorizontalAlignment="Left" Margin="210,46,0,0" VerticalAlignment="Top" Unchecked="chk_randomdecks_Unchecked" Checked="chk_randomdecks_Checked"/>
                             <CheckBox x:Name="chk_atkdefenabled" Content="Enable ATK/DEF scramble" HorizontalAlignment="Left" Margin="0,69,429,0" VerticalAlignment="Top" Checked="chk_atkdefenabled_Checked" Unchecked="chk_atkdefenabled_Unchecked" Width="184" FontFamily="Segoe UI"/>
                             <CheckBox x:Name="ch_illegal" Content="Allow ID 2 lower than ID 1" Margin="0,92,343,0" Width="270" Unchecked="ch_illegal_Unchecked" Checked="ch_illegal_Checked" FontFamily="Segoe UI" VerticalAlignment="Top" ToolTip="Allows the Card ID of the second Fusion Material to be lower than the first Card ID." RenderTransformOrigin="0.352,-1.111"/>
                             <CheckBox x:Name="ch_glitch" Content="&quot;000&quot; Glitch Fusions" Margin="0,115,343,0" Width="270" Checked="ch_glitch_Checked" Unchecked="ch_glitch_Unchecked" FontFamily="Segoe UI" VerticalAlignment="Top" ToolTip="Allow glitchy fusions with an ID over 722." RenderTransformOrigin="0.244,-2.056"/>
+                            <CheckBox x:Name="chk_randomequips" Content="Randomize Duelist Decks" HorizontalAlignment="Left" Margin="210,69,0,0" VerticalAlignment="Top" Checked="chk_randomequips_Checked" Unchecked="chk_randomequips_Unchecked"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox x:Name="grp_atkdef" Header="ATK/DEF Options" HorizontalAlignment="Left" Height="146" Margin="10,190,0,0" VerticalAlignment="Top" Width="621" Controls:ControlsHelper.HeaderFontSize="13" Controls:ControlsHelper.HeaderFontWeight="Medium" IsEnabled="False">

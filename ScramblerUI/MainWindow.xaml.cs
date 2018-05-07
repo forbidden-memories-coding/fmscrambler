@@ -193,5 +193,82 @@ namespace FMScrambler
             Static.randomATKDEF = false;
             grp_atkdef.IsEnabled = false;
         }
+
+        private void chk_randomattributes_Checked(object sender, RoutedEventArgs e)
+        {
+            Static.randomAttributes = true;
+        }
+
+        private void chk_randomattributes_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Static.randomAttributes = false;
+        }
+
+        private void chk_randomguardianstars_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Static.randomGuardianStars = false;
+        }
+
+        private void chk_randomguardianstars_Checked(object sender, RoutedEventArgs e)
+        {
+            Static.randomGuardianStars = true;
+        }
+
+        private void chk_randomdrops_Checked(object sender, RoutedEventArgs e)
+        {
+            Static.randomCardDrops = true;
+        }
+
+        private void chk_randomdrops_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Static.randomCardDrops = false;
+        }
+
+        private void chk_randomtypes_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Static.randomTypes = false;
+        }
+
+        private void chk_randomtypes_Checked(object sender, RoutedEventArgs e)
+        {
+            Static.randomTypes = true;
+        }
+
+        private void chk_glitchgs_Checked(object sender, RoutedEventArgs e)
+        {
+            Static.glitchGuardianStars = true;
+        }
+
+        private void chk_glitchgs_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Static.glitchGuardianStars = false;
+
+        }
+
+        private void chk_randomdecks_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Static.randomDecks = false;
+        }
+
+        private void chk_randomdecks_Checked(object sender, RoutedEventArgs e)
+        {
+            Static.randomDecks = true;
+        }
+
+        private void chk_randomequips_Checked(object sender, RoutedEventArgs e)
+        {
+            Static.randomEquips = true;
+        }
+
+        private void chk_randomequips_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Static.randomEquips = false;
+        }
+
+        private void MetroWindow_Initialized(object sender, EventArgs e)
+        {
+            this.Title =
+                $"YGO! FM Fusion Scrambler Tool - {Meta.majorVersion}.{Meta.minorVersion}.{Meta.patchVersion} {Meta.versionInfo}";
+        }
     }
 }
