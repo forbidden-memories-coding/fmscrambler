@@ -158,6 +158,76 @@ namespace FMScrambler.Utility
             fusionStream.Close();
         }
 
+        public void ScrambleNames()
+        {
+            string[] readText = File.ReadAllLines(@"rando.txt");
+
+            for (int i = 0; i < readText.Length; i++)
+            {
+                Static.Cards[i].Name = readText[i];
+            }
+
+            using (FileStream fileStream = new FileStream(Static.SLUSPath, FileMode.Open))
+            {
+                fileStream.Position = 1858355L;
+
+                using (MemoryStream memoryStream5 = new MemoryStream())
+                {
+                    int num = 0;
+                    bool flag = false;
+                    using (MemoryStream memoryStream6 = new MemoryStream(11261))
+                    {
+                        for (int l = 0; l < 722; l++)
+                        {
+                            byte[] buffer2 = new byte[]
+                            {
+                                248,
+                                10,
+                                (byte)0
+                            };
+                            byte[] array2 = Static.Cards[l].Name.TextToArray(Static.rDict);
+                            if (memoryStream6.Position + (long)array2.Length > (long)memoryStream6.Capacity)
+                            {
+                                flag = true;
+                                num = l;
+                                while (memoryStream6.Position < (long)memoryStream6.Capacity)
+                                {
+                                    memoryStream6.WriteByte(0);
+                                }
+                                break;
+                            }
+                            memoryStream5.Write(((short)(memoryStream6.Position + 24576L - 304L)).int16ToByteArray(), 0, 2);
+                            memoryStream6.Write(array2, 0, array2.Length);
+                        }
+                        fileStream.Position = 1861328L;
+                        fileStream.Write(memoryStream6.ToArray(), 0, (int)memoryStream6.Length);
+                    }
+                    if (flag)
+                    {
+                        using (MemoryStream memoryStream7 = new MemoryStream())
+                        {
+                            for (int m = num; m < 722; m++)
+                            {
+                                byte[] buffer3 = new byte[]
+                                {
+                                    248,
+                                    10,
+                                    (byte)0
+                                };
+                                memoryStream5.Write(((short)(memoryStream7.Position + 24576L + 12800L)).int16ToByteArray(), 0, 2);
+                                byte[] array3 = Static.Cards[m].Name.TextToArray(Static.rDict);
+
+                                memoryStream7.Write(array3, 0, array3.Length);
+                            }
+                            fileStream.Position = 1874432L;
+                            fileStream.Write(memoryStream7.ToArray(), 0, (int)memoryStream7.Length);
+                        }
+                    }
+                    fileStream.Position = 1859586L;
+                    fileStream.Write(memoryStream5.ToArray(), 0, (int)memoryStream5.Length);
+                }
+            }
+        }
         public void ScrambleFusions(int seed)
         {
             var randFusion = new Random(seed);
@@ -418,7 +488,7 @@ namespace FMScrambler.Utility
             logStream.Close();
             if (mainWin != null)
             {
-                mainWin.lbl_status.Content = "Done scrambling!";
+                //mainWin.lbl_status.Content = "Done scrambling!";
                 mainWin.pgr_back.Visibility = Visibility.Hidden;
             }
         }

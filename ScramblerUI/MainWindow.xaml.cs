@@ -60,7 +60,7 @@ namespace FMScrambler
 
         public void setActionLabel(string text)
         {
-            lbl_status.Content = text;
+            //lbl_status.Content = text;
         }
 
         private void btn_perform_Click(object sender, RoutedEventArgs e)
@@ -269,6 +269,47 @@ namespace FMScrambler
         {
             this.Title =
                 $"YGO! FM Fusion Scrambler Tool - {Meta.majorVersion}.{Meta.minorVersion}.{Meta.patchVersion} {Meta.versionInfo}";
+        }
+
+        private void btn_loadad_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog { Title = "Forbidden Memories Image" };
+
+            if (dlg.ShowDialog() == true)
+            {
+
+                ImagePatcher patcher = new ImagePatcher(dlg.FileName);
+                MessageBox.Show("Extra!", "Done patching.",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+
+                //if (patcher.ExtractImageData() == 1)
+                //{
+                //    MessageBox.Show("Image successfully patched! Have fun playing!", "Done patching.",
+                //        MessageBoxButton.OK, MessageBoxImage.Information);
+                //}
+                //else
+                //{
+                //    MessageBox.Show("Wat", "Done patching.",
+                //        MessageBoxButton.OK, MessageBoxImage.Information);
+                //}
+            }
+        }
+
+        private void btn_randomn_Click(object sender, RoutedEventArgs e)
+        {
+            int cardCount = Static.glitchFusions ? 1400 : 722;
+            Static.setCardCount(cardCount);
+
+            FileHandler fileHandler = new FileHandler();
+
+            MessageBox.Show("Done scrambling, you may proceed with patching your game ISO now. A logfile was created in the tools directory as well.",
+                "Done scrambling.", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            fileHandler.LoadSlus(lbl_path.Content.ToString());
+            fileHandler.ScrambleNames();
+
+            btn_patchiso.IsEnabled = true;
+            //btn_perform.IsEnabled = false;
         }
     }
 }

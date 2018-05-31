@@ -9,6 +9,25 @@ namespace FMLib.Utility
     /// </summary>
     public static class NumberHandler
     {
+        public static byte[] TextToArray(this string s, Dictionary<char, byte> dic)
+        {
+            List<byte> list = new List<byte>();
+            for (int i = 0; i < s.Length; i++)
+            {
+                char c = s[i];
+                if (dic.ContainsKey(c))
+                {
+                    list.Add(dic[c]);
+                }
+                else if (c == '\n')
+                {
+                    list.Add(254);
+                }
+            }
+            list.Add(255);
+            return list.ToArray();
+        }
+
         /// <summary>
         /// Extract as Integer32
         /// </summary>
