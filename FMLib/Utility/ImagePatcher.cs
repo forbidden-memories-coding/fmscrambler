@@ -48,7 +48,7 @@ namespace FMLib.Utility
             foreach (GameFile k in GameFile)
             {  
                 // Choose which File to use based on the name of the Item in the loop
-                string p = k.Name == "SLUS_014.11" ? Static.SLUSPath : Static.WAPath;
+                string p = k.Name == "SLUS_014.11" ? Static.SlusPath : Static.WaPath;
 
                 using (FileStream fs2 = new FileStream(p, FileMode.Open))
                 {
@@ -62,7 +62,7 @@ namespace FMLib.Utility
 
                     for (int n = 0; n < fs2.Length / 2048L; n++)
                     {
-                        _fs.Write(fs2.extractPiece(0, 2048), 0, 2048);
+                        _fs.Write(fs2.ExtractPiece(0, 2048), 0, 2048);
                         _fs.Position += 304L;
                     }
                 }
@@ -70,6 +70,10 @@ namespace FMLib.Utility
             _fs.Dispose();
             _fs.Close();
 
+            string[] CueTemplate = {$"FILE \"{Static.RandomizerFileName}.bin\" BINARY", "  TRACK 01 MODE2/2352", "    INDEX 01 00:00:00" };
+            
+            
+            File.WriteAllLines(Directory.GetCurrentDirectory() + @"\" + Static.RandomizerFileName + ".cue", CueTemplate);
             return 1;
         }
 
@@ -79,20 +83,20 @@ namespace FMLib.Utility
 
             foreach (var file in iso)
             {
-                using (MemoryStream ms = new MemoryStream(fs.extractPiece(0, 2048, file.Offset)))
+                using (MemoryStream ms = new MemoryStream(fs.ExtractPiece(0, 2048, file.Offset)))
                 {
                     ms.Position = 120L;
                     for (int j = ms.ReadByte(); j > 0; j = ms.ReadByte())
                     {
                         GameFile tmpFile = new GameFile();
-                        byte[] arr = ms.extractPiece(0, j - 1);
-                        tmpFile.Offset = arr.extractInt32(1) * 2352;
-                        tmpFile.Size = arr.extractInt32(9);
-                        tmpFile.isDirectory = arr[24] == 2;
+                        byte[] arr = ms.ExtractPiece(0, j - 1);
+                        tmpFile.Offset = arr.ExtractInt32(1) * 2352;
+                        tmpFile.Size = arr.ExtractInt32(9);
+                        tmpFile.IsDirectory = arr[24] == 2;
                         tmpFile.NameSize = arr[31];
                         tmpFile.Name = GetName(ref arr, tmpFile.NameSize);
 
-                        if (tmpFile.isDirectory)
+                        if (tmpFile.IsDirectory)
                         {
                             fileList.Add(tmpFile);
                         }

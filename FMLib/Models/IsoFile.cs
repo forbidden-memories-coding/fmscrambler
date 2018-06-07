@@ -28,6 +28,6 @@
         /// <summary>
         /// Is file a directory as Boolean
         /// </summary>
-        public bool isDirectory { get; set; }
+        public bool IsDirectory { get; set; }
     }
 }

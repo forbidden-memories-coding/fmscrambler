@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -28,39 +29,32 @@ namespace FMScrambler
 
         private void btn_loadiso_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dlg = new OpenFileDialog {Title = "Location of SLUS_014.11", Filter = "SLUS_014.11 | SLUS_014.11"};
+            OpenFileDialog dlg = new OpenFileDialog {Title = "Location of Yu-Gi-Oh! Forbidden Memories NTSC CUE File", Filter = "*.cue | *.cue" };
      
             if (dlg.ShowDialog() == true)
             {
-                Static.SLUSPath = dlg.FileName;
+                //Static.IsoPath = dlg.FileName;
                 lbl_path.Content = Path.GetDirectoryName(dlg.FileName);
 
-                if (!File.Exists(Path.GetDirectoryName(dlg.FileName) + "\\DATA\\WA_MRG.MRG"))
-                {
-                    dlg.Title = "Location of WA_MRG.MRG";
-                    dlg.Filter = "WA_MRG | WA_MRG.MRG";
+                MessageBox.Show("Extracting game data can take a minute... please wait.", "Extracting data",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                pgr_back.Visibility = Visibility.Visible;
+                BinChunk chunker = new BinChunk();
+                chunker.ExtractBin(dlg.FileName);
+                pgr_back.Visibility = Visibility.Hidden;
+                MessageBox.Show("Extracting game data complete.", "Extracting data",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                Static.UsedIso = true;
 
-                    if (dlg.ShowDialog() == true)
-                    {
-                        Static.WAPath = dlg.FileName;
-                        btn_perform.IsEnabled = true;
-                    }
-                }
-                else
-                {
-                    Static.WAPath = Path.GetDirectoryName(dlg.FileName) + "\\DATA\\WA_MRG.MRG";
-                    btn_perform.IsEnabled = true;
-                }
-                #if DEBUG
-                Console.WriteLine("Load SL "+Static.SLUSPath);
-                Console.WriteLine("Load WA " + Static.WAPath);
-                #endif
+                btn_loadiso.IsEnabled = false;
+                btn_loadiso1.IsEnabled = false;
+                btn_perform.IsEnabled = true;
             }      
         }
 
         public void setActionLabel(string text)
         {
-            lbl_status.Content = text;
+            //lbl_status.Content = text;
         }
 
         private void btn_perform_Click(object sender, RoutedEventArgs e)
@@ -70,8 +64,8 @@ namespace FMScrambler
 
         private void sync_Scramble()
         {
-            int cardCount = Static.glitchFusions ? 1400 : 722;
-            Static.setCardCount(cardCount);
+            int cardCount = Static.GlitchFusions ? 1400 : 722;
+            Static.SetCardCount(cardCount);
 
             FileHandler fileHandler = new FileHandler();
 
@@ -100,22 +94,22 @@ namespace FMScrambler
 
         private void ch_glitch_Checked(object sender, RoutedEventArgs e)
         {
-            Static.glitchFusions = true;
+            Static.GlitchFusions = true;
         }
 
         private void ch_glitch_Unchecked(object sender, RoutedEventArgs e)
         {
-            Static.glitchFusions = false;
+            Static.GlitchFusions = false;
         }
 
         private void ch_illegal_Unchecked(object sender, RoutedEventArgs e)
         {
-            Static.highID = false;
+            Static.HighId = false;
         }
 
         private void ch_illegal_Checked(object sender, RoutedEventArgs e)
         {
-            Static.highID = true;
+            Static.HighId = true;
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
@@ -126,23 +120,44 @@ namespace FMScrambler
 
         private void btn_patchiso_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Did you make a backup copy of your Image file before patching? If not, do so before pressing OK.", "Backup Info",
-                MessageBoxButton.OK, MessageBoxImage.Question);
-
-            OpenFileDialog dlg = new OpenFileDialog { Title = "Forbidden Memories Image" };
-
-            if (dlg.ShowDialog() == true)
+            if (!Static.UsedIso)
             {
-                #if DEBUG
-                Console.WriteLine(dlg.FileName);
-                #endif
+                MessageBox.Show("Did you make a backup copy of your Image file before patching? If not, do so before pressing OK.", "Backup Info",
+                    MessageBoxButton.OK, MessageBoxImage.Question);
+
+                OpenFileDialog dlg = new OpenFileDialog { Title = "Forbidden Memories Image" };
+
+                if (dlg.ShowDialog() == true)
+                {
+                    #if DEBUG
+                    Console.WriteLine(dlg.FileName);
+                    #endif
+                    pgr_back.Visibility = Visibility.Visible;
+                    ImagePatcher patcher = new ImagePatcher(dlg.FileName);
+
+                    if (patcher.PatchImage() == 1)
+                    {
+                        MessageBox.Show("Image successfully patched! Have fun playing!", "Done patching.",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error patching Image. Not Forbidden Memories or wrong version.", "Error patching.",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
                 pgr_back.Visibility = Visibility.Visible;
-                ImagePatcher patcher = new ImagePatcher(dlg.FileName);
+                ImagePatcher patcher = new ImagePatcher(Static.IsoPath);
 
                 if (patcher.PatchImage() == 1)
                 {
-                    MessageBox.Show("Image successfully patched! Have fun playing!", "Done patching.",
+                    MessageBox.Show("Image successfully patched! Have fun playing! Location of Randomized Image: "+ Static.IsoPath, "Done patching.",
                         MessageBoxButton.OK, MessageBoxImage.Information);
+                    Process.Start(Directory.GetCurrentDirectory());
+
                 }
                 else
                 {
@@ -150,6 +165,7 @@ namespace FMScrambler
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+
 
             pgr_back.Visibility = Visibility.Hidden;
         }
@@ -184,91 +200,119 @@ namespace FMScrambler
 
         private void chk_atkdefenabled_Checked(object sender, RoutedEventArgs e)
         {
-            Static.randomATKDEF = true;
+            Static.RandomAtkdef = true;
             grp_atkdef.IsEnabled = true;
         }
 
         private void chk_atkdefenabled_Unchecked(object sender, RoutedEventArgs e)
         {
-            Static.randomATKDEF = false;
+            Static.RandomAtkdef = false;
             grp_atkdef.IsEnabled = false;
         }
 
         private void chk_randomattributes_Checked(object sender, RoutedEventArgs e)
         {
-            Static.randomAttributes = true;
+            Static.RandomAttributes = true;
         }
 
         private void chk_randomattributes_Unchecked(object sender, RoutedEventArgs e)
         {
-            Static.randomAttributes = false;
+            Static.RandomAttributes = false;
         }
 
         private void chk_randomguardianstars_Unchecked(object sender, RoutedEventArgs e)
         {
-            Static.randomGuardianStars = false;
+            Static.RandomGuardianStars = false;
         }
 
         private void chk_randomguardianstars_Checked(object sender, RoutedEventArgs e)
         {
-            Static.randomGuardianStars = true;
+            Static.RandomGuardianStars = true;
         }
 
         private void chk_randomdrops_Checked(object sender, RoutedEventArgs e)
         {
-            Static.randomCardDrops = true;
+            Static.RandomCardDrops = true;
         }
 
         private void chk_randomdrops_Unchecked(object sender, RoutedEventArgs e)
         {
-            Static.randomCardDrops = false;
+            Static.RandomCardDrops = false;
         }
 
         private void chk_randomtypes_Unchecked(object sender, RoutedEventArgs e)
         {
-            Static.randomTypes = false;
+            Static.RandomTypes = false;
         }
 
         private void chk_randomtypes_Checked(object sender, RoutedEventArgs e)
         {
-            Static.randomTypes = true;
+            Static.RandomTypes = true;
         }
 
         private void chk_glitchgs_Checked(object sender, RoutedEventArgs e)
         {
-            Static.glitchGuardianStars = true;
+            Static.GlitchGuardianStars = true;
         }
 
         private void chk_glitchgs_Unchecked(object sender, RoutedEventArgs e)
         {
-            Static.glitchGuardianStars = false;
+            Static.GlitchGuardianStars = false;
 
         }
 
         private void chk_randomdecks_Unchecked(object sender, RoutedEventArgs e)
         {
-            Static.randomDecks = false;
+            Static.RandomDecks = false;
         }
 
         private void chk_randomdecks_Checked(object sender, RoutedEventArgs e)
         {
-            Static.randomDecks = true;
+            Static.RandomDecks = true;
         }
 
         private void chk_randomequips_Checked(object sender, RoutedEventArgs e)
         {
-            Static.randomEquips = true;
+            Static.RandomEquips = true;
         }
 
         private void chk_randomequips_Unchecked(object sender, RoutedEventArgs e)
         {
-            Static.randomEquips = false;
+            Static.RandomEquips = false;
         }
 
         private void MetroWindow_Initialized(object sender, EventArgs e)
         {
             this.Title =
-                $"YGO! FM Fusion Scrambler Tool - {Meta.majorVersion}.{Meta.minorVersion}.{Meta.patchVersion} {Meta.versionInfo}";
+                $"YGO! FM Fusion Scrambler Tool - {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} {Meta.VersionInfo}";
+        }
+
+        private void btn_loadiso1_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog { Title = "Location of SLUS_014.11", Filter = "SLUS_014.11 | SLUS_014.11" };
+
+            if (dlg.ShowDialog() == true)
+            {
+                Static.SlusPath = dlg.FileName;
+                lbl_path.Content = Path.GetDirectoryName(dlg.FileName);
+
+                if (!File.Exists(Path.GetDirectoryName(dlg.FileName) + "\\DATA\\WA_MRG.MRG"))
+                {
+                    dlg.Title = "Location of WA_MRG.MRG";
+                    dlg.Filter = "WA_MRG | WA_MRG.MRG";
+
+                    if (dlg.ShowDialog() == true)
+                    {
+                        Static.WaPath = dlg.FileName;
+                        btn_perform.IsEnabled = true;
+                    }
+                }
+                else
+                {
+                    Static.WaPath = Path.GetDirectoryName(dlg.FileName) + "\\DATA\\WA_MRG.MRG";
+                    btn_perform.IsEnabled = true;
+                }
+            }
         }
     }
 }

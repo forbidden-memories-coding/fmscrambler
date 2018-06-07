@@ -22,37 +22,37 @@ namespace FMLib.Utility
         /// <summary>
         /// Option - Glitchy Fusions allowed? (true / false)
         /// </summary>
-        public static bool glitchFusions = false;
+        public static bool GlitchFusions = false;
 
-        public static bool randomAttributes = false;
+        public static bool RandomAttributes = false;
 
-        public static bool randomGuardianStars = false;
+        public static bool RandomGuardianStars = false;
 
-        public static bool randomCardDrops = false;
+        public static bool RandomCardDrops = false;
 
-        public static bool randomTypes = false;
+        public static bool RandomTypes = false;
 
-        public static bool glitchGuardianStars = false;
+        public static bool GlitchGuardianStars = false;
 
-        public static bool randomDecks = false;
+        public static bool RandomDecks = false;
 
-        public static bool glitchAttributes = false;
+        public static bool GlitchAttributes = false;
 
-        public static bool randomEquips = false;
+        public static bool RandomEquips = false;
 
         /// <summary>
         /// Option - Card ID higher than Card1 allowed? (true / false)
         /// </summary>
-        public static bool highID = false;
+        public static bool HighId = false;
 
         /// <summary>
         /// 
         /// </summary>
-        public static bool randomATKDEF = false;
+        public static bool RandomAtkdef = false;
         /// <summary>
         /// Count of Cards as Integer
         /// </summary>
-        public static int cardCount;
+        public static int CardCount;
 
         /// <summary>
         /// Card Array for all the 722 Cards in the game
@@ -64,7 +64,7 @@ namespace FMLib.Utility
         /// Method to set the Card Count
         /// </summary>
         /// <param name="c">Card Count as Integer</param>
-        public static void setCardCount(int c) { cardCount = c; }
+        public static void SetCardCount(int c) { CardCount = c; }
 
         /// <summary>
         /// Path to the Game Folder
@@ -74,12 +74,20 @@ namespace FMLib.Utility
         /// <summary>
         /// File - Executable - Path to the SLUS Binary file of the game
         /// </summary>
-        public static string SLUSPath;
+        public static string SlusPath;
 
         /// <summary>
         /// File - Data - Path to the WA_MRG.MRG data file of the game
         /// </summary>
-        public static string WAPath;
+        public static string WaPath;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static string IsoPath;
+
+        public static bool UsedIso = false;
+        public static string RandomizerFileName;
 
         /// <summary>
         /// Helper - Dictionary to map chars from data to readable chars
@@ -89,7 +97,7 @@ namespace FMLib.Utility
         /// <summary>
         /// Helper - Dictionary to map chars from data to readable chars
         /// </summary>
-        public static Dictionary<char, byte> rDict = new Dictionary<char, byte>();
+        public static Dictionary<char, byte> RDict = new Dictionary<char, byte>();
 
         
     }

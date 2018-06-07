@@ -27,21 +27,21 @@ namespace FMScrambler.Utility
                 }
 
                 var k1 = Convert.ToChar(match.Groups[2].ToString());
-                var k2 = (byte) int.Parse(match.Groups[1].ToString(), NumberStyles.HexNumber);
+                var k2 = (byte)int.Parse(match.Groups[1].ToString(), NumberStyles.HexNumber);
 
                 Static.Dict.Add(k2, k1);
 
-                if (!Static.rDict.ContainsKey(k1))
+                if (!Static.RDict.ContainsKey(k1))
                 {
-                    Static.rDict.Add(k1, k2);
+                    Static.RDict.Add(k1, k2);
                 }
             }
 
             // Card ID, GuardianStar1 and 2, Type
-            var memStream = new MemoryStream(File.ReadAllBytes(Static.SLUSPath)) {Position = 1854020L};
+            var memStream = new MemoryStream(File.ReadAllBytes(Static.SlusPath)) { Position = 1854020L };
             for (var i = 0; i < 722; i++)
             {
-                int int32 = memStream.extractPiece(0, 4).extractInt32();
+                int int32 = memStream.ExtractPiece(0, 4).ExtractInt32();
                 Static.Cards[i] = new Card
                 {
                     Id = i + 1,
@@ -57,7 +57,7 @@ namespace FMScrambler.Utility
             memStream.Position = 1858355L;
             for (var i = 0; i < 722; i++)
             {
-                var num = memStream.extractPiece(0, 1)[0];
+                var num = memStream.ExtractPiece(0, 1)[0];
                 Static.Cards[i].Level = num & 15;
                 Static.Cards[i].Attribute = num >> 4 & 15;
             }
@@ -66,7 +66,7 @@ namespace FMScrambler.Utility
             for (var i = 0; i < 722; i++)
             {
                 memStream.Position = 1859586 + i * 2;
-                var num = memStream.extractPiece(0, 2).extractUInt16() & ushort.MaxValue;
+                var num = memStream.ExtractPiece(0, 2).ExtractUInt16() & ushort.MaxValue;
                 memStream.Position = 1861632 + num - 24576;
                 Static.Cards[i].Name = memStream.GetText(Static.Dict);
             }
@@ -75,7 +75,7 @@ namespace FMScrambler.Utility
             for (var i = 0; i < 722; i++)
             {
                 memStream.Position = 1772034 + i * 2;
-                int num3 = memStream.extractPiece(0, 2).extractUInt16();
+                int num3 = memStream.ExtractPiece(0, 2).ExtractUInt16();
                 memStream.Position = 1774068 + (num3 - 2548);
                 Static.Cards[i].Description = memStream.GetText(Static.Dict);
             }
@@ -84,20 +84,20 @@ namespace FMScrambler.Utility
             for (var i = 0; i < 39; i++)
             {
                 memStream.Position = 1861202 + i * 2;
-                memStream.Position = 1861632 + memStream.extractPiece(0, 2).extractUInt16() - 24576;
+                memStream.Position = 1861632 + memStream.ExtractPiece(0, 2).ExtractUInt16() - 24576;
                 Static.Duelist[i] = new Duelist(memStream.GetText(Static.Dict));
             }
 
             memStream.Close();
             // WA_MRG process
-            var fusionStream = new FileStream(Static.WAPath, FileMode.Open);
-            memStream = new MemoryStream(fusionStream.extractPiece(0, 65536, 12089344));
+            var fusionStream = new FileStream(Static.WaPath, FileMode.Open);
+            memStream = new MemoryStream(fusionStream.ExtractPiece(0, 65536, 12089344));
 
             // Card Fusions
             for (var i = 0; i < 722; ++i)
             {
                 memStream.Position = 2 + i * 2;
-                memStream.Position = memStream.extractPiece(0, 2).extractUInt16() & ushort.MaxValue;
+                memStream.Position = memStream.ExtractPiece(0, 2).ExtractUInt16() & ushort.MaxValue;
                 if (memStream.Position != 0L)
                 {
                     var num1 = memStream.ReadByte();
@@ -134,23 +134,23 @@ namespace FMScrambler.Utility
                 }
             }
             memStream.Close();
-            memStream = new MemoryStream(fusionStream.extractPiece(0, 10240, 12079104));
+            memStream = new MemoryStream(fusionStream.ExtractPiece(0, 10240, 12079104));
 
             while (true)
             {
-                var num6 = (int) memStream.extractPiece(0, 2).extractUInt16();
+                var num6 = (int)memStream.ExtractPiece(0, 2).ExtractUInt16();
 
                 if (num6 == 0)
                 {
                     break;
                 }
 
-                int num7 = memStream.extractPiece(0, 2).extractUInt16();
+                int num7 = memStream.ExtractPiece(0, 2).ExtractUInt16();
 
                 for (int num8 = 0; num8 < num7; num8++)
                 {
-                    int num9 = memStream.extractPiece(0, 2).extractUInt16();
-                    Static.Cards[num6-1].Equips.Add(num9-1);
+                    int num9 = memStream.ExtractPiece(0, 2).ExtractUInt16();
+                    Static.Cards[num6 - 1].Equips.Add(num9 - 1);
                 }
             }
 
@@ -174,7 +174,7 @@ namespace FMScrambler.Utility
                     if (mainWin != null)
                     {
                         // ATK/DEF RANDOMIZING
-                        if (Static.randomATKDEF)
+                        if (Static.RandomAtkdef)
                         {
                             Static.Cards[i].Attack = randVal.Next(Convert.ToInt32(mainWin.rs_atk.LowerValue),
                                 Convert.ToInt32(mainWin.rs_atk.UpperValue));
@@ -183,24 +183,24 @@ namespace FMScrambler.Utility
                                 Convert.ToInt32(mainWin.rs_def.UpperValue));
                         }
 
-                        if (Static.glitchAttributes)
+                        if (Static.GlitchAttributes)
                         {
                             Static.Cards[i].Attribute = randVal.Next(1, 15);
                         }
                         //Static.Cards[i].Level = randVal.Next(1, 12);
-                        if (Static.randomGuardianStars)
+                        if (Static.RandomGuardianStars)
                         {
                             Static.Cards[i].GuardianStar1 = randVal.Next(1, 25);
                             Static.Cards[i].GuardianStar2 = randVal.Next(1, 25);
                         }
 
-                        if (Static.randomTypes)
+                        if (Static.RandomTypes)
                         {
                             Static.Cards[i].Type = randVal.Next(1, 25);
                         }
                         //logStream.WriteLine($"=> {Static.Cards[i].Name} {Static.Cards[i].Attack}/{Static.Cards[i].Defense}");
 
-                        if (Static.randomEquips)
+                        if (Static.RandomEquips)
                         {
                             for (int j = 0; j < randVal.Next(20); j++)
                             {
@@ -214,26 +214,26 @@ namespace FMScrambler.Utility
                     }
 
                     // FUSION RANDOMIZING
-                    t.Cards2 = randFusion.Next(Static.highID ? 1 : i, Static.cardCount);
-                    t.Result = randFusion.Next(Static.highID ? 1 : i, Static.cardCount);
+                    t.Cards2 = randFusion.Next(Static.HighId ? 1 : i, Static.CardCount);
+                    t.Result = randFusion.Next(Static.HighId ? 1 : i, Static.CardCount);
 
                 }
             }
 
-            if (Static.randomCardDrops || Static.randomDecks)
+            if (Static.RandomCardDrops || Static.RandomDecks)
             {
                 foreach (Duelist t1 in Static.Duelist)
                 {
                     for (int ix = 0; ix < 2048; ix++)
                     {
-                        if (Static.randomCardDrops)
+                        if (Static.RandomCardDrops)
                         {
-                            t1.Drop.BCDPow[randVal.Next(0, 722)]++;
-                            t1.Drop.SAPow[randVal.Next(0, 722)]++;
-                            t1.Drop.SATec[randVal.Next(0, 722)]++;
+                            t1.Drop.BcdPow[randVal.Next(0, 722)]++;
+                            t1.Drop.SaPow[randVal.Next(0, 722)]++;
+                            t1.Drop.SaTec[randVal.Next(0, 722)]++;
                         }
 
-                        if (Static.randomDecks)
+                        if (Static.RandomDecks)
                         {
                             t1.Deck[randVal.Next(0, 722)]++;
 
@@ -242,7 +242,7 @@ namespace FMScrambler.Utility
                 }
             }
 
-            var fileStream = new FileStream(Static.WAPath, FileMode.Open);
+            var fileStream = new FileStream(Static.WaPath, FileMode.Open);
 
             var numArray = new int[7]
             {
@@ -263,19 +263,19 @@ namespace FMScrambler.Utility
 
             foreach (var card in Static.Cards)
             {
-                var num1 = card.Fusions.Count != 0 ? (short) (memStream2.Position + 1444L) : (short) 0;
-                memStream1.Write(num1.int16ToByteArray(), 0, 2);
+                var num1 = card.Fusions.Count != 0 ? (short)(memStream2.Position + 1444L) : (short)0;
+                memStream1.Write(num1.Int16ToByteArray(), 0, 2);
 
                 if (card.Fusions.Count != 0)
                 {
                     if (card.Fusions.Count < 256)
                     {
-                        memStream2.WriteByte((byte) card.Fusions.Count);
+                        memStream2.WriteByte((byte)card.Fusions.Count);
                     }
                     else
                     {
                         memStream2.WriteByte(0);
-                        memStream2.WriteByte((byte) Math.Abs(card.Fusions.Count - 511));
+                        memStream2.WriteByte((byte)Math.Abs(card.Fusions.Count - 511));
                     }
                     for (var i = 0; i < card.Fusions.Count; ++i)
                     {
@@ -292,13 +292,13 @@ namespace FMScrambler.Utility
                                     (card.Fusions[i + 1].Result + 1 >> 8 & 3) << 6;
                             ++i;
                         }
-                        memStream2.WriteByte((byte) (num6 & byte.MaxValue));
-                        memStream2.WriteByte((byte) (num2 & byte.MaxValue));
-                        memStream2.WriteByte((byte) (num3 & byte.MaxValue));
+                        memStream2.WriteByte((byte)(num6 & byte.MaxValue));
+                        memStream2.WriteByte((byte)(num2 & byte.MaxValue));
+                        memStream2.WriteByte((byte)(num3 & byte.MaxValue));
                         if (num4 != 0 || num5 != 0)
                         {
-                            memStream2.WriteByte((byte) (num4 & byte.MaxValue));
-                            memStream2.WriteByte((byte) (num5 & byte.MaxValue));
+                            memStream2.WriteByte((byte)(num4 & byte.MaxValue));
+                            memStream2.WriteByte((byte)(num5 & byte.MaxValue));
                         }
                     }
                 }
@@ -319,9 +319,9 @@ namespace FMScrambler.Utility
             memStream2.Close();
             memStream1.Close();
 
-            if (Static.randomATKDEF || Static.randomGuardianStars || Static.randomTypes)
+            if (Static.RandomAtkdef || Static.RandomGuardianStars || Static.RandomTypes)
             {
-                using (var fileStreamSl = new FileStream(Static.SLUSPath, FileMode.Open))
+                using (var fileStreamSl = new FileStream(Static.SlusPath, FileMode.Open))
                 {
                     fileStreamSl.Position = 1854020L;
                     using (var memoryStream = new MemoryStream(2888))
@@ -331,16 +331,16 @@ namespace FMScrambler.Utility
                             var value = (Static.Cards[i].Attack / 10 & 511) | (Static.Cards[i].Defense / 10 & 511) << 9 |
                                         (Static.Cards[i].GuardianStar2 & 15) << 18 |
                                         (Static.Cards[i].GuardianStar1 & 15) << 22 | (Static.Cards[i].Type & 31) << 26;
-                            memoryStream.Write(value.int32ToByteArray(), 0, 4);
+                            memoryStream.Write(value.Int32ToByteArray(), 0, 4);
                         }
                         fileStreamSl.Write(memoryStream.ToArray(), 0, 2888);
                     }
                 }
             }
 
-            if (Static.randomDecks || Static.randomCardDrops)
+            if (Static.RandomDecks || Static.RandomCardDrops)
             {
-                using (FileStream duelistStream = new FileStream(Static.WAPath, FileMode.Open))
+                using (FileStream duelistStream = new FileStream(Static.WaPath, FileMode.Open))
                 {
                     for (int i = 0; i < 39; i++)
                     {
@@ -352,40 +352,40 @@ namespace FMScrambler.Utility
                             foreach (var t in array)
                             {
                                 short value = (short)t;
-                                memoryStream.Write(value.int16ToByteArray(), 0, 2);
+                                memoryStream.Write(value.Int16ToByteArray(), 0, 2);
                             }
                             duelistStream.Write(memoryStream.ToArray(), 0, 1444);
                         }
                         duelistStream.Position = num + 1460;
                         using (MemoryStream memoryStream2 = new MemoryStream(1444))
                         {
-                            int[] array = Static.Duelist[i].Drop.SAPow;
+                            int[] array = Static.Duelist[i].Drop.SaPow;
                             foreach (var t in array)
                             {
                                 short value2 = (short)t;
-                                memoryStream2.Write(value2.int16ToByteArray(), 0, 2);
+                                memoryStream2.Write(value2.Int16ToByteArray(), 0, 2);
                             }
                             duelistStream.Write(memoryStream2.ToArray(), 0, 1444);
                         }
                         duelistStream.Position = num + 2920;
                         using (MemoryStream memoryStream3 = new MemoryStream(1444))
                         {
-                            int[] array = Static.Duelist[i].Drop.BCDPow;
+                            int[] array = Static.Duelist[i].Drop.BcdPow;
                             foreach (var t in array)
                             {
                                 short value3 = (short)t;
-                                memoryStream3.Write(value3.int16ToByteArray(), 0, 2);
+                                memoryStream3.Write(value3.Int16ToByteArray(), 0, 2);
                             }
                             duelistStream.Write(memoryStream3.ToArray(), 0, 1444);
                         }
                         duelistStream.Position = num + 4380;
                         using (MemoryStream memoryStream4 = new MemoryStream(1444))
                         {
-                            int[] array = Static.Duelist[i].Drop.SATec;
+                            int[] array = Static.Duelist[i].Drop.SaTec;
                             foreach (var t in array)
                             {
                                 short value4 = (short)t;
-                                memoryStream4.Write(value4.int16ToByteArray(), 0, 2);
+                                memoryStream4.Write(value4.Int16ToByteArray(), 0, 2);
                             }
                             duelistStream.Write(memoryStream4.ToArray(), 0, 1444);
                         }
@@ -401,7 +401,7 @@ namespace FMScrambler.Utility
             StreamWriter logStream = new StreamWriter($@"scramblelog_#{seed}.log");
 
             logStream.WriteLine("== YU-GI-OH! Forbidden Memories Fusion Scrambler Log Output ==");
-            logStream.WriteLine($"== Version {Meta.majorVersion}.{Meta.minorVersion}.{Meta.patchVersion} ==");
+            logStream.WriteLine($"== Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} ==");
             logStream.WriteLine("====================================================================\r\n");
             string glitchPlace = "Glitch!";
             foreach (var c in Static.Cards)
@@ -418,7 +418,6 @@ namespace FMScrambler.Utility
             logStream.Close();
             if (mainWin != null)
             {
-                mainWin.lbl_status.Content = "Done scrambling!";
                 mainWin.pgr_back.Visibility = Visibility.Hidden;
             }
         }

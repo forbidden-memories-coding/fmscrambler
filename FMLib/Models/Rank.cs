@@ -8,8 +8,8 @@ namespace FMLib.Models
 {
     public class Rank
     {
-        public int[] SAPow { get; set; } = new int[722];
-        public int[] SATec { get; set; } = new int[722];
-        public int[] BCDPow { get; set; } = new int[722];
+        public int[] SaPow { get; set; } = new int[722];
+        public int[] SaTec { get; set; } = new int[722];
+        public int[] BcdPow { get; set; } = new int[722];
     }
 }

@@ -8,18 +8,18 @@
         /// <summary>  
         ///  Major Version Identifier as Integer  
         /// </summary>  
-        public static int majorVersion = 0;
+        public static int MajorVersion = 0;
         /// <summary>
         /// Minor Version Identifier as Integer
         /// </summary>
-        public static int minorVersion = 1;
+        public static int MinorVersion = 1;
         /// <summary>
         /// Patch Version Identifier as Integer
         /// </summary>
-        public static int patchVersion = 3;
+        public static int PatchVersion = 5;
         /// <summary>
         /// Extra Version Info String
         /// </summary>
-        public static string versionInfo = "Alpha";
+        public static string VersionInfo = "Alpha";
     }
 }

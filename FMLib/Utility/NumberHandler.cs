@@ -9,13 +9,32 @@ namespace FMLib.Utility
     /// </summary>
     public static class NumberHandler
     {
+        public static byte[] TextToArray(this string s, Dictionary<char, byte> dic)
+        {
+            List<byte> list = new List<byte>();
+            for (int i = 0; i < s.Length; i++)
+            {
+                char c = s[i];
+                if (dic.ContainsKey(c))
+                {
+                    list.Add(dic[c]);
+                }
+                else if (c == '\n')
+                {
+                    list.Add(254);
+                }
+            }
+            list.Add(255);
+            return list.ToArray();
+        }
+
         /// <summary>
         /// Extract as Integer32
         /// </summary>
         /// <param name="bytes"></param>
         /// <param name="index">Index</param>
         /// <returns></returns>
-        public static int extractInt32(this byte[] bytes, int index = 0)
+        public static int ExtractInt32(this byte[] bytes, int index = 0)
         {
             return bytes[index + 3] << 24 | bytes[index + 2] << 16 | bytes[index + 1] << 8 | bytes[index + 0];
         }
@@ -28,7 +47,7 @@ namespace FMLib.Utility
         /// <param name="length"></param>
         /// <param name="changeOffset"></param>
         /// <returns>Buffer</returns>
-        public static byte[] extractPiece(this FileStream ms, int offset, int length, int changeOffset = -1)
+        public static byte[] ExtractPiece(this FileStream ms, int offset, int length, int changeOffset = -1)
         {
             if (changeOffset > -1)
             {
@@ -48,7 +67,7 @@ namespace FMLib.Utility
         /// <param name="length"></param>
         /// <param name="changeOffset"></param>
         /// <returns></returns>
-        public static byte[] extractPiece(this MemoryStream ms, int offset, int length, int changeOffset = -1)
+        public static byte[] ExtractPiece(this MemoryStream ms, int offset, int length, int changeOffset = -1)
         {
             if (changeOffset > -1)
             {
@@ -82,7 +101,7 @@ namespace FMLib.Utility
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static byte[] int32ToByteArray(this int value)
+        public static byte[] Int32ToByteArray(this int value)
         {
             byte[] numArray = new byte[4];
             for (int index = 0; index < 4; ++index)
@@ -99,7 +118,7 @@ namespace FMLib.Utility
         /// <param name="bytes"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static ushort extractUInt16(this byte[] bytes, int index = 0)
+        public static ushort ExtractUInt16(this byte[] bytes, int index = 0)
         {
             return (ushort)((uint)bytes[index + 1] << 8 | bytes[index + 0]);
         }
@@ -109,9 +128,9 @@ namespace FMLib.Utility
         /// </summary>
         /// <param name="value">As unsigned short</param>
         /// <returns></returns>
-        public static byte[] int16ToByteArray(this ushort value)
+        public static byte[] Int16ToByteArray(this ushort value)
         {
-            return ((short)value).int16ToByteArray();
+            return ((short)value).Int16ToByteArray();
         }
 
         /// <summary>
@@ -119,7 +138,7 @@ namespace FMLib.Utility
         /// </summary>
         /// <param name="value">As short</param>
         /// <returns></returns>
-        public static byte[] int16ToByteArray(this short value)
+        public static byte[] Int16ToByteArray(this short value)
         {
             byte[] numArray = new byte[2];
             for (int index = 0; index < 2; ++index)
@@ -139,7 +158,7 @@ namespace FMLib.Utility
         /// <param name="length"></param>
         /// <param name="destinyOffset"></param>
         /// <returns></returns>
-        public static byte[] copyFrom(this byte[] self, byte[] data, int copyOffset, int length, int destinyOffset = 0)
+        public static byte[] CopyFrom(this byte[] self, byte[] data, int copyOffset, int length, int destinyOffset = 0)
         {
             for (int index = copyOffset; index < length; ++index)
             {
@@ -162,7 +181,7 @@ namespace FMLib.Utility
 
             while (true)
             {
-                byte b = ms.extractPiece(0, 1)[0];
+                byte b = ms.ExtractPiece(0, 1)[0];
 
                 if (dic.ContainsKey(b))
                 {
