@@ -4,5 +4,7 @@ branches:
   - master
 image: Visual Studio 2017
 configuration: Debug
+before_build:
+- cmd: nuget restore
 build:
   verbosity: minimal
