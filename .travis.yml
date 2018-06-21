@@ -1,4 +1,0 @@
-language: csharp
-solution: FM_CardScrambler.sln
-install:
-  - nuget restore FM_CardScrambler.sln

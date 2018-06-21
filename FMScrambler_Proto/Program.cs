@@ -34,7 +34,7 @@ namespace FMScrambler_Proto
                 }
             }
 
-            var memStream = new MemoryStream(File.ReadAllBytes(@"D:\epsxe\Yu-Gi-Oh! Forbidden Memories (USA)\ex\SLUS_014.11")) { Position = 1710675L };
+            var memStream = new MemoryStream(File.ReadAllBytes(@"SLUS_014.11")) { Position = 1710735L };
             String aText = String.Empty;
             while (memStream.Position < 1770321L)
             {
@@ -50,7 +50,7 @@ namespace FMScrambler_Proto
             }
 
             Console.WriteLine(aText);
-            char[] heS = new char[] { (char)250, (char)251 };
+            char[] heS = new char[] { (char)250, (char)251, (char)254, (char)255, (char)11 };
             var bText = aText.Split(heS, StringSplitOptions.None);
             Console.WriteLine(bText.Length);
             for (var i = 0; i < bText.Length; i++)
