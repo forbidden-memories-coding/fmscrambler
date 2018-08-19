@@ -3,7 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace FMLib.Utility
+namespace FMLib.Disc
 {
     /// <summary>
     /// 
@@ -38,7 +38,7 @@ namespace FMLib.Utility
 
             Regex trackRegex = new Regex(@"track\s+?(\d+?)\s+?(\S+?)[\s$]+?index\s+?\d+?\s+?(\S*)",
                 RegexOptions.IgnoreCase | RegexOptions.Multiline);
-            var matches = trackRegex.Matches(cueLines);
+            MatchCollection matches = trackRegex.Matches(cueLines);
 
             if (matches.Count == 0)
                 throw new ApplicationException("No tracks was found.");
@@ -69,7 +69,7 @@ namespace FMLib.Utility
 
         private long GetBinFileLength()
         {
-            var fileInfo = new FileInfo(BinFileName);
+            FileInfo fileInfo = new FileInfo(BinFileName);
             return fileInfo.Length;
         }
 
@@ -78,7 +78,7 @@ namespace FMLib.Utility
             Regex binRegex = new Regex(@"file\s+?""(.*?)""", RegexOptions.IgnoreCase | RegexOptions.Multiline);
             Match match = binRegex.Match(cueFirstLine);
             string res = match.Groups[1].Value;
-            var cueDirectory = Path.GetDirectoryName(_cueFilePath);
+            string cueDirectory = Path.GetDirectoryName(_cueFilePath);
             res = Path.Combine(cueDirectory, Path.GetFileName(res));
             if (!File.Exists(res))
                 res = Path.Combine(cueDirectory, Path.GetFileNameWithoutExtension(_cueFilePath) + ".bin");

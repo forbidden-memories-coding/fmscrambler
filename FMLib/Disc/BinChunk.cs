@@ -2,9 +2,11 @@
 using System.IO;
 using System.Threading.Tasks;
 using DiscUtils.Iso9660;
+using DiscUtils.Streams;
+using FMLib.Utility;
 using Nito.AsyncEx;
 
-namespace FMLib.Utility
+namespace FMLib.Disc
 {
     /// <summary>
     /// 
@@ -75,8 +77,8 @@ namespace FMLib.Utility
                 CDReader cd = new CDReader(isoStream, false);
                 Console.WriteLine(cd.Root.FullName);
 
-                var files = cd.GetFiles(cd.Root.FullName);
-                var dirs = cd.GetDirectories(cd.Root.FullName);
+                string[] files = cd.GetFiles(cd.Root.FullName);
+                string[] dirs = cd.GetDirectories(cd.Root.FullName);
                 bool mrgdone = false;
 
                 foreach (string c in files)
@@ -89,18 +91,12 @@ namespace FMLib.Utility
                             Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\" + _outFileNameBase);
                         }
                         FileStream fs = File.Create(Directory.GetCurrentDirectory() + @"\" + _outFileNameBase + @"\SLUS_014.11");
-                        var isf = cd.OpenFile(c, FileMode.Open);
+                        SparseStream isf = cd.OpenFile(c, FileMode.Open);
                         byte[] dat = new byte[isf.Length];
-                        int cc = 0;
 
-                        var result = AsyncContext.Run(() => isf.ReadAsync(dat, 0, (int)isf.Length));
-                        //                        while (true)
-                        //                        {
-                        //                            var reada = isf.ReadByte();
-                        //                            if (reada == -1) break;
-                        //                            dat[cc] = (byte)reada;
-                        //                        }
-                        var task = Task.Run(async () => { await fs.WriteAsync(dat, 0, dat.Length); });
+                        int result = AsyncContext.Run(() => isf.ReadAsync(dat, 0, (int)isf.Length));
+
+                        Task task = Task.Run(async () => { await fs.WriteAsync(dat, 0, dat.Length); });
                         task.Wait();
                         fs.Close();
                     }
@@ -115,17 +111,10 @@ namespace FMLib.Utility
                                 Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\" + _outFileNameBase);
                             }
                             FileStream fs = File.Create(Directory.GetCurrentDirectory() + @"\" + _outFileNameBase + @"\WA_MRG.MRG");
-                            var isf = cd.OpenFile(e, FileMode.Open);
+                            SparseStream isf = cd.OpenFile(e, FileMode.Open);
                             byte[] dat = new byte[isf.Length];
-                            int cc = 0;
-                            var result = AsyncContext.Run(() => isf.ReadAsync(dat, 0, (int) isf.Length));
-                            //                                while (true)
-                            //                                {
-                            //                                    var reada = isf.ReadByte();
-                            //                                    if (reada == -1) break;
-                            //                                    dat[cc] = (byte)reada;
-                            //                                }
-                            var task = Task.Run(async () => { await fs.WriteAsync(dat, 0, dat.Length); });
+                            int result = AsyncContext.Run(() => isf.ReadAsync(dat, 0, (int) isf.Length));
+                            Task task = Task.Run(async () => { await fs.WriteAsync(dat, 0, dat.Length); });
                             task.Wait();
                             mrgdone = true;
                             fs.Close();

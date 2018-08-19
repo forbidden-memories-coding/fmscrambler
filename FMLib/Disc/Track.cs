@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace FMLib.Utility
+namespace FMLib.Disc
 {
     class Track
     {
@@ -157,8 +157,8 @@ namespace FMLib.Utility
         /// <summary>
         /// return a progress bar
         /// </summary>
-        /// <param name="value">Progress (0.0 - 1.0)</param>
         /// <param name="position">Width of the progress bar (number of characters)</param>
+        /// <param name="length"></param>
         /// <returns>String containing multiple '*' showing progress.</returns>
         string GetProgressBar(float position, int length)
         {
@@ -230,7 +230,6 @@ namespace FMLib.Utility
         /// <summary>
         /// Convert a mins:secs:frames format to plain frames
         /// </summary>
-        /// <param name="s">text containing mins:secs:frames</param>
         /// <returns>Frame number</returns>
         static long ToFrames(string time)
         {

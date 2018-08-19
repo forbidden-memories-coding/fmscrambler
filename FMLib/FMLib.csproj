@@ -51,6 +51,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -59,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Randomizer\DataScrambler.cs" />
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\Duelist.cs" />
     <Compile Include="Models\Fusion.cs" />
@@ -66,13 +69,14 @@
     <Compile Include="Models\Rank.cs" />
     <Compile Include="Models\Ritual.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\BinChunk.cs" />
-    <Compile Include="Utility\CueFile.cs" />
-    <Compile Include="Utility\ImagePatcher.cs" />
+    <Compile Include="Disc\BinChunk.cs" />
+    <Compile Include="Disc\CueFile.cs" />
+    <Compile Include="Randomizer\ImagePatcher.cs" />
+    <Compile Include="Utility\MainView.cs" />
     <Compile Include="Utility\Meta.cs" />
     <Compile Include="Utility\NumberHandler.cs" />
     <Compile Include="Utility\Static.cs" />
-    <Compile Include="Utility\Track.cs" />
+    <Compile Include="Disc\Track.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

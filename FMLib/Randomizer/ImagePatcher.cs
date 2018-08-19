@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using FMLib.Models;
+using FMLib.Utility;
 
-namespace FMLib.Utility
+namespace FMLib.Randomizer
 {
     /// <summary>
     /// Patching of the Game Image File (BIN/ISO)
@@ -70,18 +71,18 @@ namespace FMLib.Utility
             _fs.Dispose();
             _fs.Close();
 
-            string[] CueTemplate = {$"FILE \"{Static.RandomizerFileName}.bin\" BINARY", "  TRACK 01 MODE2/2352", "    INDEX 01 00:00:00" };
+            string[] cueTemplate = {$"FILE \"{Static.RandomizerFileName}.bin\" BINARY", "  TRACK 01 MODE2/2352", "    INDEX 01 00:00:00" };
             
             
-            File.WriteAllLines(Directory.GetCurrentDirectory() + @"\" + Static.RandomizerFileName + ".cue", CueTemplate);
+            File.WriteAllLines($"{Directory.GetCurrentDirectory()}\\{Static.RandomizerFileName}.cue", cueTemplate);
             return 1;
         }
 
-        private void ListDirectories(ref FileStream fs, IReadOnlyList<GameFile> iso)
+        private void ListDirectories(ref FileStream fs, IEnumerable<GameFile> iso)
         {
             List<GameFile> fileList = new List<GameFile>();
 
-            foreach (var file in iso)
+            foreach (GameFile file in iso)
             {
                 using (MemoryStream ms = new MemoryStream(fs.ExtractPiece(0, 2048, file.Offset)))
                 {
@@ -101,12 +102,9 @@ namespace FMLib.Utility
                             fileList.Add(tmpFile);
                         }
 
-                        if (tmpFile.NameSize == 13)
+                        if (tmpFile.NameSize == 13 && tmpFile.Name == "SLUS_014.11")
                         {
-                            if (tmpFile.Name == "SLUS_014.11")
-                            {
-                                GameFile.Add(tmpFile);
-                            }
+                            GameFile.Add(tmpFile);
                         }
 
                         if (tmpFile.NameSize == 12 && tmpFile.Name == "WA_MRG.MRG")

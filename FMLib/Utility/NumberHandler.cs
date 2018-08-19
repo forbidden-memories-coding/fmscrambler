@@ -9,6 +9,12 @@ namespace FMLib.Utility
     /// </summary>
     public static class NumberHandler
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="dic"></param>
+        /// <returns></returns>
         public static byte[] TextToArray(this string s, Dictionary<char, byte> dic)
         {
             List<byte> list = new List<byte>();
