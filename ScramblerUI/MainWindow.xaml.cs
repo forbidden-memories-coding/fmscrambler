@@ -2,9 +2,12 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using FMLib.Disc;
 using FMLib.Randomizer;
 using FMLib.Utility;
@@ -20,6 +23,7 @@ namespace FMScrambler
         private bool _isPasteEvent = false;
         private string _prevSeedText;
         private readonly Random _rnd = new Random();
+ 
 
         public MainWindow()
         {
@@ -28,7 +32,7 @@ namespace FMScrambler
 
 
         // Randomizing via Game Image
-        private void btn_loadiso_Click(object sender, RoutedEventArgs e)
+        private async void btn_loadiso_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog {Title = "Location of Yu-Gi-Oh! Forbidden Memories NTSC CUE File", Filter = "*.cue | *.cue" };
      
@@ -42,7 +46,7 @@ namespace FMScrambler
                 pgr_back.Visibility = Visibility.Visible;
 
                 BinChunk chunker = new BinChunk();
-                chunker.ExtractBin(dlg.FileName);
+                await Task.Run(() => chunker.ExtractBin(dlg.FileName));
 
                 pgr_back.Visibility = Visibility.Hidden;
                 MessageBox.Show("Extracting game data complete.", "Extracting data",
@@ -66,7 +70,12 @@ namespace FMScrambler
             Static.SetCardCount(cardCount);
 
             DataScrambler fileHandler = new DataScrambler(int.Parse(txt_seed.Text));
-            fileHandler.PerformScrambling((int)txt_minAtk.Value, (int)txt_maxAtk.Value, (int)txt_minDef.Value, (int)txt_maxDef.Value);
+
+            Dispatcher.CurrentDispatcher.Invoke(() =>
+                {
+                    fileHandler.PerformScrambling((int) txt_minAtk.Value, (int) txt_maxAtk.Value,
+                        (int) txt_minDef.Value, (int) txt_maxDef.Value);
+                });
 
             MessageBox.Show("Done scrambling, you may proceed with patching your game ISO now. A logfile was created in the tools directory as well.",
                 "Done scrambling.", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -87,7 +96,7 @@ namespace FMScrambler
             txt_seed.Focus();
         }
 
-        private void btn_patchiso_Click(object sender, RoutedEventArgs e)
+        private async void btn_patchiso_Click(object sender, RoutedEventArgs e)
         {
             if (!Static.UsedIso)
             {
@@ -103,8 +112,9 @@ namespace FMScrambler
                     #endif
                     pgr_back.Visibility = Visibility.Visible;
                     ImagePatcher patcher = new ImagePatcher(dlg.FileName);
+                    int patchResult = await Task.Run(() => patcher.PatchImage());
 
-                    if (patcher.PatchImage() == 1)
+                    if (patchResult == 1)
                     {
                         MessageBox.Show("Image successfully patched! Have fun playing!", "Done patching.",
                             MessageBoxButton.OK, MessageBoxImage.Information);
@@ -120,8 +130,8 @@ namespace FMScrambler
             {
                 pgr_back.Visibility = Visibility.Visible;
                 ImagePatcher patcher = new ImagePatcher(Static.IsoPath);
-
-                if (patcher.PatchImage() == 1)
+                int patchImgResult = await Task.Run(() => patcher.PatchImage());
+                if (patchImgResult == 1)
                 {
                     MessageBox.Show("Image successfully patched! Have fun playing! Location of Randomized Image: "+ Static.IsoPath, "Done patching.",
                         MessageBoxButton.OK, MessageBoxImage.Information);

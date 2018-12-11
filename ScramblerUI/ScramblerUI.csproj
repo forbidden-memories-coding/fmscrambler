@@ -184,7 +184,9 @@
     <Resource Include="simonico.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="CharacterTable.txt" />
+    <Resource Include="CharacterTable.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utility\" />

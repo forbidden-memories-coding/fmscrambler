@@ -252,9 +252,12 @@ namespace FMLib.Randomizer
         {
             foreach (Duelist t1 in Static.Duelist)
             {
-                t1.Drop.BcdPow[_random.Next(0, 722)]++;
-                t1.Drop.SaPow[_random.Next(0, 722)]++;
-                t1.Drop.SaTec[_random.Next(0, 722)]++;
+                for (int x = 0; x < 2048; x++)
+                {
+                    t1.Drop.BcdPow[_random.Next(0, 722)]++;
+                    t1.Drop.SaPow[_random.Next(0, 722)]++;
+                    t1.Drop.SaTec[_random.Next(0, 722)]++;
+                }
             }
         }
 

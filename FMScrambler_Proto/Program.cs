@@ -27,36 +27,31 @@ namespace FMScrambler_Proto
                     var k1 = Convert.ToChar(match.Groups[2].ToString());
                     var k2 = (byte)int.Parse(match.Groups[1].ToString(), NumberStyles.HexNumber);
                     Static.Dict.Add(k2, k1);
-                    if (!Static.rDict.ContainsKey(k1))
+                    if (!Static.RDict.ContainsKey(k1))
                     {
-                        Static.rDict.Add(k1, k2);
+                        Static.RDict.Add(k1, k2);
                     }
                 }
             }
 
-            var memStream = new MemoryStream(File.ReadAllBytes(@"SLUS_014.11")) { Position = 1710735L };
+            Console.WriteLine("Start Position? ");
+            var startPos = Int64.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
+            Console.WriteLine("Length to read? ");
+            var readLen = Int64.Parse(Console.ReadLine());
+
+
+            var memStream = new MemoryStream(File.ReadAllBytes(@"SLUS_014.11")) { Position = startPos };
             String aText = String.Empty;
-            while (memStream.Position < 1770321L)
+            while (memStream.Position < (startPos+readLen))
             {
-                //Console.WriteLine(memStream.extractPiece(0, 2, -1).extractUInt16(0));
-                //Console.WriteLine($"{memStream.Position}");
-                //foreach (var x in memStream.extractPiece(0, 1))
-                //{
-                //    Console.WriteLine($">> {x}");
-                //}
-                aText += memStream.GetText(Static.Dict);
-                //Console.WriteLine($"Current Pos: {memStream.Position}");
+                aText += memStream.GetText(Static.Dict);                
                 memStream.Position += 1L;
             }
 
-            Console.WriteLine(aText);
-            char[] heS = new char[] { (char)250, (char)251, (char)254, (char)255, (char)11 };
-            var bText = aText.Split(heS, StringSplitOptions.None);
-            Console.WriteLine(bText.Length);
-            for (var i = 0; i < bText.Length; i++)
-            {
-            //    Console.WriteLine($"[{i}] >> {bText[i]}");
-            }
+            string replace = aText.Replace((char) 0xFE, (char)0x0A);
+
+            Console.WriteLine(replace);
+            //Console.WriteLine(bText.Length);
         }
 
     }
