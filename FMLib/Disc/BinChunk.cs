@@ -19,7 +19,7 @@ namespace FMLib.Disc
         public const int SectorLength = 2352;
         private const string CueExtension = ".cue";
 
-        private readonly string _outFileNameBase = $"FM_Randomizer_{DateTime.Now.Date.ToShortDateString()}_{DateTime.Now.Hour}-{DateTime.Now.Minute}-{DateTime.Now.Second}";
+        private readonly string _outFileNameBase = $"FM_Randomizer_[{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.Day}]_{DateTime.Now.Hour}-{DateTime.Now.Minute}-{DateTime.Now.Second}";
         private string _outFileName;
         /// <summary>
         /// 
