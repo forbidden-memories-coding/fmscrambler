@@ -180,6 +180,36 @@ namespace FMLib.Randomizer
             }
 
             memStream.Close();
+
+            //Read Starchip Cost/Password pairs
+            memStream = new MemoryStream(fusionStream.ExtractPiece(0, 722 * 8, 0xFB9808));
+            for(var i = 0; i < 722; ++i)
+            {
+                Static.Cards[i].Starchip = new Starchips();
+                var cost_bytes = new byte[4];
+                cost_bytes[0] = (byte)memStream.ReadByte();
+                cost_bytes[1] = (byte)memStream.ReadByte();
+                cost_bytes[2] = (byte)memStream.ReadByte();
+                cost_bytes[3] = (byte)memStream.ReadByte();
+                Static.Cards[i].Starchip.Cost = cost_bytes.ExtractInt32();
+                var pass_bytes = new byte[4];
+                pass_bytes[0] = (byte)memStream.ReadByte();
+                pass_bytes[1] = (byte)memStream.ReadByte();
+                pass_bytes[2] = (byte)memStream.ReadByte();
+                pass_bytes[3] = (byte)memStream.ReadByte();
+                var res_pass = "";
+                for(var j = 3; j >= 0; --j)
+                {
+                    var str = pass_bytes[j].ToString("X");
+                    if (str.Length == 1) str = str.Insert(0, "0");
+                    res_pass += str;
+                }
+                int.TryParse(res_pass, out int out_pass);
+                Static.Cards[i].Starchip.Password = out_pass;
+                Static.Cards[i].Starchip.PasswordStr = res_pass;
+            }
+
+            memStream.Close();
             fusionStream.Close();
         }
 
@@ -209,7 +239,7 @@ namespace FMLib.Randomizer
         /// <param name="maxAtk"></param>
         /// <param name="minDef"></param>
         /// <param name="maxDef"></param>
-        public void RandomizeCardInfo(int minAtk = 1000, int maxAtk = 3000, int minDef = 1000, int maxDef = 3000)
+        public void RandomizeCardInfo(int minAtk = 1000, int maxAtk = 3000, int minDef = 1000, int maxDef = 3000, int minCost = 1, int maxCost = 999999)
         {
             for (int i = 0; i < 722; i++)
             {
@@ -243,6 +273,14 @@ namespace FMLib.Randomizer
                     {
                         int rando = _random.Next(1, 722);
                         Static.Cards[i].Equips.Add(rando);
+                    }
+                }
+
+                if (Static.RandomStarchips)
+                {
+                    foreach (Card card in Static.Cards)
+                    {
+                        card.Starchip.Cost = _random.Next(minCost, maxCost);
                     }
                 }
             }
@@ -462,6 +500,36 @@ namespace FMLib.Randomizer
                     }
                 }
             }
+
+            if (Static.RandomStarchips)
+            {
+                using (FileStream starchipStream = new FileStream(Static.WaPath, FileMode.Open))
+                {
+                    starchipStream.Position = 0xFB9808;
+                    for (var i = 0; i < 722; ++i)
+                    {
+                        var cost_arr = Static.Cards[i].Starchip.Cost.Int32ToByteArray();
+                        var pass_arr = Static.Cards[i].Starchip.PasswordStr.StringToByteArray();
+                        var offset = 0;
+                        for (var j = cost_arr.Length - 2; j >= 0; --j)
+                        {
+                            if (cost_arr[j] == 0) offset++;
+                            else break;
+                        }
+                        for (var j = 0; j < cost_arr.Length - offset - 1; ++j)
+                        {
+                            starchipStream.WriteByte(cost_arr[j]);
+                        }
+                        for (var j = 0; j < offset; ++j) starchipStream.WriteByte(0);
+                        // Advance over unused byte
+                        starchipStream.Position += 1;
+                        for (var j = pass_arr.Length - 1; j >= 0; --j)
+                        {
+                            starchipStream.WriteByte(pass_arr[j]);
+                        }
+                    }
+                }
+            }
         }
 
         // TODO: Better Log File Logic + HTML/JSON/XML Format
@@ -590,14 +658,16 @@ namespace FMLib.Randomizer
         /// <param name="maxAtk"></param>
         /// <param name="minDef"></param>
         /// <param name="maxDef"></param>
+        /// <param name="minCost"></param>
+        /// <param name="maxCost"></param>
         /// <param name="log"></param>
         /// <returns></returns>
-        public bool PerformScrambling(int minAtk = 0, int maxAtk = 0, int minDef = 0, int maxDef = 0, bool log = true)
+        public bool PerformScrambling(int minAtk = 0, int maxAtk = 0, int minDef = 0, int maxDef = 0, int minCost = 0, int maxCost = 999999, bool log = true)
         {
             LoadDataFromSlus();
             LoadDataFromWaMrg();
             RandomizeFusions();
-            RandomizeCardInfo(minAtk, maxAtk, minDef, maxDef);
+            RandomizeCardInfo(minAtk, maxAtk, minDef, maxDef, minCost, maxCost);
             RandomizeCardDrops();
             RandomizeDuelistDecks();
             WriteChangesToFile();

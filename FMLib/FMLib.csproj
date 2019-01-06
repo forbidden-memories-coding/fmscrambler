@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Starchips.cs" />
     <Compile Include="Randomizer\DataScrambler.cs" />
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\Duelist.cs" />

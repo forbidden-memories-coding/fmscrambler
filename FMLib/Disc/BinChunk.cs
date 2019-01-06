@@ -124,7 +124,6 @@ namespace FMLib.Disc
 
                     Static.SlusPath = Directory.GetCurrentDirectory() + @"\" + _outFileNameBase + @"\SLUS_014.11";
                     Static.WaPath = Directory.GetCurrentDirectory() + @"\" + _outFileNameBase + @"\WA_MRG.MRG";
-                    Static.RandomizerFileName = _outFileNameBase;
                     Static.IsoPath = Directory.GetCurrentDirectory() + @"\" + _outFileNameBase + ".bin";
 
                 }

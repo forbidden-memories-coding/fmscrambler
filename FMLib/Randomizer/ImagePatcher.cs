@@ -47,7 +47,7 @@ namespace FMLib.Randomizer
             });
 
             foreach (GameFile k in GameFile)
-            {  
+            {
                 // Choose which File to use based on the name of the Item in the loop
                 string p = k.Name == "SLUS_014.11" ? Static.SlusPath : Static.WaPath;
 
@@ -70,7 +70,8 @@ namespace FMLib.Randomizer
             }
             _fs.Dispose();
             _fs.Close();
-
+            File.Move(Static.IsoPath, $"{Directory.GetCurrentDirectory()}\\{Static.RandomizerFileName}.bin");
+            Static.IsoPath = $"{Directory.GetCurrentDirectory()}\\{Static.RandomizerFileName}.bin";
             string[] cueTemplate = {$"FILE \"{Static.RandomizerFileName}.bin\" BINARY", "  TRACK 01 MODE2/2352", "    INDEX 01 00:00:00" };
             
             
