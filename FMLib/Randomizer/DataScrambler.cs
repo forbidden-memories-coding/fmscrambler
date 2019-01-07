@@ -239,6 +239,8 @@ namespace FMLib.Randomizer
         /// <param name="maxAtk"></param>
         /// <param name="minDef"></param>
         /// <param name="maxDef"></param>
+        /// <param name="minCost"></param>
+        /// <param name="maxCost"></param>
         public void RandomizeCardInfo(int minAtk = 1000, int maxAtk = 3000, int minDef = 1000, int maxDef = 3000, int minCost = 1, int maxCost = 999999)
         {
             for (int i = 0; i < 722; i++)
@@ -289,17 +291,27 @@ namespace FMLib.Randomizer
         /// <summary>
         /// 
         /// </summary>
-        public void RandomizeCardDrops()
+        /// <param name="minDropRate"></param>
+        /// <param name="maxDropRate"></param>
+        public void RandomizeCardDrops(int minDropRate = 1, int maxDropRate = 1)
         {
             if (Static.RandomCardDrops)
-            {
+            { 
                 foreach (Duelist t1 in Static.Duelist)
                 {
-                    for (int x = 0; x < 2048; x++)
+                    var total_rate = 0;
+                    while (true)
                     {
-                        t1.Drop.BcdPow[_random.Next(0, 722)]++;
-                        t1.Drop.SaPow[_random.Next(0, 722)]++;
-                        t1.Drop.SaTec[_random.Next(0, 722)]++;
+                        var rate = _random.Next(minDropRate, maxDropRate);
+                        if (total_rate + rate > 2048)
+                        {
+                            rate = 2048 - total_rate;
+                        }
+                        t1.Drop.BcdPow[_random.Next(0, 722)]+= rate;
+                        t1.Drop.SaPow[_random.Next(0, 722)] += rate;
+                        t1.Drop.SaTec[_random.Next(0, 722)] += rate;
+                        total_rate += rate;
+                        if (total_rate == 2048) break;
                     }
                 }
             }
@@ -610,7 +622,8 @@ namespace FMLib.Randomizer
                 logStream.WriteLine($"{d.Name} S/A-Tec drops");
                 foreach (Card c in Static.Cards)
                 {
-                    logStream.WriteLine($"    => #{c.Id} {c.Name} Rate: {d.Drop.SaTec[c.Id-1]}/2048");
+                    logStream.WriteLine($"    => #{c.Id} {c.Name}");
+                    logStream.WriteLine($"        Rate: {d.Drop.SaTec[c.Id - 1]}/2048");
                 }
 
                 logStream.WriteLine();
@@ -618,7 +631,8 @@ namespace FMLib.Randomizer
                 logStream.WriteLine($"{d.Name} B/C/D drops");
                 foreach (Card c in Static.Cards)
                 {
-                    logStream.WriteLine($"    => #{c.Id} {c.Name} Rate: {d.Drop.BcdPow[c.Id-1]}/2048");
+                    logStream.WriteLine($"    => #{c.Id} {c.Name}");
+                    logStream.WriteLine($"        Rate: {d.Drop.BcdPow[c.Id-1]}/2048");
                 }
 
                 logStream.WriteLine();
@@ -626,7 +640,8 @@ namespace FMLib.Randomizer
                 logStream.WriteLine($"{d.Name} S/A-Pow drops");
                 foreach (Card c in Static.Cards)
                 {
-                    logStream.WriteLine($"    => #{c.Id} {c.Name} Rate: {d.Drop.SaPow[c.Id-1]}/2048");
+                    logStream.WriteLine($"    => #{c.Id} {c.Name}");
+                    logStream.WriteLine($"        Rate: {d.Drop.SaPow[c.Id - 1]}/2048");
                 }
             }
 
@@ -713,13 +728,13 @@ namespace FMLib.Randomizer
         /// <param name="minCost"></param>
         /// <param name="maxCost"></param>
         /// <returns></returns>
-        public bool PerformScrambling(int minAtk = 0, int maxAtk = 0, int minDef = 0, int maxDef = 0, int minCost = 0, int maxCost = 999999)
+        public bool PerformScrambling(int minAtk = 0, int maxAtk = 0, int minDef = 0, int maxDef = 0, int minCost = 0, int maxCost = 999999, int minDropRate = 1, int maxDropRate = 1)
         {
             LoadDataFromSlus();
             LoadDataFromWaMrg();
             RandomizeFusions();
             RandomizeCardInfo(minAtk, maxAtk, minDef, maxDef, minCost, maxCost);
-            RandomizeCardDrops();
+            RandomizeCardDrops(minDropRate, maxDropRate);
             RandomizeDuelistDecks();
             WriteChangesToFile();
             if (Static.Spoiler)

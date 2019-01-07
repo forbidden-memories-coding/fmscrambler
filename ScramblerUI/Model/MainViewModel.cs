@@ -27,6 +27,8 @@ namespace FMScrambler.Model
         private int _textboxMaxDefense = 3000;
         private int _textboxMinCost = 0;
         private int _textboxMaxCost = 999999;
+        private int _textboxMinDropRate = 1;
+        private int _textboxMaxDropRate = 1;
         private bool _checkboxIsoSeed = true;
         private bool _checkboxIsoDate;
         private bool _checkboxIsoOptions;
@@ -242,6 +244,26 @@ namespace FMScrambler.Model
             {
                 _textboxMaxCost = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("TextboxMaxCost"));
+            }
+        }
+
+        public int TextboxMinDropRate
+        {
+            get => _textboxMinDropRate;
+            set
+            {
+                _textboxMinDropRate = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("TextboxMinDropRate"));
+            }
+        }
+
+        public int TextboxMaxDropRate
+        {
+            get => _textboxMaxDropRate;
+            set
+            {
+                _textboxMaxDropRate = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("TextboxMaxDropRate"));
             }
         }
 

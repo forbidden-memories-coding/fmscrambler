@@ -75,7 +75,7 @@ namespace FMScrambler
                 {
                     fileHandler.PerformScrambling((int) txt_minAtk.Value, (int) txt_maxAtk.Value,
                         (int) txt_minDef.Value, (int) txt_maxDef.Value, (int) txt_minCost.Value,
-                        (int) txt_maxCost.Value);
+                        (int) txt_maxCost.Value, (int) txt_minDropRate.Value, (int) txt_maxDropRate.Value);
                 });
 
             MessageBox.Show("Done scrambling, you may proceed with patching your game ISO now. A logfile was created in the tools directory as well.",
