@@ -183,7 +183,7 @@ namespace FMLib.Randomizer
 
             //Read Starchip Cost/Password pairs
             memStream = new MemoryStream(fusionStream.ExtractPiece(0, 722 * 8, 0xFB9808));
-            for(var i = 0; i < 722; ++i)
+            for (var i = 0; i < 722; ++i)
             {
                 Static.Cards[i].Starchip = new Starchips();
                 var cost_bytes = new byte[4];
@@ -198,7 +198,7 @@ namespace FMLib.Randomizer
                 pass_bytes[2] = (byte)memStream.ReadByte();
                 pass_bytes[3] = (byte)memStream.ReadByte();
                 var res_pass = "";
-                for(var j = 3; j >= 0; --j)
+                for (var j = 3; j >= 0; --j)
                 {
                     var str = pass_bytes[j].ToString("X");
                     if (str.Length == 1) str = str.Insert(0, "0");
@@ -536,16 +536,16 @@ namespace FMLib.Randomizer
         /// <summary>
         /// 
         /// </summary>
-        public void WriteLogFile()
+        public void WriteFusionSpoilerFile()
         {
-            if (!File.Exists($@"scramblelog_#{_seed}.log"))
+            if (!File.Exists($@"fusions_spoiler_#{_seed}.log"))
             {
-                File.CreateText($"scramblelog_#{_seed}.log").Close();
+                File.CreateText($"fusions_spoiler_#{_seed}.log").Close();
             }
 
-            StreamWriter logStream = new StreamWriter($@"scramblelog_#{_seed}.log");
+            StreamWriter logStream = new StreamWriter($@"fusions_spoiler_#{_seed}.log");
 
-            logStream.WriteLine("== YU-GI-OH! Forbidden Memories Fusion Scrambler Log Output ==");
+            logStream.WriteLine("== YU-GI-OH! Forbidden Memories Fusion Scrambler Spoiler File ==");
             logStream.WriteLine($"== Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} ==");
             logStream.WriteLine("====================================================================\r\n");
 
@@ -563,18 +563,88 @@ namespace FMLib.Randomizer
             logStream.Close();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public void WriteStarchipSpoilerFile()
+        {
+            if (!File.Exists($@"starchip_spoiler_#{_seed}.log"))
+            {
+                File.CreateText($"starchip_spoiler_#{_seed}.log").Close();
+            }
+
+            StreamWriter logStream = new StreamWriter($@"starchip_spoiler_#{_seed}.log");
+
+            logStream.WriteLine("== YU-GI-OH! Forbidden Memories Starchip Scrambler Spoiler File ==");
+            logStream.WriteLine($"== Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} ==");
+            logStream.WriteLine("====================================================================\r\n");
+
+            foreach (Card c in Static.Cards)
+            {
+                logStream.WriteLine($"    => #{c.Id} {c.Name}");
+                logStream.WriteLine($"        Cost: {c.Starchip.Cost} Password: {c.Starchip.PasswordStr}");
+            }
+
+            logStream.Close();
+        }
 
         /// <summary>
         /// 
         /// </summary>
-        public void WriteHtmlLogFile()
+        public void WriteDropsSpoilerFile()
         {
-            if (!File.Exists($@"scramblelog_#{_seed}.html"))
+            if (!File.Exists($@"drops_spoiler_#{_seed}.log"))
             {
-                File.CreateText($"scramblelog_#{_seed}.html").Close();
+                File.CreateText($"drops_spoiler_#{_seed}.log").Close();
             }
 
-            StreamWriter logStream = new StreamWriter($@"scramblelog_#{_seed}.html");
+            StreamWriter logStream = new StreamWriter($@"drops_spoiler_#{_seed}.log");
+
+            logStream.WriteLine("== YU-GI-OH! Forbidden Memories Drops Scrambler Spoiler File ==");
+            logStream.WriteLine($"== Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} ==");
+            logStream.WriteLine("====================================================================\r\n");
+
+            foreach (Duelist d in Static.Duelist)
+            {
+                logStream.WriteLine("====================================================================");
+                logStream.WriteLine($"{d.Name} S/A-Tec drops");
+                foreach (Card c in Static.Cards)
+                {
+                    logStream.WriteLine($"    => #{c.Id} {c.Name} Rate: {d.Drop.SaTec[c.Id-1]}/2048");
+                }
+
+                logStream.WriteLine();
+                logStream.WriteLine("====================================================================");
+                logStream.WriteLine($"{d.Name} B/C/D drops");
+                foreach (Card c in Static.Cards)
+                {
+                    logStream.WriteLine($"    => #{c.Id} {c.Name} Rate: {d.Drop.BcdPow[c.Id-1]}/2048");
+                }
+
+                logStream.WriteLine();
+                logStream.WriteLine("====================================================================");
+                logStream.WriteLine($"{d.Name} S/A-Pow drops");
+                foreach (Card c in Static.Cards)
+                {
+                    logStream.WriteLine($"    => #{c.Id} {c.Name} Rate: {d.Drop.SaPow[c.Id-1]}/2048");
+                }
+            }
+
+            logStream.Close();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void WriteHtmlFusionSpoilerFile()
+        {
+            if (!File.Exists($@"fusions_spoiler_#{_seed}.html"))
+            {
+                File.CreateText($"fusions_spoiler_#{_seed}.html").Close();
+            }
+
+            StreamWriter logStream = new StreamWriter($@"fusions_spoiler_#{_seed}.html");
 
             string template =
                 $@"<!DOCTYPE html>
@@ -598,21 +668,6 @@ namespace FMLib.Randomizer
                 <body>
                 <div style=\""width: 100 %; text-align: center;\"">";
 
-            string table1Template =
-                @"<span style=\""text-align: center; font-size: 120%; font-weight: bold; margin-bottom: 5px;\"">Changed Cards</span>
-                  <table>
-                    <thead>
-                    <tr>
-                        <th style=\""width: 5%;\"">ID</th>
-                        <th style=\""width: 25%;\"">Name</th>
-                        <th style=\""width: 10%;\"">Attack/Defense</th>
-                        <th style=\""width: 15%;\"">Guardian Stars</th>
-                        <th style=\""width: 10%;\"">Attribute</th>
-                        <th style=\""width: 10%;\"">Type</th>
-                   </tr>
-                   </thead>
-                 <tbody>";
-
             string table2Template =
                 @"<span style=\""text-align: center; font-size: 120%; font-weight: bold; margin-bottom: 5px;\"">Changed Fusions</span>
                   <table>
@@ -629,23 +684,20 @@ namespace FMLib.Randomizer
             <tbody>";
             string tmpFusions = "";
 
-            logStream.WriteLine(template + $" <h1>YU-GI-OH! Forbidden Memories Fusion Scrambler Log Output</h1> <h4>Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion}</h4>");
-            logStream.WriteLine(table1Template);
+            logStream.WriteLine(template + $" <h1>YU-GI-OH! Forbidden Memories Fusion Scrambler Spoiler File</h1> <h4>Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion}</h4>");
 
             foreach (Card c in Static.Cards)
             {
-                logStream.WriteLine($"<tr><td>#{c.Id}</td> <td>{c.Name}</td> <td>{c.Attack}/{c.Defense}</td> <td>{c.GuardianStar1}/{c.GuardianStar2}</td> <td>{c.Attribute}</td> <td>{c.Type}</td></tr>");
-
                 foreach (Fusion fus in c.Fusions)
                 {
                     tmpFusions += "<tr>";
                     tmpFusions += $"<td>{fus.Cards1}</td> <td>{(fus.Cards1 > 722 ? "Glitch!" : Static.Cards.Single(card => card.Id == fus.Cards1).Name)}</td> <td>{fus.Cards2}</td> <td>{(fus.Cards2 > 722 ? "Glitch!" : Static.Cards.Single(card => card.Id == fus.Cards2).Name)}</td> <td>{fus.Result}</td> <td>{(fus.Result > 722 ? "Glitch!" : Static.Cards.Single(card => card.Id == fus.Result).Name)}</td></tr>";
                 }
             }
-            logStream.WriteLine("</tbody></table><br />");
+            //logStream.WriteLine("</tbody></table><br />");
             logStream.WriteLine(table2Template);
             Console.WriteLine("Writing tmpFusions");
-            logStream.WriteLineAsync(tmpFusions).RunSynchronously();
+            logStream.WriteLine(tmpFusions);
             logStream.WriteLine("</tbody></table></div></body></html>");
             logStream.Close();
         }
@@ -660,9 +712,8 @@ namespace FMLib.Randomizer
         /// <param name="maxDef"></param>
         /// <param name="minCost"></param>
         /// <param name="maxCost"></param>
-        /// <param name="log"></param>
         /// <returns></returns>
-        public bool PerformScrambling(int minAtk = 0, int maxAtk = 0, int minDef = 0, int maxDef = 0, int minCost = 0, int maxCost = 999999, bool log = true)
+        public bool PerformScrambling(int minAtk = 0, int maxAtk = 0, int minDef = 0, int maxDef = 0, int minCost = 0, int maxCost = 999999)
         {
             LoadDataFromSlus();
             LoadDataFromWaMrg();
@@ -671,8 +722,12 @@ namespace FMLib.Randomizer
             RandomizeCardDrops();
             RandomizeDuelistDecks();
             WriteChangesToFile();
-            if (log)
-                WriteLogFile();
+            if (Static.Spoiler)
+            {
+                if (Static.RandomFusions) { WriteFusionSpoilerFile(); /*WriteHtmlFusionSpoilerFile();*/ }
+                if (Static.RandomStarchips) WriteStarchipSpoilerFile();
+                if (Static.RandomCardDrops) WriteDropsSpoilerFile();
+            }
 
             return true;
         }

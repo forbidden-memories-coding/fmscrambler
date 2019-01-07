@@ -248,7 +248,7 @@ namespace FMScrambler
         private void MetroWindow_Initialized(object sender, EventArgs e)
         {
             Title = $"YGO! FM Fusion Scrambler Tool - {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} {Meta.VersionInfo}";
-            lbl_isoExample.Content = $"fmscrambler[{txt_seed.Text}]";
+            lbl_isoExample.Content = $"fmscrambler[{txt_seed.Text}].bin";
         }
 
         private void btn_loadiso1_Click(object sender, RoutedEventArgs e)

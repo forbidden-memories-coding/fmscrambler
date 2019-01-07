@@ -62,6 +62,10 @@ namespace FMLib.Utility
         /// 
         /// </summary>
         public static bool RandomAtkdef = false;
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool Spoiler = true;
 
         /// <summary>
         /// Count of Cards as Integer

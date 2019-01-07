@@ -30,6 +30,7 @@ namespace FMScrambler.Model
         private bool _checkboxIsoSeed = true;
         private bool _checkboxIsoDate;
         private bool _checkboxIsoOptions;
+        private bool _checkboxSpoilerFiles = true;
         private string _labelIsoExample = "fmscrambler[12345678].bin";
 
         public string LabelPath
@@ -276,6 +277,16 @@ namespace FMScrambler.Model
                 _checkboxIsoOptions = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("CheckboxIsoOptions"));
                 onIsoCheckbox();
+            }
+        }
+
+        public bool CheckboxSpoilerFiles
+        {
+            get => _checkboxSpoilerFiles;
+            set
+            {
+                _checkboxSpoilerFiles = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("CheckboxSpoilerFiles"));
             }
         }
 

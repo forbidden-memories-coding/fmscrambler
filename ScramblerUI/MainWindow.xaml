@@ -118,6 +118,7 @@
                             <CheckBox x:Name="chk_isoDate" Content="Date" HorizontalAlignment="Left" Margin="65,10,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxIsoDate, Mode=TwoWay}"/>
                             <CheckBox x:Name="chk_isoOptions" Content="Options" HorizontalAlignment="Left" Margin="128,10,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxIsoOptions, Mode=TwoWay}"/>
                             <Label x:Name="lbl_isoExample" Content="{Binding LabelIsoExample, Mode=TwoWay}" HorizontalAlignment="Left" Margin="65,33,0,0" VerticalAlignment="Top" Width="663" Height="26" Padding="1,5"/>
+                            <CheckBox Content="Spoiler files" HorizontalAlignment="Left" Margin="199,10,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxSpoilerFiles, Mode=TwoWay}"/>
                         </Grid>
                     </GroupBox>
                 </Grid>
