@@ -180,6 +180,36 @@ namespace FMLib.Randomizer
             }
 
             memStream.Close();
+
+            //Read Starchip Cost/Password pairs
+            memStream = new MemoryStream(fusionStream.ExtractPiece(0, 722 * 8, 0xFB9808));
+            for (var i = 0; i < 722; ++i)
+            {
+                Static.Cards[i].Starchip = new Starchips();
+                var cost_bytes = new byte[4];
+                cost_bytes[0] = (byte)memStream.ReadByte();
+                cost_bytes[1] = (byte)memStream.ReadByte();
+                cost_bytes[2] = (byte)memStream.ReadByte();
+                cost_bytes[3] = (byte)memStream.ReadByte();
+                Static.Cards[i].Starchip.Cost = cost_bytes.ExtractInt32();
+                var pass_bytes = new byte[4];
+                pass_bytes[0] = (byte)memStream.ReadByte();
+                pass_bytes[1] = (byte)memStream.ReadByte();
+                pass_bytes[2] = (byte)memStream.ReadByte();
+                pass_bytes[3] = (byte)memStream.ReadByte();
+                var res_pass = "";
+                for (var j = 3; j >= 0; --j)
+                {
+                    var str = pass_bytes[j].ToString("X");
+                    if (str.Length == 1) str = str.Insert(0, "0");
+                    res_pass += str;
+                }
+                int.TryParse(res_pass, out int out_pass);
+                Static.Cards[i].Starchip.Password = out_pass;
+                Static.Cards[i].Starchip.PasswordStr = res_pass;
+            }
+
+            memStream.Close();
             fusionStream.Close();
         }
 
@@ -188,13 +218,16 @@ namespace FMLib.Randomizer
         /// </summary>
         public void RandomizeFusions()
         {
-            for (int i = 0; i < 722; i++)
+            if (Static.RandomFusions)
             {
-                foreach (Fusion t in Static.Cards[i].Fusions)
+                for (int i = 0; i < 722; i++)
                 {
-                    // FUSION RANDOMIZING
-                    t.Cards2 = _random.Next(Static.HighId ? 1 : i, Static.CardCount);
-                    t.Result = _random.Next(Static.HighId ? 1 : i, Static.CardCount);
+                    foreach (Fusion t in Static.Cards[i].Fusions)
+                    {
+                        // FUSION RANDOMIZING
+                        t.Cards2 = _random.Next(Static.HighId ? 1 : i, Static.CardCount);
+                        t.Result = _random.Next(Static.HighId ? 1 : i, Static.CardCount);
+                    }
                 }
             }
         }
@@ -206,7 +239,9 @@ namespace FMLib.Randomizer
         /// <param name="maxAtk"></param>
         /// <param name="minDef"></param>
         /// <param name="maxDef"></param>
-        public void RandomizeCardInfo(int minAtk = 1000, int maxAtk = 3000, int minDef = 1000, int maxDef = 3000)
+        /// <param name="minCost"></param>
+        /// <param name="maxCost"></param>
+        public void RandomizeCardInfo(int minAtk = 1000, int maxAtk = 3000, int minDef = 1000, int maxDef = 3000, int minCost = 1, int maxCost = 999999)
         {
             for (int i = 0; i < 722; i++)
             {
@@ -242,21 +277,42 @@ namespace FMLib.Randomizer
                         Static.Cards[i].Equips.Add(rando);
                     }
                 }
+
+                if (Static.RandomStarchips)
+                {
+                    foreach (Card card in Static.Cards)
+                    {
+                        card.Starchip.Cost = _random.Next(minCost, maxCost);
+                    }
+                }
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public void RandomizeCardDrops()
+        /// <param name="minDropRate"></param>
+        /// <param name="maxDropRate"></param>
+        public void RandomizeCardDrops(int minDropRate = 1, int maxDropRate = 1)
         {
-            foreach (Duelist t1 in Static.Duelist)
-            {
-                for (int x = 0; x < 2048; x++)
+            if (Static.RandomCardDrops)
+            { 
+                foreach (Duelist t1 in Static.Duelist)
                 {
-                    t1.Drop.BcdPow[_random.Next(0, 722)]++;
-                    t1.Drop.SaPow[_random.Next(0, 722)]++;
-                    t1.Drop.SaTec[_random.Next(0, 722)]++;
+                    var total_rate = 0;
+                    while (true)
+                    {
+                        var rate = _random.Next(minDropRate, maxDropRate);
+                        if (total_rate + rate > 2048)
+                        {
+                            rate = 2048 - total_rate;
+                        }
+                        t1.Drop.BcdPow[_random.Next(0, 722)]+= rate;
+                        t1.Drop.SaPow[_random.Next(0, 722)] += rate;
+                        t1.Drop.SaTec[_random.Next(0, 722)] += rate;
+                        total_rate += rate;
+                        if (total_rate == 2048) break;
+                    }
                 }
             }
         }
@@ -266,14 +322,16 @@ namespace FMLib.Randomizer
         /// </summary>
         public void RandomizeDuelistDecks()
         {
-            foreach (Duelist t1 in Static.Duelist)
+            if (Static.RandomDecks)
             {
-                for (int ix = 0; ix < 2048; ix++)
+                foreach (Duelist t1 in Static.Duelist)
                 {
-                    t1.Deck[_random.Next(0, 722)]++;
+                    for (int ix = 0; ix < 2048; ix++)
+                    {
+                        t1.Deck[_random.Next(0, 722)]++;
+                    }
                 }
             }
-
         }
 
         /// <summary>
@@ -281,86 +339,88 @@ namespace FMLib.Randomizer
         /// </summary>
         public void WriteChangesToFile()
         {
-            FileStream fileStream = new FileStream(Static.WaPath, FileMode.Open);
-
-            int[] numArray = {
-                12089344,
-                12570624,
-                13051904,
-                13533184,
-                14014464,
-                14495744,
-                14977024
-            };
-
-            MemoryStream memStream1 = new MemoryStream(1444);
-            MemoryStream memStream2 = new MemoryStream(64092);
-
-            memStream1.Position = 2L;
-            memStream2.Position = 2L;
 
             // Writing Random Fusions
             if (Static.RandomFusions)
             {
-                foreach (Card card in Static.Cards)
+                using (FileStream fileStream = new FileStream(Static.WaPath, FileMode.Open))
                 {
-                    short num1 = card.Fusions.Count != 0 ? (short)(memStream2.Position + 1444L) : (short)0;
-                    memStream1.Write(num1.Int16ToByteArray(), 0, 2);
-                    if (card.Fusions.Count != 0)
+
+                    int[] numArray = {
+                        12089344,
+                        12570624,
+                        13051904,
+                        13533184,
+                        14014464,
+                        14495744,
+                        14977024
+                    };
+
+                    MemoryStream memStream1 = new MemoryStream(1444);
+                    MemoryStream memStream2 = new MemoryStream(64092);
+
+                    memStream1.Position = 2L;
+                    memStream2.Position = 2L;
+                    foreach (Card card in Static.Cards)
                     {
-                        if (card.Fusions.Count < 256)
+                        short num1 = card.Fusions.Count != 0 ? (short)(memStream2.Position + 1444L) : (short)0;
+                        memStream1.Write(num1.Int16ToByteArray(), 0, 2);
+                        if (card.Fusions.Count != 0)
                         {
-                            memStream2.WriteByte((byte)card.Fusions.Count);
-                        }
-                        else
-                        {
-                            memStream2.WriteByte(0);
-                            memStream2.WriteByte((byte)Math.Abs(card.Fusions.Count - 511));
-                        }
-                        for (int i = 0; i < card.Fusions.Count; ++i)
-                        {
-                            int num2 = card.Fusions[i].Cards2 + 1 & byte.MaxValue;
-                            int num3 = card.Fusions[i].Result + 1 & byte.MaxValue;
-                            int num4 = 0;
-                            int num5 = 0;
-                            int num6 = card.Fusions[i].Cards2 + 1 >> 8 & 3 | (card.Fusions[i].Result + 1 >> 8 & 3) << 2;
-                            if (i < card.Fusions.Count - 1)
+                            if (card.Fusions.Count < 256)
                             {
-                                num4 = card.Fusions[i + 1].Cards2 + 1 & byte.MaxValue;
-                                num5 = card.Fusions[i + 1].Result + 1 & byte.MaxValue;
-                                num6 |= (card.Fusions[i + 1].Cards2 + 1 >> 8 & 3) << 4 |
-                                        (card.Fusions[i + 1].Result + 1 >> 8 & 3) << 6;
-                                ++i;
+                                memStream2.WriteByte((byte)card.Fusions.Count);
                             }
-                            memStream2.WriteByte((byte)(num6 & byte.MaxValue));
-                            memStream2.WriteByte((byte)(num2 & byte.MaxValue));
-                            memStream2.WriteByte((byte)(num3 & byte.MaxValue));
-                            if (num4 != 0 || num5 != 0)
+                            else
                             {
-                                memStream2.WriteByte((byte)(num4 & byte.MaxValue));
-                                memStream2.WriteByte((byte)(num5 & byte.MaxValue));
+                                memStream2.WriteByte(0);
+                                memStream2.WriteByte((byte)Math.Abs(card.Fusions.Count - 511));
+                            }
+                            for (int i = 0; i < card.Fusions.Count; ++i)
+                            {
+                                int num2 = card.Fusions[i].Cards2 + 1 & byte.MaxValue;
+                                int num3 = card.Fusions[i].Result + 1 & byte.MaxValue;
+                                int num4 = 0;
+                                int num5 = 0;
+                                int num6 = card.Fusions[i].Cards2 + 1 >> 8 & 3 | (card.Fusions[i].Result + 1 >> 8 & 3) << 2;
+                                if (i < card.Fusions.Count - 1)
+                                {
+                                    num4 = card.Fusions[i + 1].Cards2 + 1 & byte.MaxValue;
+                                    num5 = card.Fusions[i + 1].Result + 1 & byte.MaxValue;
+                                    num6 |= (card.Fusions[i + 1].Cards2 + 1 >> 8 & 3) << 4 |
+                                            (card.Fusions[i + 1].Result + 1 >> 8 & 3) << 6;
+                                    ++i;
+                                }
+                                memStream2.WriteByte((byte)(num6 & byte.MaxValue));
+                                memStream2.WriteByte((byte)(num2 & byte.MaxValue));
+                                memStream2.WriteByte((byte)(num3 & byte.MaxValue));
+                                if (num4 != 0 || num5 != 0)
+                                {
+                                    memStream2.WriteByte((byte)(num4 & byte.MaxValue));
+                                    memStream2.WriteByte((byte)(num5 & byte.MaxValue));
+                                }
                             }
                         }
                     }
+                    while (memStream2.Position < 64092L)
+                    {
+                        memStream2.WriteByte(238);
+                    }
+
+                    foreach (int num in numArray)
+                    {
+                        fileStream.Position = num;
+                        var mem_arr1 = memStream1.ToArray();
+                        var mem_arr2 = memStream2.ToArray();
+                        fileStream.Write(mem_arr1, 0, mem_arr1.Length);
+                        fileStream.Write(mem_arr2, 0, mem_arr2.Length);
+                    }
+
+                    // Close memorystream after use
+                    memStream2.Close();
+                    memStream1.Close();
                 }
             }
-
-            while (memStream2.Position < 64092L)
-            {
-                memStream2.WriteByte(238);
-            }
-
-            foreach (int num in numArray)
-            {
-                fileStream.Position = num;
-                fileStream.Write(memStream1.ToArray(), 0, 1444);
-                fileStream.Write(memStream2.ToArray(), 0, 64092);
-            }
-
-            // Close file and memorystream after use
-            fileStream.Close();
-            memStream2.Close();
-            memStream1.Close();
 
             // Randomize ATK/DEF, Guardian Stars, Types, Attributes
             if (Static.RandomAtkdef || Static.RandomGuardianStars || Static.RandomTypes || Static.RandomAttributes)
@@ -377,7 +437,8 @@ namespace FMLib.Randomizer
                                         (Static.Cards[i].GuardianStar1 & 15) << 22 | (Static.Cards[i].Type & 31) << 26;
                             memoryStream.Write(value.Int32ToByteArray(), 0, 4);
                         }
-                        fileStreamSl.Write(memoryStream.ToArray(), 0, 2888);
+                        var arr = memoryStream.ToArray();
+                        fileStreamSl.Write(arr, 0, arr.Length);
                     }
                 }
             }
@@ -403,7 +464,8 @@ namespace FMLib.Randomizer
                                     short value = (short)t;
                                     memoryStream.Write(value.Int16ToByteArray(), 0, 2);
                                 }
-                                duelistStream.Write(memoryStream.ToArray(), 0, 1444);
+                                var arr = memoryStream.ToArray();
+                                duelistStream.Write(arr, 0, arr.Length);
                             }
                         }
 
@@ -419,7 +481,8 @@ namespace FMLib.Randomizer
                                     short value2 = (short)t;
                                     memoryStream2.Write(value2.Int16ToByteArray(), 0, 2);
                                 }
-                                duelistStream.Write(memoryStream2.ToArray(), 0, 1444);
+                                var arr = memoryStream2.ToArray();
+                                duelistStream.Write(arr, 0, arr.Length);
                             }
                             duelistStream.Position = num + 2920;
                             using (MemoryStream memoryStream3 = new MemoryStream(1444))
@@ -430,7 +493,8 @@ namespace FMLib.Randomizer
                                     short value3 = (short)t;
                                     memoryStream3.Write(value3.Int16ToByteArray(), 0, 2);
                                 }
-                                duelistStream.Write(memoryStream3.ToArray(), 0, 1444);
+                                var arr = memoryStream3.ToArray();
+                                duelistStream.Write(arr, 0, arr.Length);
                             }
                             duelistStream.Position = num + 4380;
                             using (MemoryStream memoryStream4 = new MemoryStream(1444))
@@ -441,8 +505,39 @@ namespace FMLib.Randomizer
                                     short value4 = (short)t;
                                     memoryStream4.Write(value4.Int16ToByteArray(), 0, 2);
                                 }
-                                duelistStream.Write(memoryStream4.ToArray(), 0, 1444);
+                                var arr = memoryStream4.ToArray();
+                                duelistStream.Write(arr, 0, arr.Length);
                             }
+                        }
+                    }
+                }
+            }
+
+            if (Static.RandomStarchips)
+            {
+                using (FileStream starchipStream = new FileStream(Static.WaPath, FileMode.Open))
+                {
+                    starchipStream.Position = 0xFB9808;
+                    for (var i = 0; i < 722; ++i)
+                    {
+                        var cost_arr = Static.Cards[i].Starchip.Cost.Int32ToByteArray();
+                        var pass_arr = Static.Cards[i].Starchip.PasswordStr.StringToByteArray();
+                        var offset = 0;
+                        for (var j = cost_arr.Length - 2; j >= 0; --j)
+                        {
+                            if (cost_arr[j] == 0) offset++;
+                            else break;
+                        }
+                        for (var j = 0; j < cost_arr.Length - offset - 1; ++j)
+                        {
+                            starchipStream.WriteByte(cost_arr[j]);
+                        }
+                        for (var j = 0; j < offset; ++j) starchipStream.WriteByte(0);
+                        // Advance over unused byte
+                        starchipStream.Position += 1;
+                        for (var j = pass_arr.Length - 1; j >= 0; --j)
+                        {
+                            starchipStream.WriteByte(pass_arr[j]);
                         }
                     }
                 }
@@ -453,16 +548,16 @@ namespace FMLib.Randomizer
         /// <summary>
         /// 
         /// </summary>
-        public void WriteLogFile()
+        public void WriteFusionSpoilerFile()
         {
-            if (!File.Exists($@"scramblelog_#{_seed}.log"))
+            if (!File.Exists($@"fusions_spoiler_#{_seed}.log"))
             {
-                File.CreateText($"scramblelog_#{_seed}.log").Close();
+                File.CreateText($"fusions_spoiler_#{_seed}.log").Close();
             }
 
-            StreamWriter logStream = new StreamWriter($@"scramblelog_#{_seed}.log");
+            StreamWriter logStream = new StreamWriter($@"fusions_spoiler_#{_seed}.log");
 
-            logStream.WriteLine("== YU-GI-OH! Forbidden Memories Fusion Scrambler Log Output ==");
+            logStream.WriteLine("== YU-GI-OH! Forbidden Memories Fusion Scrambler Spoiler File ==");
             logStream.WriteLine($"== Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} ==");
             logStream.WriteLine("====================================================================\r\n");
 
@@ -480,18 +575,91 @@ namespace FMLib.Randomizer
             logStream.Close();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public void WriteStarchipSpoilerFile()
+        {
+            if (!File.Exists($@"starchip_spoiler_#{_seed}.log"))
+            {
+                File.CreateText($"starchip_spoiler_#{_seed}.log").Close();
+            }
+
+            StreamWriter logStream = new StreamWriter($@"starchip_spoiler_#{_seed}.log");
+
+            logStream.WriteLine("== YU-GI-OH! Forbidden Memories Starchip Scrambler Spoiler File ==");
+            logStream.WriteLine($"== Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} ==");
+            logStream.WriteLine("====================================================================\r\n");
+
+            foreach (Card c in Static.Cards)
+            {
+                logStream.WriteLine($"    => #{c.Id} {c.Name}");
+                logStream.WriteLine($"        Cost: {c.Starchip.Cost} Password: {c.Starchip.PasswordStr}");
+            }
+
+            logStream.Close();
+        }
 
         /// <summary>
         /// 
         /// </summary>
-        public void WriteHtmlLogFile()
+        public void WriteDropsSpoilerFile()
         {
-            if (!File.Exists($@"scramblelog_#{_seed}.html"))
+            if (!File.Exists($@"drops_spoiler_#{_seed}.log"))
             {
-                File.CreateText($"scramblelog_#{_seed}.html").Close();
+                File.CreateText($"drops_spoiler_#{_seed}.log").Close();
             }
 
-            StreamWriter logStream = new StreamWriter($@"scramblelog_#{_seed}.html");
+            StreamWriter logStream = new StreamWriter($@"drops_spoiler_#{_seed}.log");
+
+            logStream.WriteLine("== YU-GI-OH! Forbidden Memories Drops Scrambler Spoiler File ==");
+            logStream.WriteLine($"== Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} ==");
+            logStream.WriteLine("====================================================================\r\n");
+
+            foreach (Duelist d in Static.Duelist)
+            {
+                logStream.WriteLine("====================================================================");
+                logStream.WriteLine($"{d.Name} S/A-Tec drops");
+                foreach (Card c in Static.Cards)
+                {
+                    logStream.WriteLine($"    => #{c.Id} {c.Name}");
+                    logStream.WriteLine($"        Rate: {d.Drop.SaTec[c.Id - 1]}/2048");
+                }
+
+                logStream.WriteLine();
+                logStream.WriteLine("====================================================================");
+                logStream.WriteLine($"{d.Name} B/C/D drops");
+                foreach (Card c in Static.Cards)
+                {
+                    logStream.WriteLine($"    => #{c.Id} {c.Name}");
+                    logStream.WriteLine($"        Rate: {d.Drop.BcdPow[c.Id-1]}/2048");
+                }
+
+                logStream.WriteLine();
+                logStream.WriteLine("====================================================================");
+                logStream.WriteLine($"{d.Name} S/A-Pow drops");
+                foreach (Card c in Static.Cards)
+                {
+                    logStream.WriteLine($"    => #{c.Id} {c.Name}");
+                    logStream.WriteLine($"        Rate: {d.Drop.SaPow[c.Id - 1]}/2048");
+                }
+            }
+
+            logStream.Close();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void WriteHtmlFusionSpoilerFile()
+        {
+            if (!File.Exists($@"fusions_spoiler_#{_seed}.html"))
+            {
+                File.CreateText($"fusions_spoiler_#{_seed}.html").Close();
+            }
+
+            StreamWriter logStream = new StreamWriter($@"fusions_spoiler_#{_seed}.html");
 
             string template =
                 $@"<!DOCTYPE html>
@@ -515,21 +683,6 @@ namespace FMLib.Randomizer
                 <body>
                 <div style=\""width: 100 %; text-align: center;\"">";
 
-            string table1Template =
-                @"<span style=\""text-align: center; font-size: 120%; font-weight: bold; margin-bottom: 5px;\"">Changed Cards</span>
-                  <table>
-                    <thead>
-                    <tr>
-                        <th style=\""width: 5%;\"">ID</th>
-                        <th style=\""width: 25%;\"">Name</th>
-                        <th style=\""width: 10%;\"">Attack/Defense</th>
-                        <th style=\""width: 15%;\"">Guardian Stars</th>
-                        <th style=\""width: 10%;\"">Attribute</th>
-                        <th style=\""width: 10%;\"">Type</th>
-                   </tr>
-                   </thead>
-                 <tbody>";
-
             string table2Template =
                 @"<span style=\""text-align: center; font-size: 120%; font-weight: bold; margin-bottom: 5px;\"">Changed Fusions</span>
                   <table>
@@ -546,23 +699,20 @@ namespace FMLib.Randomizer
             <tbody>";
             string tmpFusions = "";
 
-            logStream.WriteLine(template + $" <h1>YU-GI-OH! Forbidden Memories Fusion Scrambler Log Output</h1> <h4>Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion}</h4>");
-            logStream.WriteLine(table1Template);
+            logStream.WriteLine(template + $" <h1>YU-GI-OH! Forbidden Memories Fusion Scrambler Spoiler File</h1> <h4>Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion}</h4>");
 
             foreach (Card c in Static.Cards)
             {
-                logStream.WriteLine($"<tr><td>#{c.Id}</td> <td>{c.Name}</td> <td>{c.Attack}/{c.Defense}</td> <td>{c.GuardianStar1}/{c.GuardianStar2}</td> <td>{c.Attribute}</td> <td>{c.Type}</td></tr>");
-
                 foreach (Fusion fus in c.Fusions)
                 {
                     tmpFusions += "<tr>";
                     tmpFusions += $"<td>{fus.Cards1}</td> <td>{(fus.Cards1 > 722 ? "Glitch!" : Static.Cards.Single(card => card.Id == fus.Cards1).Name)}</td> <td>{fus.Cards2}</td> <td>{(fus.Cards2 > 722 ? "Glitch!" : Static.Cards.Single(card => card.Id == fus.Cards2).Name)}</td> <td>{fus.Result}</td> <td>{(fus.Result > 722 ? "Glitch!" : Static.Cards.Single(card => card.Id == fus.Result).Name)}</td></tr>";
                 }
             }
-            logStream.WriteLine("</tbody></table><br />");
+            //logStream.WriteLine("</tbody></table><br />");
             logStream.WriteLine(table2Template);
             Console.WriteLine("Writing tmpFusions");
-            logStream.WriteLineAsync(tmpFusions).RunSynchronously();
+            logStream.WriteLine(tmpFusions);
             logStream.WriteLine("</tbody></table></div></body></html>");
             logStream.Close();
         }
@@ -575,19 +725,24 @@ namespace FMLib.Randomizer
         /// <param name="maxAtk"></param>
         /// <param name="minDef"></param>
         /// <param name="maxDef"></param>
-        /// <param name="log"></param>
+        /// <param name="minCost"></param>
+        /// <param name="maxCost"></param>
         /// <returns></returns>
-        public bool PerformScrambling(int minAtk = 0, int maxAtk = 0, int minDef = 0, int maxDef = 0, bool log = true)
+        public bool PerformScrambling(int minAtk = 0, int maxAtk = 0, int minDef = 0, int maxDef = 0, int minCost = 0, int maxCost = 999999, int minDropRate = 1, int maxDropRate = 1)
         {
             LoadDataFromSlus();
             LoadDataFromWaMrg();
             RandomizeFusions();
-            RandomizeCardInfo(minAtk, maxAtk, minDef, maxDef);
-            RandomizeCardDrops();
+            RandomizeCardInfo(minAtk, maxAtk, minDef, maxDef, minCost, maxCost);
+            RandomizeCardDrops(minDropRate, maxDropRate);
             RandomizeDuelistDecks();
             WriteChangesToFile();
-            if (log)
-                WriteLogFile();
+            if (Static.Spoiler)
+            {
+                if (Static.RandomFusions) { WriteFusionSpoilerFile(); /*WriteHtmlFusionSpoilerFile();*/ }
+                if (Static.RandomStarchips) WriteStarchipSpoilerFile();
+                if (Static.RandomCardDrops) WriteDropsSpoilerFile();
+            }
 
             return true;
         }

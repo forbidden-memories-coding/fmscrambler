@@ -74,7 +74,8 @@ namespace FMScrambler
             Dispatcher.CurrentDispatcher.Invoke(() =>
                 {
                     fileHandler.PerformScrambling((int) txt_minAtk.Value, (int) txt_maxAtk.Value,
-                        (int) txt_minDef.Value, (int) txt_maxDef.Value);
+                        (int) txt_minDef.Value, (int) txt_maxDef.Value, (int) txt_minCost.Value,
+                        (int) txt_maxCost.Value, (int) txt_minDropRate.Value, (int) txt_maxDropRate.Value);
                 });
 
             MessageBox.Show("Done scrambling, you may proceed with patching your game ISO now. A logfile was created in the tools directory as well.",
@@ -94,6 +95,7 @@ namespace FMScrambler
         {
             txt_seed.Text = _rnd.Next(10000, 214748364).ToString();
             txt_seed.Focus();
+
         }
 
         private async void btn_patchiso_Click(object sender, RoutedEventArgs e)
@@ -151,6 +153,7 @@ namespace FMScrambler
         private void txt_seed_Initialized(object sender, EventArgs e)
         {
             txt_seed.Text = _rnd.Next(10000, 214748364).ToString();
+            _prevSeedText = txt_seed.Text;
             txt_seed.Focus();
         }
 
@@ -227,11 +230,25 @@ namespace FMScrambler
                         break;
                 }
             }
+            LabelUpdateSeed();
+        }
+
+        private void LabelUpdateSeed()
+        {
+            if (lbl_isoExample != null)
+            {
+                var content = (string)lbl_isoExample.Content;
+                var offset = content.IndexOf('[') + 1;
+                content = content.Remove(offset, content.IndexOf(']') - offset);
+                content = content.Insert(offset, txt_seed.Text);
+                lbl_isoExample.Content = content;
+            }
         }
     
         private void MetroWindow_Initialized(object sender, EventArgs e)
         {
             Title = $"YGO! FM Fusion Scrambler Tool - {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} {Meta.VersionInfo}";
+            lbl_isoExample.Content = $"fmscrambler[{txt_seed.Text}].bin";
         }
 
         private void btn_loadiso1_Click(object sender, RoutedEventArgs e)

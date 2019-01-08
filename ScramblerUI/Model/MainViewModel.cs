@@ -19,14 +19,20 @@ namespace FMScrambler.Model
         private bool _checkboxAttackDefenseRandomizing;
         private bool _checkboxGlitchCards;
         private bool _checkboxRandomEquips;
-        private bool _checkboxRandomFusions = true;
+        private bool _checkboxRandomFusions;
+        private bool _checkboxRandomStarchips;
         private int _textboxMinAttack = 1000;
         private int _textboxMaxAttack = 3000;
         private int _textboxMinDefense = 1000;
         private int _textboxMaxDefense = 3000;
+        private int _textboxMinCost = 0;
+        private int _textboxMaxCost = 999999;
+        private int _textboxMinDropRate = 1;
+        private int _textboxMaxDropRate = 1;
         private bool _checkboxIsoSeed = true;
         private bool _checkboxIsoDate;
         private bool _checkboxIsoOptions;
+        private bool _checkboxSpoilerFiles = true;
         private string _labelIsoExample = "fmscrambler[12345678].bin";
 
         public string LabelPath
@@ -57,6 +63,7 @@ namespace FMScrambler.Model
                 _checkboxRandomAttributes = value;
                 Static.RandomAttributes = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("CheckboxRandomAttributes"));
+                onIsoCheckbox();
             }
         }
 
@@ -68,6 +75,7 @@ namespace FMScrambler.Model
                 _checkboxRandomTypes = value;
                 Static.RandomTypes = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("CheckboxRandomTypes"));
+                onIsoCheckbox();
             }
         }
 
@@ -79,6 +87,7 @@ namespace FMScrambler.Model
                 _checkboxRandomGuardianStars = value;
                 Static.RandomGuardianStars = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("CheckboxRandomGuardianStars"));
+                onIsoCheckbox();
             }
         }
 
@@ -90,6 +99,7 @@ namespace FMScrambler.Model
                 _checkboxGlitchGuardianStars = value;
                 Static.GlitchGuardianStars = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("CheckboxGlitchGuardianStars"));
+                onIsoCheckbox();
             }
         }
 
@@ -101,6 +111,7 @@ namespace FMScrambler.Model
                 _checkboxRandomCardDrops = value;
                 Static.RandomCardDrops = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("CheckboxRandomCardDrops"));
+                onIsoCheckbox();
             }
         }
 
@@ -112,6 +123,7 @@ namespace FMScrambler.Model
                 _checkboxRandomDecks = value;
                 Static.RandomDecks = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("CheckboxRandomDecks"));
+                onIsoCheckbox();
             }
         }
 
@@ -123,6 +135,7 @@ namespace FMScrambler.Model
                 _checkboxAttackDefenseRandomizing = value;
                 Static.RandomAtkdef = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("CheckboxAttackDefenseRandomizing"));
+                onIsoCheckbox();
             }
         }
 
@@ -134,6 +147,7 @@ namespace FMScrambler.Model
                 _checkboxGlitchCards = value;
                 Static.GlitchFusions = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("CheckboxGlitchCards"));
+                onIsoCheckbox();
             }
         }
 
@@ -145,6 +159,7 @@ namespace FMScrambler.Model
                 _checkboxRandomEquips = value;
                 Static.RandomEquips = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("CheckboxRandomEquips"));
+                onIsoCheckbox();
             }
         }
 
@@ -156,6 +171,19 @@ namespace FMScrambler.Model
                 _checkboxRandomFusions = value;
                 Static.RandomFusions = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("CheckboxRandomFusions"));
+                onIsoCheckbox();
+            }
+        }
+
+        public bool CheckboxRandomStarchips
+        {
+            get => _checkboxRandomStarchips;
+            set
+            {
+                _checkboxRandomStarchips = value;
+                Static.RandomStarchips = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("CheckboxRandomStarchips"));
+                onIsoCheckbox();
             }
         }
 
@@ -199,6 +227,46 @@ namespace FMScrambler.Model
             }
         }
 
+        public int TextboxMinCost
+        {
+            get => _textboxMinCost;
+            set
+            {
+                _textboxMinCost = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("TextboxMinCost"));
+            }
+        }
+
+        public int TextboxMaxCost
+        {
+            get => _textboxMaxCost;
+            set
+            {
+                _textboxMaxCost = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("TextboxMaxCost"));
+            }
+        }
+
+        public int TextboxMinDropRate
+        {
+            get => _textboxMinDropRate;
+            set
+            {
+                _textboxMinDropRate = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("TextboxMinDropRate"));
+            }
+        }
+
+        public int TextboxMaxDropRate
+        {
+            get => _textboxMaxDropRate;
+            set
+            {
+                _textboxMaxDropRate = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("TextboxMaxDropRate"));
+            }
+        }
+
         public string VersionMeta => $"{Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} {Meta.VersionInfo}";
 
         public bool CheckboxIsoSeed
@@ -234,6 +302,16 @@ namespace FMScrambler.Model
             }
         }
 
+        public bool CheckboxSpoilerFiles
+        {
+            get => _checkboxSpoilerFiles;
+            set
+            {
+                _checkboxSpoilerFiles = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("CheckboxSpoilerFiles"));
+            }
+        }
+
         public string LabelIsoExample
         {
             get => _labelIsoExample;
@@ -250,9 +328,24 @@ namespace FMScrambler.Model
 
             LabelIsoExample = "fmscrambler";
 
-            if (CheckboxIsoSeed) LabelIsoExample += "[12345678]";
-            if (CheckboxIsoOptions) LabelIsoExample += "[Fusions][ATKDEF][Drops]";
-            if (CheckboxIsoDate) LabelIsoExample += "[2018-01-01]";
+            if (CheckboxIsoSeed) LabelIsoExample += $"[{_textboxSeed}]";
+            if (CheckboxIsoOptions)
+            {
+                var options_str = "";
+                if (Static.RandomAtkdef) options_str += "[ATKDEF]";
+                if (Static.RandomAttributes) options_str += "[Attributes]";
+                if (Static.RandomCardDrops) options_str += "[Drops]";
+                if (Static.RandomDecks) options_str += "[Decks]";
+                if (Static.RandomEquips) options_str += "[Equips]";
+                if (Static.RandomFusions) options_str += "[Fusions]";
+                if (Static.RandomGuardianStars) options_str += "[Guardian_Stars]";
+                if (Static.RandomTypes) options_str += "[Types]";
+                if (Static.RandomStarchips) options_str += "[Starchips]";
+                LabelIsoExample += options_str;
+            }
+            if (CheckboxIsoDate) LabelIsoExample += $"[{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.Day}]";
+
+            Static.RandomizerFileName = LabelIsoExample;
 
             LabelIsoExample += ".bin";
         }

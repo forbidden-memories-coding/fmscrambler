@@ -55,32 +55,58 @@
                     </LinearGradientBrush>
                 </TabItem.Background>
                 <Grid Background="#FFE5E5E5">
-                    <GroupBox x:Name="grp_more1" Header="Options" HorizontalAlignment="Left" Height="256" Margin="10,10,0,0" VerticalAlignment="Top" Width="409" Background="#CC119EDA" Controls:ControlsHelper.HeaderFontSize="13" Controls:ControlsHelper.HeaderFontWeight="Medium">
-                        <Grid Margin="0,0,-2,-2">
+                    <GroupBox x:Name="grp_more1" Header="Options" HorizontalAlignment="Left" Height="256" Margin="10,10,0,0" VerticalAlignment="Top" Width="409" Background="#CC119EDA" Controls:ControlsHelper.HeaderFontSize="13" Controls:ControlsHelper.HeaderFontWeight="Medium" FontWeight="Bold">
+                        <Grid Margin="0,0,-2,5">
                             <CheckBox x:Name="chk_randomattributes" Content="Randomize Attributes" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="{Binding CheckboxRandomAttributes, Mode=TwoWay}" />
                             <CheckBox x:Name="chk_randomtypes" Content="Randomize Types" HorizontalAlignment="Left" Margin="210,0,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxRandomTypes, Mode=TwoWay}" />
                             <CheckBox x:Name="chk_randomguardianstars" Content="Randomize Guardian Stars" HorizontalAlignment="Left" Margin="0,23,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxRandomGuardianStars, Mode=TwoWay}" />
                             <CheckBox x:Name="chk_glitchgs" Content="Allow Glitch Guardian Stars" HorizontalAlignment="Left" Margin="0,46,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxGlitchGuardianStars, Mode=TwoWay}" />
                             <CheckBox x:Name="chk_randomdrops" Content="Randomize Card Drops" HorizontalAlignment="Left" Margin="210,23,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxRandomCardDrops, Mode=TwoWay}"/>
                             <CheckBox x:Name="chk_randomdecks" Content="Randomize Duelist Decks" HorizontalAlignment="Left" Margin="210,46,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxRandomDecks, Mode=TwoWay}"/>
-                            <CheckBox x:Name="chk_atkdefenabled" Content="Enable ATK/DEF scramble" HorizontalAlignment="Left" Margin="0,68,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxAttackDefenseRandomizing, Mode=TwoWay}" Width="210" FontFamily="Segoe UI"/>
+                            <CheckBox x:Name="chk_atkdefenabled" Content="Enable ATK/DEF Scramble" HorizontalAlignment="Left" Margin="0,68,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxAttackDefenseRandomizing, Mode=TwoWay}" Width="210" FontFamily="Segoe UI"/>
                             <CheckBox x:Name="ch_glitch" Content="&quot;000&quot; Glitch Fusions" Margin="0,91,0,0" IsChecked="{Binding CheckboxGlitchCards, Mode=TwoWay}" FontFamily="Segoe UI" VerticalAlignment="Top" ToolTip="Allow glitchy fusions with an ID over 722." RenderTransformOrigin="0.244,-2.056" HorizontalAlignment="Left" Width="195"/>
                             <CheckBox x:Name="chk_randomequips" Content="Randomize Equips" HorizontalAlignment="Left" Margin="210,69,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxRandomEquips, Mode=TwoWay}"/>
                             <CheckBox x:Name="chk_randomfusion" Content="Randomize Fusions" HorizontalAlignment="Left" Margin="210,92,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxRandomFusions, FallbackValue=True, Mode=TwoWay}"/>
+                            <CheckBox x:Name="chk_randomstarchips" Content="Randomize Starchip Costs" HorizontalAlignment="Left" Margin="210,115,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxRandomStarchips, Mode=TwoWay}"/>
+                            <GroupBox Header="Drop date" HorizontalAlignment="Left" Height="61" Margin="10,164,0,-10" VerticalAlignment="Top" Width="381" IsEnabled="{Binding CheckboxRandomCardDrops, Mode=OneWay}">
+                                <Grid HorizontalAlignment="Left" Height="56" Margin="0,-27,0,-3" VerticalAlignment="Top" Width="381">
+                                    <Controls:NumericUpDown x:Name="txt_maxDropRate" HorizontalAlignment="Left" Margin="251,30,0,0" VerticalAlignment="Top" Width="120" HasDecimals="False" Maximum="2048" Minimum="1" NumericInputMode="Numbers" SnapToMultipleOfInterval="True" Value="{Binding TextboxMaxDropRate, Mode=TwoWay}"/>
+                                    <Controls:NumericUpDown x:Name="txt_minDropRate" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" HasDecimals="False" Maximum="2048" Minimum="1" NumericInputMode="Numbers" SnapToMultipleOfInterval="True" Value="{Binding TextboxMinDropRate, Mode=TwoWay}" Margin="53,30,0,0"/>
+                                    <Label Content="Max rate" HorizontalAlignment="Left" Margin="191,30,0,0" VerticalAlignment="Top"/>
+                                    <Label Content="Min rate" HorizontalAlignment="Left" Margin="-5,30,0,0" VerticalAlignment="Top"/>
+                                </Grid>
+                            </GroupBox>
                         </Grid>
                     </GroupBox>
-                    <GroupBox x:Name="grp_atkdef" Header="ATK/DEF Options" HorizontalAlignment="Left" Height="175" Margin="424,10,0,0" VerticalAlignment="Top" Width="324" Controls:ControlsHelper.HeaderFontSize="13" Controls:ControlsHelper.HeaderFontWeight="Medium" IsEnabled="{Binding CheckboxAttackDefenseRandomizing, Mode=OneWay}" MouseUp="grp_atkdef_MouseUp">
+                    <GroupBox x:Name="grp_atkdef" Header="ATK/DEF Options" HorizontalAlignment="Left" Height="161" Margin="424,10,0,0" VerticalAlignment="Top" Width="324" Controls:ControlsHelper.HeaderFontSize="13" Controls:ControlsHelper.HeaderFontWeight="Medium" IsEnabled="{Binding CheckboxAttackDefenseRandomizing, Mode=OneWay}" MouseUp="grp_atkdef_MouseUp" FontWeight="Bold">
                         <Grid x:Name="grid_grpatkdef" Height="141" Width="314" UseLayoutRounding="False" Margin="0" >
-                            <Label Content="Attack Value" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="111,0,0,0" Width="88" Padding="1,2,0,2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                            <Label Content="Defense Value" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="111,66,0,0" Width="88" Padding="1,2"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="187*"/>
+                                <ColumnDefinition Width="7*"/>
+                                <ColumnDefinition Width="120*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Attack Value" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="111,0,0,0" Width="88" Padding="1,2,0,2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.ColumnSpan="3"/>
+                            <Label Content="Defense Value" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="111,66,0,0" Width="88" Padding="1,2" Grid.ColumnSpan="3"/>
                             <Label Content="Min. ATK" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,17,0,0" Width="120" Padding="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                            <Label Content="Max. ATK" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="184,17,0,0" Width="120" Padding="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                            <Label Content="Min. DEF" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,86,0,0" Width="120" Padding="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                            <Label Content="Max. DEF" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="184,86,0,0" Width="120" Padding="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Label Content="Max. ATK" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="184,17,0,0" Width="120" Padding="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.ColumnSpan="3"/>
+                            <Label Content="Min. DEF" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,81,0,0" Width="120" Padding="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Label Content="Max. DEF" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="184,81,0,0" Width="120" Padding="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.ColumnSpan="3"/>
                             <Controls:NumericUpDown x:Name="txt_minAtk" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="120" HasDecimals="False" Maximum="5500" Minimum="0" NumericInputMode="Numbers" SnapToMultipleOfInterval="True" Value="{Binding TextboxMinAttack, Mode=TwoWay}" />
-                            <Controls:NumericUpDown x:Name="txt_maxAtk" HorizontalAlignment="Left" Margin="184,35,0,0" VerticalAlignment="Top" Width="120" HasDecimals="False" Maximum="5500" Minimum="0" NumericInputMode="Numbers" SnapToMultipleOfInterval="True" Value="{Binding TextboxMaxAttack, Mode=TwoWay}"/>
-                            <Controls:NumericUpDown x:Name="txt_minDef" HorizontalAlignment="Left" Margin="10,104,0,-21" VerticalAlignment="Top" Width="120" HasDecimals="False" Maximum="5500" Minimum="0" NumericInputMode="Numbers" SnapToMultipleOfInterval="True" Value="{Binding TextboxMinDefense, Mode=TwoWay}"/>
-                            <Controls:NumericUpDown x:Name="txt_maxDef" HorizontalAlignment="Left" Margin="184,104,0,-21" VerticalAlignment="Top" Width="120" HasDecimals="False" Maximum="5500" Minimum="0" NumericInputMode="Numbers" SnapToMultipleOfInterval="True" Value="{Binding TextboxMaxDefense, Mode=TwoWay}"/>
+                            <Controls:NumericUpDown x:Name="txt_maxAtk" HorizontalAlignment="Left" Margin="184,35,0,0" VerticalAlignment="Top" Width="120" HasDecimals="False" Maximum="5500" Minimum="0" NumericInputMode="Numbers" SnapToMultipleOfInterval="True" Value="{Binding TextboxMaxAttack, Mode=TwoWay}" Grid.ColumnSpan="3"/>
+                            <Controls:NumericUpDown x:Name="txt_minDef" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" Width="120" HasDecimals="False" Maximum="5500" Minimum="0" NumericInputMode="Numbers" SnapToMultipleOfInterval="True" Value="{Binding TextboxMinDefense, Mode=TwoWay}"/>
+                            <Controls:NumericUpDown x:Name="txt_maxDef" HorizontalAlignment="Left" Margin="184,99,0,0" VerticalAlignment="Top" Width="120" HasDecimals="False" Maximum="5500" Minimum="0" NumericInputMode="Numbers" SnapToMultipleOfInterval="True" Value="{Binding TextboxMaxDefense, Mode=TwoWay}" Grid.ColumnSpan="3"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="grp_strchipcost" Header="STARCHIP COSTS" HorizontalAlignment="Left" Height="90" Margin="424,176,0,0" VerticalAlignment="Top" Width="324" FontWeight="Bold" IsEnabled="{Binding CheckboxRandomStarchips, Mode=OneWay}">
+                        <Grid x:Name="grid_grstrchipcost" HorizontalAlignment="Left" Height="66" Margin="10,0,0,-1" VerticalAlignment="Top" Width="300">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="41*"/>
+                                <ColumnDefinition Width="9*"/>
+                            </Grid.ColumnDefinitions>
+                            <Controls:NumericUpDown x:Name="txt_maxCost" HorizontalAlignment="Left" Margin="180,30,0,0" VerticalAlignment="Top" Width="120" HasDecimals="False" Maximum="999999" Minimum="0" NumericInputMode="Numbers" SnapToMultipleOfInterval="True" Value="{Binding TextboxMaxCost, Mode=TwoWay}" Grid.ColumnSpan="2"/>
+                            <Controls:NumericUpDown x:Name="txt_minCost" HorizontalAlignment="Left" Margin="0,30,0,0" VerticalAlignment="Top" Width="120" HasDecimals="False" Maximum="999999" Minimum="0" NumericInputMode="Numbers" SnapToMultipleOfInterval="True" Value="{Binding TextboxMinCost, Mode=TwoWay}"/>
+                            <Label Content="Min cost" HorizontalAlignment="Left" Margin="0,4,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.007,-0.171" Width="120" HorizontalContentAlignment="Center"/>
+                            <Label Content="Max cost" HorizontalAlignment="Left" Margin="180,4,0,0" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" Grid.ColumnSpan="2"/>
                         </Grid>
                     </GroupBox>
                 </Grid>
@@ -99,7 +125,8 @@
                             <CheckBox x:Name="chk_isoSeed" Content="Seed" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxIsoSeed, Mode=TwoWay}"/>
                             <CheckBox x:Name="chk_isoDate" Content="Date" HorizontalAlignment="Left" Margin="65,10,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxIsoDate, Mode=TwoWay}"/>
                             <CheckBox x:Name="chk_isoOptions" Content="Options" HorizontalAlignment="Left" Margin="128,10,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxIsoOptions, Mode=TwoWay}"/>
-                            <Label x:Name="lbl_isoExample" Content="{Binding LabelIsoExample, Mode=OneWay}" HorizontalAlignment="Left" Margin="65,33,0,0" VerticalAlignment="Top" Width="468" Height="26" Padding="1,5"/>
+                            <Label x:Name="lbl_isoExample" Content="{Binding LabelIsoExample, Mode=TwoWay}" HorizontalAlignment="Left" Margin="65,33,0,0" VerticalAlignment="Top" Width="663" Height="26" Padding="1,5"/>
+                            <CheckBox Content="Spoiler files" HorizontalAlignment="Left" Margin="199,10,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckboxSpoilerFiles, Mode=TwoWay}"/>
                         </Grid>
                     </GroupBox>
                 </Grid>

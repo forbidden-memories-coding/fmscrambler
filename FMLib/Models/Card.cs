@@ -73,13 +73,8 @@ namespace FMLib.Models
         public Ritual Rituals { get; set; }
 
         /// <summary>
-        /// Starchip cost of the Card as Integer
+        /// Starchip information on the card Cost/Password
         /// </summary>
-        public int Starchips { get; set; }
-
-        /// <summary>
-        /// Password of the Card as String
-        /// </summary>
-        public string Code { get; set; }
+        public Starchips Starchip { get; set; }
     }
 }

@@ -61,7 +61,7 @@ namespace FMLib.Utility
             }
 
             byte[] buffer = new byte[length];
-            ms.Read(buffer, 0, length);
+            ms.Read(buffer, offset, length);
             return buffer;
         }
 
@@ -140,6 +140,24 @@ namespace FMLib.Utility
         }
 
         /// <summary>
+        /// Convert string to byte array, must have Length % 2 = 0
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static byte[] StringToByteArray(this string str)
+        {
+            var bytes_amt = str.Length / 2;
+            var byte_arr = new byte[bytes_amt];
+            var byte_ind = 0;
+            for(var i = 0; i < str.Length; i += 2)
+            {
+                byte.TryParse(str.Substring(i, 2), System.Globalization.NumberStyles.AllowHexSpecifier, null, out byte res);
+                byte_arr[byte_ind++] = res;
+            }
+            return byte_arr;
+        }
+
+        /// <summary>
         /// Integer16 to Byte Array
         /// </summary>
         /// <param name="value">As short</param>
@@ -173,6 +191,25 @@ namespace FMLib.Utility
 
             return self;
 
+        }
+
+        /// <summary>
+        /// Read integer from memory stream
+        /// </summary>
+        /// <param name="ms"></param>
+        /// <param name="changePos"></param>
+        /// <param name="newPos"></param>
+        /// <returns></returns>
+        public static int ReadInt32(this MemoryStream ms, bool changePos = false, int newPos = 0)
+        {
+            if (changePos) ms.Position = newPos;
+
+            byte[] bytes = new byte[4];
+            bytes[3] = (byte)ms.ReadByte();
+            bytes[2] = (byte)ms.ReadByte();
+            bytes[1] = (byte)ms.ReadByte();
+            bytes[0] = (byte)ms.ReadByte();
+            return bytes.ExtractInt32();
         }
 
         /// <summary>

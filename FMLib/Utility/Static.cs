@@ -13,7 +13,7 @@ namespace FMLib.Utility
         /// Options (true / false)
         /// </summary>
 
-        public static bool RandomFusions = true;
+        public static bool RandomFusions = false;
         /// <summary>
         /// 
         /// </summary>
@@ -34,6 +34,10 @@ namespace FMLib.Utility
         /// 
         /// </summary>
         public static bool RandomTypes = false;
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool RandomStarchips = false;
         /// <summary>
         /// 
         /// </summary>
@@ -58,6 +62,10 @@ namespace FMLib.Utility
         /// 
         /// </summary>
         public static bool RandomAtkdef = false;
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool Spoiler = true;
 
         /// <summary>
         /// Count of Cards as Integer
