@@ -73,7 +73,10 @@ namespace FMLib.Randomizer
 
             var output_dir = Static.IsoPath.Substring(0, Static.IsoPath.LastIndexOf('\\'));
 
-            File.Move(Static.IsoPath, $"{output_dir}\\{Static.RandomizerFileName}.bin");
+            if (Static.UsedIso)
+                File.Copy(Static.IsoPath, $"{output_dir}\\{Static.RandomizerFileName}.bin");
+            else
+                File.Move(Static.IsoPath, $"{output_dir}\\{Static.RandomizerFileName}.bin");
 
             Static.IsoPath = $"{output_dir}\\{Static.RandomizerFileName}.bin";
             string[] cueTemplate = {$"FILE \"{Static.RandomizerFileName}.bin\" BINARY", "  TRACK 01 MODE2/2352", "    INDEX 01 00:00:00" };

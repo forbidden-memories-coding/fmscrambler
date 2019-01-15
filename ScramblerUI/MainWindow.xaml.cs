@@ -236,6 +236,7 @@ namespace FMScrambler
                 content = content.Remove(offset, content.IndexOf(']') - offset);
                 content = content.Insert(offset, txt_seed.Text);
                 lbl_isoExample.Content = content;
+                Static.RandomizerFileName = content.Substring(0, content.LastIndexOf('.'));
             }
         }
     
