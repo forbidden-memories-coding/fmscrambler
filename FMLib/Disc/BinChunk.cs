@@ -27,6 +27,11 @@ namespace FMLib.Disc
         /// <exception cref="ApplicationException"></exception>
         public void ExtractBin(string cueFileName)
         {
+            if (!Directory.Exists(Directory.GetCurrentDirectory() + @"\" + _outFileNameBase))
+            {
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\" + _outFileNameBase);
+            }
+            var save_dir = Directory.GetCurrentDirectory() + @"\" + _outFileNameBase;
             try
             {
                 CueFile cueFile;
@@ -43,7 +48,7 @@ namespace FMLib.Disc
                 Stream binStream;
                 try
                 {
-                    File.Copy(cueFile.BinFileName, Directory.GetCurrentDirectory()+@"\"+ _outFileNameBase + ".bin");
+                    File.Copy(cueFile.BinFileName, save_dir + @"\"+ _outFileNameBase + ".bin");
                     binStream = File.OpenRead(cueFile.BinFileName);
                 }
                 catch (Exception e)
@@ -86,11 +91,7 @@ namespace FMLib.Disc
                     Console.WriteLine(c);
                     if (c == @"\SLUS_014.11;1")
                     {
-                        if (!Directory.Exists(Directory.GetCurrentDirectory() + @"\" + _outFileNameBase))
-                        {
-                            Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\" + _outFileNameBase);
-                        }
-                        FileStream fs = File.Create(Directory.GetCurrentDirectory() + @"\" + _outFileNameBase + @"\SLUS_014.11");
+                        FileStream fs = File.Create(save_dir + @"\SLUS_014.11");
                         SparseStream isf = cd.OpenFile(c, FileMode.Open);
                         byte[] dat = new byte[isf.Length];
 
@@ -106,11 +107,7 @@ namespace FMLib.Disc
                         Console.WriteLine(e);
                         if (e == @"\DATA\WA_MRG.MRG;1" && !mrgdone)
                         {
-                            if (!Directory.Exists(Directory.GetCurrentDirectory() + @"\" + _outFileNameBase))
-                            {
-                                Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\" + _outFileNameBase);
-                            }
-                            FileStream fs = File.Create(Directory.GetCurrentDirectory() + @"\" + _outFileNameBase + @"\WA_MRG.MRG");
+                            FileStream fs = File.Create(save_dir + @"\WA_MRG.MRG");
                             SparseStream isf = cd.OpenFile(e, FileMode.Open);
                             byte[] dat = new byte[isf.Length];
                             int result = AsyncContext.Run(() => isf.ReadAsync(dat, 0, (int) isf.Length));
@@ -122,9 +119,9 @@ namespace FMLib.Disc
                         }
                     }
 
-                    Static.SlusPath = Directory.GetCurrentDirectory() + @"\" + _outFileNameBase + @"\SLUS_014.11";
-                    Static.WaPath = Directory.GetCurrentDirectory() + @"\" + _outFileNameBase + @"\WA_MRG.MRG";
-                    Static.IsoPath = Directory.GetCurrentDirectory() + @"\" + _outFileNameBase + ".bin";
+                    Static.SlusPath = save_dir + @"\SLUS_014.11";
+                    Static.WaPath = save_dir + @"\WA_MRG.MRG";
+                    Static.IsoPath = save_dir + @"\" + _outFileNameBase + ".bin";
 
                 }
                 isoStream.Close();
