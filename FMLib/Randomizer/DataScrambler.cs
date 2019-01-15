@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using FMLib.Models;
 using FMLib.Utility;
@@ -22,29 +23,6 @@ namespace FMLib.Randomizer
         /// <param name="seed"></param>
         public DataScrambler(int seed)
         {
-            StringReader strReader = new StringReader(File.ReadAllText(@"./CharacterTable.txt"));
-
-            string input;
-
-            while ((input = strReader.ReadLine()) != null)
-            {
-                Match match = Regex.Match(input, "^([A-Fa-f0-9]{2})\\=(.*)$");
-
-                if (!match.Success)
-                {
-                    continue;
-                }
-
-                char k1 = Convert.ToChar(match.Groups[2].ToString());
-                byte k2 = (byte)int.Parse(match.Groups[1].ToString(), NumberStyles.HexNumber);
-
-                Static.Dict.Add(k2, k1);
-
-                if (!Static.RDict.ContainsKey(k1))
-                {
-                    Static.RDict.Add(k1, k2);
-                }
-            }
 
             // Initialize RNG with the Seed
             _random = new Random(seed);
@@ -616,33 +594,61 @@ namespace FMLib.Randomizer
             logStream.WriteLine($"== Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} ==");
             logStream.WriteLine("====================================================================\r\n");
 
+            // Get drop map as well as sort by drop rate
+            Dictionary<Duelist, List<KeyValuePair<Card, int>>> get_drop_map(DropType dropType)
+            {
+                var drop_map = new Dictionary<Duelist, List<KeyValuePair<Card, int>>>();
+                foreach (Duelist d in Static.Duelist)
+                {
+                    var sorted_map = new List<KeyValuePair<Card, int>>();
+                    foreach (Card c in Static.Cards)
+                    {
+                        if (d.Drop.GetDropArray(dropType)[c.Id - 1] > 0)
+                        {
+                            sorted_map.Add(new KeyValuePair<Card, int>(c, d.Drop.GetDropArray(dropType)[c.Id - 1]));
+                        }
+                    }
+                    sorted_map.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
+                    drop_map.Add(d, sorted_map);
+                }
+                return drop_map;
+            }
+
+            var sap_d_map = get_drop_map(DropType.SAPOW);
+            var bcd_d_map = get_drop_map(DropType.BCDPOW);
+            var sat_d_map = get_drop_map(DropType.SATEC);
+
             foreach (Duelist d in Static.Duelist)
             {
                 logStream.WriteLine("====================================================================");
                 logStream.WriteLine($"{d.Name} S/A-Tec drops");
-                foreach (Card c in Static.Cards)
+                var drop_map = sat_d_map[d];
+                foreach (var p in drop_map)
                 {
-                    logStream.WriteLine($"    => #{c.Id} {c.Name}");
-                    logStream.WriteLine($"        Rate: {d.Drop.SaTec[c.Id - 1]}/2048");
+                    logStream.WriteLine($"    => #{p.Key.Id} {p.Key.Name}");
+                    logStream.WriteLine($"        Rate: {p.Value}/2048");
                 }
 
                 logStream.WriteLine();
                 logStream.WriteLine("====================================================================");
                 logStream.WriteLine($"{d.Name} B/C/D drops");
-                foreach (Card c in Static.Cards)
+                drop_map = bcd_d_map[d];
+                foreach (var p in drop_map)
                 {
-                    logStream.WriteLine($"    => #{c.Id} {c.Name}");
-                    logStream.WriteLine($"        Rate: {d.Drop.BcdPow[c.Id-1]}/2048");
+                    logStream.WriteLine($"    => #{p.Key.Id} {p.Key.Name}");
+                    logStream.WriteLine($"        Rate: {p.Value}/2048");
                 }
 
                 logStream.WriteLine();
                 logStream.WriteLine("====================================================================");
                 logStream.WriteLine($"{d.Name} S/A-Pow drops");
-                foreach (Card c in Static.Cards)
+                drop_map = sap_d_map[d];
+                foreach (var p in drop_map)
                 {
-                    logStream.WriteLine($"    => #{c.Id} {c.Name}");
-                    logStream.WriteLine($"        Rate: {d.Drop.SaPow[c.Id - 1]}/2048");
+                    logStream.WriteLine($"    => #{p.Key.Id} {p.Key.Name}");
+                    logStream.WriteLine($"        Rate: {p.Value}/2048");
                 }
+                logStream.WriteLine();
             }
 
             logStream.Close();
