@@ -94,7 +94,6 @@ namespace FMScrambler
         {
             txt_seed.Text = _rnd.Next(10000, 214748364).ToString();
             txt_seed.Focus();
-
         }
 
         private void btn_patchiso_Click(object sender, RoutedEventArgs e)

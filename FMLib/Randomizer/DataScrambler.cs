@@ -528,12 +528,14 @@ namespace FMLib.Randomizer
         /// </summary>
         public void WriteFusionSpoilerFile()
         {
-            if (!File.Exists($@"fusions_spoiler_#{_seed}.log"))
+            var output_dir = Static.IsoPath.Substring(0, Static.IsoPath.LastIndexOf('\\'));
+
+            if (!File.Exists($@"{output_dir}\\fusions_spoiler_#{_seed}.log"))
             {
-                File.CreateText($"fusions_spoiler_#{_seed}.log").Close();
+                File.CreateText($"{output_dir}\\fusions_spoiler_#{_seed}.log").Close();
             }
 
-            StreamWriter logStream = new StreamWriter($@"fusions_spoiler_#{_seed}.log");
+            StreamWriter logStream = new StreamWriter($@"{output_dir}\\fusions_spoiler_#{_seed}.log");
 
             logStream.WriteLine("== YU-GI-OH! Forbidden Memories Fusion Scrambler Spoiler File ==");
             logStream.WriteLine($"== Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} ==");
@@ -558,12 +560,14 @@ namespace FMLib.Randomizer
         /// </summary>
         public void WriteStarchipSpoilerFile()
         {
-            if (!File.Exists($@"starchip_spoiler_#{_seed}.log"))
+            var output_dir = Static.IsoPath.Substring(0, Static.IsoPath.LastIndexOf('\\'));
+
+            if (!File.Exists($@"{output_dir}\\starchip_spoiler_#{_seed}.log"))
             {
-                File.CreateText($"starchip_spoiler_#{_seed}.log").Close();
+                File.CreateText($"{output_dir}\\starchip_spoiler_#{_seed}.log").Close();
             }
 
-            StreamWriter logStream = new StreamWriter($@"starchip_spoiler_#{_seed}.log");
+            StreamWriter logStream = new StreamWriter($@"{output_dir}\\starchip_spoiler_#{_seed}.log");
 
             logStream.WriteLine("== YU-GI-OH! Forbidden Memories Starchip Scrambler Spoiler File ==");
             logStream.WriteLine($"== Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} ==");
@@ -583,12 +587,14 @@ namespace FMLib.Randomizer
         /// </summary>
         public void WriteDropsSpoilerFile()
         {
-            if (!File.Exists($@"drops_spoiler_#{_seed}.log"))
+            var output_dir = Static.IsoPath.Substring(0, Static.IsoPath.LastIndexOf('\\'));
+
+            if (!File.Exists($@"{output_dir}\\drops_spoiler_#{_seed}.log"))
             {
-                File.CreateText($"drops_spoiler_#{_seed}.log").Close();
+                File.CreateText($"{output_dir}\\drops_spoiler_#{_seed}.log").Close();
             }
 
-            StreamWriter logStream = new StreamWriter($@"drops_spoiler_#{_seed}.log");
+            StreamWriter logStream = new StreamWriter($@"{output_dir}\\drops_spoiler_#{_seed}.log");
 
             logStream.WriteLine("== YU-GI-OH! Forbidden Memories Drops Scrambler Spoiler File ==");
             logStream.WriteLine($"== Version {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} ==");
@@ -660,12 +666,14 @@ namespace FMLib.Randomizer
         /// </summary>
         public void WriteHtmlFusionSpoilerFile()
         {
-            if (!File.Exists($@"fusions_spoiler_#{_seed}.html"))
+            var output_dir = Static.IsoPath.Substring(0, Static.IsoPath.LastIndexOf('\\'));
+
+            if (!File.Exists($@"{output_dir}\\fusions_spoiler_#{_seed}.html"))
             {
-                File.CreateText($"fusions_spoiler_#{_seed}.html").Close();
+                File.CreateText($"{output_dir}\\fusions_spoiler_#{_seed}.html").Close();
             }
 
-            StreamWriter logStream = new StreamWriter($@"fusions_spoiler_#{_seed}.html");
+            StreamWriter logStream = new StreamWriter($@"{output_dir}\\fusions_spoiler_#{_seed}.html");
 
             string template =
                 $@"<!DOCTYPE html>

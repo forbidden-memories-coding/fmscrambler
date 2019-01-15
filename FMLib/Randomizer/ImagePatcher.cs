@@ -71,14 +71,18 @@ namespace FMLib.Randomizer
             _fs.Dispose();
             _fs.Close();
 
-            if (Static.UsedIso)
-                File.Move(Static.IsoPath, $"{Directory.GetCurrentDirectory()}\\{Static.RandomizerFileName}.bin");
+            var output_dir = Static.IsoPath.Substring(0, Static.IsoPath.LastIndexOf('\\'));
 
-            Static.IsoPath = $"{Directory.GetCurrentDirectory()}\\{Static.RandomizerFileName}.bin";
+            Console.WriteLine(output_dir);
+
+            if (Static.UsedIso)
+                File.Move(Static.IsoPath, $"{output_dir}\\{Static.RandomizerFileName}.bin");
+
+            Static.IsoPath = $"{output_dir}\\{Static.RandomizerFileName}.bin";
             string[] cueTemplate = {$"FILE \"{Static.RandomizerFileName}.bin\" BINARY", "  TRACK 01 MODE2/2352", "    INDEX 01 00:00:00" };
             
             
-            File.WriteAllLines($"{Directory.GetCurrentDirectory()}\\{Static.RandomizerFileName}.cue", cueTemplate);
+            File.WriteAllLines($"{output_dir}\\{Static.RandomizerFileName}.cue", cueTemplate);
             return 1;
         }
 
