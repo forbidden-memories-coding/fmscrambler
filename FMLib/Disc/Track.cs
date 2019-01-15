@@ -28,7 +28,7 @@ namespace FMLib.Disc
         {
             TrackNumber = int.Parse(trackNumber);
             SetMode(mode);
-            StartSector = Track.ToFrames(time);
+            StartSector = ToFrames(time);
 
             Console.WriteLine("Track {0:00}: {1} {2}", TrackNumber, mode.PadLeft(12), time);
         }
