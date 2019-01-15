@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -38,7 +39,6 @@ namespace FMScrambler
      
             if (dlg.ShowDialog() == true)
             {
-                //Static.IsoPath = dlg.FileName;
                 lbl_path.Content = Path.GetDirectoryName(dlg.FileName);
 
                 MessageBox.Show("Extracting game data can take a minute... please wait.", "Extracting data",
@@ -53,18 +53,17 @@ namespace FMScrambler
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 Static.UsedIso = true;
 
-                btn_loadiso.IsEnabled = false;
-                btn_loadiso1.IsEnabled = false;
+                btn_patchiso.IsEnabled = false;
                 btn_perform.IsEnabled = true;
             }      
         }
 
         private void btn_perform_Click(object sender, RoutedEventArgs e)
         {
-            sync_Scramble();
+            SyncScramble();
         }
 
-        private void sync_Scramble()
+        private void SyncScramble()
         {
             int cardCount = Static.GlitchFusions ? 1400 : 722;
             Static.SetCardCount(cardCount);
@@ -78,7 +77,7 @@ namespace FMScrambler
                         (int) txt_maxCost.Value, (int) txt_minDropRate.Value, (int) txt_maxDropRate.Value);
                 });
 
-            MessageBox.Show("Done scrambling, you may proceed with patching your game ISO now. A logfile was created in the tools directory as well.",
+            MessageBox.Show("Done scrambling, you may proceed with patching your game ISO now." + (Static.Spoiler ? " Spoiler files were generated as well" : ""),
                 "Done scrambling.", MessageBoxButton.OK, MessageBoxImage.Information);
             btn_patchiso.IsEnabled = true;
             btn_perform.IsEnabled = false;
@@ -98,7 +97,7 @@ namespace FMScrambler
 
         }
 
-        private async void btn_patchiso_Click(object sender, RoutedEventArgs e)
+        private void btn_patchiso_Click(object sender, RoutedEventArgs e)
         {
             if (!Static.UsedIso)
             {
@@ -109,45 +108,41 @@ namespace FMScrambler
 
                 if (dlg.ShowDialog() == true)
                 {
-                    #if DEBUG
-                    Console.WriteLine(dlg.FileName);
-                    #endif
-                    pgr_back.Visibility = Visibility.Visible;
-                    ImagePatcher patcher = new ImagePatcher(dlg.FileName);
-                    int patchResult = await Task.Run(() => patcher.PatchImage());
-
-                    if (patchResult == 1)
-                    {
-                        MessageBox.Show("Image successfully patched! Have fun playing!", "Done patching.",
-                            MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Error patching Image. Not Forbidden Memories or wrong version.", "Error patching.",
-                            MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    DoPatch(dlg.FileName);
                 }
             }
             else
             {
-                pgr_back.Visibility = Visibility.Visible;
-                ImagePatcher patcher = new ImagePatcher(Static.IsoPath);
-                int patchImgResult = await Task.Run(() => patcher.PatchImage());
-                if (patchImgResult == 1)
-                {
-                    MessageBox.Show("Image successfully patched! Have fun playing! Location of Randomized Image: "+ Static.IsoPath, "Done patching.",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
-                    Process.Start(Directory.GetCurrentDirectory());
-
-                }
-                else
-                {
-                    MessageBox.Show("Error patching Image. Not Forbidden Memories or wrong version.", "Error patching.",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                DoPatch(Static.IsoPath);
             }
-
             pgr_back.Visibility = Visibility.Hidden;
+        }
+
+        private async void DoPatch(string path)
+        {
+#if DEBUG
+            Console.WriteLine(path);
+#endif
+            pgr_back.Visibility = Visibility.Visible;
+            ImagePatcher patcher = new ImagePatcher(path);
+            Static.IsoPath = path;
+            int patchResult = await Task.Run(() => patcher.PatchImage());
+
+            if (patchResult == 1)
+            {
+                MessageBox.Show("Image successfully patched! Have fun playing! Location of Randomized Image: " + Static.IsoPath, "Done patching.",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                Process.Start(Directory.GetParent(Static.IsoPath).FullName);
+
+                //Allow scrambling again
+                btn_perform.IsEnabled = true;
+                btn_patchiso.IsEnabled = false;
+            }
+            else
+            {
+                MessageBox.Show("Error patching Image. Not Forbidden Memories or wrong version.", "Error patching.",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void txt_seed_Initialized(object sender, EventArgs e)
@@ -249,11 +244,62 @@ namespace FMScrambler
         {
             Title = $"YGO! FM Fusion Scrambler Tool - {Meta.MajorVersion}.{Meta.MinorVersion}.{Meta.PatchVersion} {Meta.VersionInfo}";
             lbl_isoExample.Content = $"fmscrambler[{txt_seed.Text}].bin";
+
+            InitCharTable();
+        }
+
+        private void InitCharTable()
+        {
+            var table_path = @"./CharacterTable.txt";
+
+            if (!File.Exists(table_path))
+            {
+                MessageBox.Show("CharacterTable.txt not found! Provide a path for it!", "Unable to find CharacterTable.txt", MessageBoxButton.OK, MessageBoxImage.Error);
+                OpenFileDialog ofd = new OpenFileDialog { Title = "CharacterTable file", Filter = "CharacterTable.txt|CharacterTable.txt" };
+                if (ofd.ShowDialog() == true)
+                {
+                    table_path = ofd.FileName;
+                }
+                else
+                {
+                    Close();
+                }
+            }
+
+            StringReader strReader = new StringReader(File.ReadAllText(table_path));
+
+            string input;
+
+            while ((input = strReader.ReadLine()) != null)
+            {
+                Match match = Regex.Match(input, "^([A-Fa-f0-9]{2})\\=(.*)$");
+
+                if (!match.Success)
+                {
+                    continue;
+                }
+
+                char k1 = Convert.ToChar(match.Groups[2].ToString());
+                byte k2 = (byte)int.Parse(match.Groups[1].ToString(), NumberStyles.HexNumber);
+
+                Static.Dict.Add(k2, k1);
+
+                if (!Static.RDict.ContainsKey(k1))
+                {
+                    Static.RDict.Add(k1, k2);
+                }
+            }
+            //There should be 85 entries otherwise file got corrupted, misread or user manually provided a bad file
+            if (Static.Dict.Values.Count != 85)
+            {
+                MessageBox.Show("Provided CharacterTable.txt is incorrect or incomplete!", "Error reading CharacterTable.txt", MessageBoxButton.OK, MessageBoxImage.Error);
+                Close();
+            }
         }
 
         private void btn_loadiso1_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dlg = new OpenFileDialog { Title = "Location of SLUS_014.11", Filter = "SLUS_014.11 | SLUS_014.11" };
+            OpenFileDialog dlg = new OpenFileDialog { Title = "Location of SLUS_014.11", Filter = "SLUS_014.11|SLUS_014.11" };
 
             if (dlg.ShowDialog() == true)
             {
@@ -263,25 +309,31 @@ namespace FMScrambler
                 if (!File.Exists(Path.GetDirectoryName(dlg.FileName) + "\\DATA\\WA_MRG.MRG"))
                 {
                     dlg.Title = "Location of WA_MRG.MRG";
-                    dlg.Filter = "WA_MRG | WA_MRG.MRG";
+                    dlg.Filter = "WA_MRG|WA_MRG.MRG";
 
                     if (dlg.ShowDialog() == true)
                     {
                         Static.WaPath = dlg.FileName;
+                        btn_patchiso.IsEnabled = false;
                         btn_perform.IsEnabled = true;
+                        Static.UsedIso = false;
                     }
                 }
                 else
                 {
                     Static.WaPath = Path.GetDirectoryName(dlg.FileName) + "\\DATA\\WA_MRG.MRG";
+                    btn_patchiso.IsEnabled = false;
                     btn_perform.IsEnabled = true;
+                    Static.UsedIso = false;
                 }
             }
         }
 
         private void grp_atkdef_MouseUp(object sender, MouseButtonEventArgs e)
         {
+#if DEBUG
             Console.WriteLine($"{txt_minAtk.Value} - {txt_maxAtk.Value} || {txt_minDef.Value} - {txt_maxDef.Value}");
+#endif
         }
     }
 }
