@@ -40,7 +40,7 @@ namespace FMLib.Randomizer
             {
                 new GameFile
                 {
-                    Offset = 51744,
+                    Offset = 0xCA20,
                     Name = "",
                     Size = 2048
                 }
@@ -64,7 +64,7 @@ namespace FMLib.Randomizer
                     for (int n = 0; n < fs2.Length / 2048L; n++)
                     {
                         _fs.Write(fs2.ExtractPiece(0, 2048), 0, 2048);
-                        _fs.Position += 304L;
+                        _fs.Position += 0x130L;
                     }
                 }
             }
@@ -73,10 +73,7 @@ namespace FMLib.Randomizer
 
             var output_dir = Static.IsoPath.Substring(0, Static.IsoPath.LastIndexOf('\\'));
 
-            Console.WriteLine(output_dir);
-
-            if (Static.UsedIso)
-                File.Move(Static.IsoPath, $"{output_dir}\\{Static.RandomizerFileName}.bin");
+            File.Move(Static.IsoPath, $"{output_dir}\\{Static.RandomizerFileName}.bin");
 
             Static.IsoPath = $"{output_dir}\\{Static.RandomizerFileName}.bin";
             string[] cueTemplate = {$"FILE \"{Static.RandomizerFileName}.bin\" BINARY", "  TRACK 01 MODE2/2352", "    INDEX 01 00:00:00" };

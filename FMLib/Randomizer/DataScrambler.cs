@@ -528,7 +528,7 @@ namespace FMLib.Randomizer
         /// </summary>
         public void WriteFusionSpoilerFile()
         {
-            var output_dir = Static.IsoPath.Substring(0, Static.IsoPath.LastIndexOf('\\'));
+            var output_dir = Static.WaPath.Substring(0, Static.WaPath.LastIndexOf('\\'));
 
             if (!File.Exists($@"{output_dir}\\fusions_spoiler_#{_seed}.log"))
             {
@@ -560,7 +560,7 @@ namespace FMLib.Randomizer
         /// </summary>
         public void WriteStarchipSpoilerFile()
         {
-            var output_dir = Static.IsoPath.Substring(0, Static.IsoPath.LastIndexOf('\\'));
+            var output_dir = Static.WaPath.Substring(0, Static.WaPath.LastIndexOf('\\'));
 
             if (!File.Exists($@"{output_dir}\\starchip_spoiler_#{_seed}.log"))
             {
@@ -587,7 +587,7 @@ namespace FMLib.Randomizer
         /// </summary>
         public void WriteDropsSpoilerFile()
         {
-            var output_dir = Static.IsoPath.Substring(0, Static.IsoPath.LastIndexOf('\\'));
+            var output_dir = Static.WaPath.Substring(0, Static.WaPath.LastIndexOf('\\'));
 
             if (!File.Exists($@"{output_dir}\\drops_spoiler_#{_seed}.log"))
             {
@@ -666,7 +666,7 @@ namespace FMLib.Randomizer
         /// </summary>
         public void WriteHtmlFusionSpoilerFile()
         {
-            var output_dir = Static.IsoPath.Substring(0, Static.IsoPath.LastIndexOf('\\'));
+            var output_dir = Static.WaPath.Substring(0, Static.WaPath.LastIndexOf('\\'));
 
             if (!File.Exists($@"{output_dir}\\fusions_spoiler_#{_seed}.html"))
             {
