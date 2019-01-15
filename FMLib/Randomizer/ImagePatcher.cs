@@ -71,7 +71,8 @@ namespace FMLib.Randomizer
             _fs.Dispose();
             _fs.Close();
 
-            if (!Static.UsedIso) File.Move(Static.IsoPath, $"{Directory.GetCurrentDirectory()}\\{Static.RandomizerFileName}.bin");
+            if (Static.UsedIso)
+                File.Move(Static.IsoPath, $"{Directory.GetCurrentDirectory()}\\{Static.RandomizerFileName}.bin");
 
             Static.IsoPath = $"{Directory.GetCurrentDirectory()}\\{Static.RandomizerFileName}.bin";
             string[] cueTemplate = {$"FILE \"{Static.RandomizerFileName}.bin\" BINARY", "  TRACK 01 MODE2/2352", "    INDEX 01 00:00:00" };
