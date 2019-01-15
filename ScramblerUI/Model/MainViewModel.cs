@@ -308,6 +308,7 @@ namespace FMScrambler.Model
             set
             {
                 _checkboxSpoilerFiles = value;
+                Static.Spoiler = value;
                 PropertyChanged(this, new PropertyChangedEventArgs("CheckboxSpoilerFiles"));
             }
         }
