@@ -263,6 +263,7 @@ namespace FMScrambler
                 else
                 {
                     Close();
+                    return;
                 }
             }
 

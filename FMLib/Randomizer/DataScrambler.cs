@@ -41,45 +41,45 @@ namespace FMLib.Randomizer
                 Static.Cards[i] = new Card
                 {
                     Id = i + 1,
-                    Attack = (int32 & 511) * 10,
-                    Defense = (int32 >> 9 & 511) * 10,
-                    GuardianStar2 = int32 >> 18 & 15,
-                    GuardianStar1 = int32 >> 22 & 15,
-                    Type = int32 >> 26 & 31
+                    Attack = (int32 & 0x1FF) * 10,
+                    Defense = (int32 >> 9 & 0x1FF) * 10,
+                    GuardianStar2 = int32 >> 18 & 0xF,
+                    GuardianStar1 = int32 >> 22 & 0xF,
+                    Type = int32 >> 26 & 0x1F
                 };
             }
 
             // Card Level and Attribute
-            memStream.Position = 1858355L;
+            memStream.Position = 0x1C5B33L;
             for (int i = 0; i < 722; i++)
             {
                 byte num = memStream.ExtractPiece(0, 1)[0];
-                Static.Cards[i].Level = num & 15;
-                Static.Cards[i].Attribute = num >> 4 & 15;
+                Static.Cards[i].Level = num & 0xF;
+                Static.Cards[i].Attribute = num >> 4 & 0xF;
             }
 
             // Card Name
             for (int i = 0; i < 722; i++)
             {
-                memStream.Position = 1859586 + i * 2;
+                memStream.Position = 0x1C6002 + i * 2;
                 int num = memStream.ExtractPiece(0, 2).ExtractUInt16() & ushort.MaxValue;
-                memStream.Position = 1861632 + num - 24576;
+                memStream.Position = 0x1C6800 + num - 0x6000;
                 Static.Cards[i].Name = memStream.GetText(Static.Dict);
             }
 
             // Card Description
             for (int i = 0; i < 722; i++)
             {
-                memStream.Position = 1772034 + i * 2;
+                memStream.Position = 0x1B0A02 + i * 2;
                 int num3 = memStream.ExtractPiece(0, 2).ExtractUInt16();
-                memStream.Position = 1774068 + (num3 - 2548);
+                memStream.Position = 0x1B11F4 + (num3 - 0x9F4);
                 Static.Cards[i].Description = memStream.GetText(Static.Dict);
             }
 
             for (int i = 0; i < 39; i++)
             {
-                memStream.Position = 1861202 + i * 2;
-                memStream.Position = 1861632 + memStream.ExtractPiece(0, 2).ExtractUInt16() - 24576;
+                memStream.Position = 0x1C6652 + i * 2;
+                memStream.Position = 0x1C6800 + memStream.ExtractPiece(0, 2).ExtractUInt16() - 0x6000;
                 Static.Duelist[i] = new Duelist(memStream.GetText(Static.Dict));
             }
 
@@ -93,7 +93,7 @@ namespace FMLib.Randomizer
         {
             // WA_MRG process
             FileStream fusionStream = new FileStream(Static.WaPath, FileMode.Open);
-            MemoryStream memStream = new MemoryStream(fusionStream.ExtractPiece(0, 65536, 12089344));
+            MemoryStream memStream = new MemoryStream(fusionStream.ExtractPiece(0, 0x10000, 0xB87800));
 
             // Card Fusions
             for (int i = 0; i < 722; ++i)
@@ -325,13 +325,13 @@ namespace FMLib.Randomizer
                 {
 
                     int[] numArray = {
-                        12089344,
-                        12570624,
-                        13051904,
-                        13533184,
-                        14014464,
-                        14495744,
-                        14977024
+                        0xB87800,
+                        0xBFD000,
+                        0xC72800,
+                        0xCE8000,
+                        0xD5D800,
+                        0xDD3000,
+                        0xE48800
                     };
 
                     MemoryStream memStream1 = new MemoryStream(1444);
@@ -382,7 +382,7 @@ namespace FMLib.Randomizer
                     }
                     while (memStream2.Position < 64092L)
                     {
-                        memStream2.WriteByte(238);
+                        memStream2.WriteByte(0xEE);
                     }
 
                     foreach (int num in numArray)
@@ -405,14 +405,14 @@ namespace FMLib.Randomizer
             {
                 using (FileStream fileStreamSl = new FileStream(Static.SlusPath, FileMode.Open))
                 {
-                    fileStreamSl.Position = 1854020L;
+                    fileStreamSl.Position = 0x1C4A44L;
                     using (MemoryStream memoryStream = new MemoryStream(2888))
                     {
                         for (int i = 0; i < 722; ++i)
                         {
-                            int value = (Static.Cards[i].Attack / 10 & 511) | (Static.Cards[i].Defense / 10 & 511) << 9 |
-                                        (Static.Cards[i].GuardianStar2 & 15) << 18 |
-                                        (Static.Cards[i].GuardianStar1 & 15) << 22 | (Static.Cards[i].Type & 31) << 26;
+                            int value = (Static.Cards[i].Attack / 10 & 0x1FF) | (Static.Cards[i].Defense / 10 & 0x1FF) << 9 |
+                                        (Static.Cards[i].GuardianStar2 & 0xF) << 18 |
+                                        (Static.Cards[i].GuardianStar1 & 0xF) << 22 | (Static.Cards[i].Type & 0x1F) << 26;
                             memoryStream.Write(value.Int32ToByteArray(), 0, 4);
                         }
                         var arr = memoryStream.ToArray();
@@ -428,7 +428,7 @@ namespace FMLib.Randomizer
                 {
                     for (int i = 0; i < 39; i++)
                     {
-                        int num = 15314944 + 6144 * i;
+                        int num = 0xE9B000 + 0x1800 * i;
 
                         // Randomize Decks
                         if (Static.RandomDecks)
@@ -450,7 +450,7 @@ namespace FMLib.Randomizer
                         // Randomize Card Drops
                         if (Static.RandomCardDrops)
                         {
-                            duelistStream.Position = num + 1460;
+                            duelistStream.Position = num + 0x5B4;
                             using (MemoryStream memoryStream2 = new MemoryStream(1444))
                             {
                                 int[] array = Static.Duelist[i].Drop.SaPow;
@@ -462,7 +462,7 @@ namespace FMLib.Randomizer
                                 var arr = memoryStream2.ToArray();
                                 duelistStream.Write(arr, 0, arr.Length);
                             }
-                            duelistStream.Position = num + 2920;
+                            duelistStream.Position = num + 0xB68;
                             using (MemoryStream memoryStream3 = new MemoryStream(1444))
                             {
                                 int[] array = Static.Duelist[i].Drop.BcdPow;
@@ -474,7 +474,7 @@ namespace FMLib.Randomizer
                                 var arr = memoryStream3.ToArray();
                                 duelistStream.Write(arr, 0, arr.Length);
                             }
-                            duelistStream.Position = num + 4380;
+                            duelistStream.Position = num + 0x111C;
                             using (MemoryStream memoryStream4 = new MemoryStream(1444))
                             {
                                 int[] array = Static.Duelist[i].Drop.SaTec;
@@ -733,6 +733,8 @@ namespace FMLib.Randomizer
         /// <param name="maxDef"></param>
         /// <param name="minCost"></param>
         /// <param name="maxCost"></param>
+        /// <param name="minDropRate"></param>
+        /// <param name="maxDropRate"></param>
         /// <returns></returns>
         public bool PerformScrambling(int minAtk = 0, int maxAtk = 0, int minDef = 0, int maxDef = 0, int minCost = 0, int maxCost = 999999, int minDropRate = 1, int maxDropRate = 1)
         {
