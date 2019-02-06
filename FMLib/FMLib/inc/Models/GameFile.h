@@ -5,14 +5,19 @@
 
 #include "Export.h"
 
-class EXPORT GameFile
+namespace FMLib
 {
-public:
-    int     Offset;
-    int     Size;
-    int     Name;
-    int     NameSize;
-    bool    IsDirectory;
-};
-
+    namespace Models
+    {
+        class EXPORT GameFile
+        {
+        public:
+            int     Offset;
+            int     Size;
+            int     Name;
+            int     NameSize;
+            bool    IsDirectory;
+        };
+    }
+}
 #endif // !GAMEFILE_H

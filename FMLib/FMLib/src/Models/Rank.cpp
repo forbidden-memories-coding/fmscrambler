@@ -1,19 +1,25 @@
 #include "Models/Rank.h"
 
-int* Rank::GetDropType(DropType type)
+namespace FMLib
 {
-        switch (type)
+    namespace Models
+    {
+        int* Rank::GetDropType(DropType type)
         {
-            case DropType::SAPOW:
-                return SaPow;
+            switch (type)
+            {
+                case DropType::SAPOW:
+                    return SaPow;
 
-            case DropType::SATEC:
-                return SaTec;
+                case DropType::SATEC:
+                    return SaTec;
 
-            case DropType::BCDPOW:
-                return BcdPow;
+                case DropType::BCDPOW:
+                    return BcdPow;
 
-            default:
-                return nullptr;
+                default:
+                    return nullptr;
+            }
         }
     }
+}

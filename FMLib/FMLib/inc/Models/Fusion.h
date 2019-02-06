@@ -4,14 +4,20 @@
 
 #include "Export.h"
 
-class EXPORT Fusion
+namespace FMLib
 {
-public:
-    Fusion(int Card1, int Card2, int Result);
-    
-    int Card1;
-    int Card2;
-    int Result;
-};
+    namespace Models
+    {
+        class EXPORT Fusion
+        {
+        public:
+            Fusion(int Card1, int Card2, int Result);
+            
+            int Card1;
+            int Card2;
+            int Result;
+        };
+    }
+}
 
 #endif // FUSION_H

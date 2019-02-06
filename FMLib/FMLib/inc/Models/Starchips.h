@@ -6,12 +6,17 @@
 #include "Export.h"
 #include <string>
 
-class Starchips
+namespace FMLib
 {
-public:
-    int         Cost;
-    int         Password;
-    std::string PasswordStr;
-};
-
+    namespace Models
+    {
+        class Starchips
+        {
+        public:
+            int         Cost;
+            int         Password;
+            std::string PasswordStr;
+        };
+    }
+}
 #endif // STARCHIPS_H

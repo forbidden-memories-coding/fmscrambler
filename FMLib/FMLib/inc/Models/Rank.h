@@ -5,22 +5,27 @@
 
 #include "Export.h"
 
-enum DropType
+namespace FMLib
 {
-    SAPOW,
-    SATEC,
-    BCDPOW
-};
+    enum DropType
+    {
+        SAPOW,
+        SATEC,
+        BCDPOW
+    };
 
-class EXPORT Rank
-{
-public:
-    int SaPow[722];
-    int SaTec[722];
-    int BcdPow[722];
+    namespace Models
+    {
+        class EXPORT Rank
+        {
+        public:
+            int SaPow[722];
+            int SaTec[722];
+            int BcdPow[722];
 
-    int* GetDropType(DropType type);
-    
-};
-
+            int* GetDropType(DropType type);
+            
+        };
+    }
+}
 #endif // RANK_H

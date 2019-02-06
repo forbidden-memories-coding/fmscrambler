@@ -2,12 +2,15 @@
 
 #include "FMLib.h"
 
-FMLib::FMLib()
+namespace FMLib
 {
+    FMLib::FMLib()
+    {
 
-}
+    }
 
-FMLib::~FMLib()
-{
+    FMLib::~FMLib()
+    {
 
+    }
 }

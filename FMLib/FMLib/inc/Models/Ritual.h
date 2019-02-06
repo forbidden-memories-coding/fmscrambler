@@ -5,13 +5,18 @@
 
 #include "Export.h"
 
-class EXPORT Ritual
+namespace FMLib
 {
-public:
-    int     RitualCard;
-    int*    Cards;
-    int     Result;
+    namespace Models
+    {
+        class EXPORT Ritual
+        {
+        public:
+            int     RitualCard;
+            int*    Cards;
+            int     Result;
 
-};
-
+        };
+    }
+}
 #endif // RITUAL_H

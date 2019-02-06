@@ -6,15 +6,19 @@
 #include "Rank.h"
 #include <string>
 
-
-class EXPORT Duelist
+namespace FMLib
 {
-public:
-    Duelist(std::string name);
+    namespace Models
+    {
+        class EXPORT Duelist
+        {
+        public:
+            Duelist(std::string name);
 
-    std::string Name;
-    int         Deck[722];
-    Rank        Drop;
-};
-
+            std::string Name;
+            int         Deck[722];
+            Rank        Drop;
+        };
+    }
+}
 #endif // DUELIST_H
