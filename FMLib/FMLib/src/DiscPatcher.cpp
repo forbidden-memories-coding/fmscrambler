@@ -6,7 +6,7 @@ namespace FMLib
 {
 
     DiscPatcher::DiscPatcher(std::string bin, std::string slus, std::string mrg)
-        : m_binFile(file, std::ios::app | std::ios::binary),
+        : m_binFile(bin, std::ios::app | std::ios::binary),
         m_slusFile(slus, std::ios::app | std::ios::binary),
         m_mrgFile(mrg, std::ios::app | std::ios::binary),
         m_edcTable{__EDCTABLE__}
@@ -52,9 +52,11 @@ namespace FMLib
         writeWithCrc(m_slusFile, slusChunks);
         m_binFile.seekg(10102 * CHUNK_SIZE, m_binFile.beg);
         writeWithCrc(m_mrgFile, mrgChunks);
+
+        return 1;
     }
 
-    void DiscPatcher::writeWithCrc(std::fstream f, int chunks)
+    void DiscPatcher::writeWithCrc(std::fstream& f, int chunks)
     {
         char crcCalc[2056];
         hex2bin("0000080000000800", crcCalc);
