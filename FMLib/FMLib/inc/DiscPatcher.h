@@ -90,14 +90,12 @@ namespace FMLib
     private:
         void        hex2bin(const char* src, char* target);
         void        writeWithCrc(std::fstream f, int chunks);
-        void        listDirectories(std::fstream& f, std::vector<Models::GameFile> iso);
-        std::string getName(char* data, int size);
 
     private:
-        std::fstream m_binFile;
-        std::fstream m_slusFile;
-        std::fstream m_mrgFile;
-        const unsigned long m_edcTable[256];
+        std::fstream                    m_binFile;
+        std::fstream                    m_slusFile;
+        std::fstream                    m_mrgFile;
+        const unsigned long             m_edcTable[256];
     };
 }
 
