@@ -7,10 +7,16 @@ namespace FMLib
 
     DiscPatcher::DiscPatcher(std::string bin, std::string slus, std::string mrg)
         : m_binFile(bin, std::ios::app | std::ios::binary),
-        m_slusFile(slus, std::ios::app | std::ios::binary),
-        m_mrgFile(mrg, std::ios::app | std::ios::binary),
         m_edcTable{__EDCTABLE__}
     {
+        if (slus != "")
+        {
+            m_slusFile.open(slus, std::ios::app | std::ios::binary);
+        }
+        if (mrg != "")
+        {
+            m_mrgFile.open(mrg, std::ios::app | std::ios::binary);
+        }
         if (!m_binFile.is_open())
         {
             throw std::exception("Specified file was not found!");
@@ -33,16 +39,16 @@ namespace FMLib
         }
     }
 
-    int DiscPatcher::PatchImage()
+    bool DiscPatcher::PatchImage()
     {
         m_binFile.seekg(0, m_binFile.beg);
-
+        
         m_slusFile.seekg(0, m_slusFile.end);
-        int slusLength = m_slusFile.tellg();
+        int slusLength = static_cast<int>(m_slusFile.tellg());
         m_slusFile.seekg(0, m_slusFile.beg);
 
         m_mrgFile.seekg(0, m_mrgFile.end);
-        int mrgLength = m_mrgFile.tellg();
+        int mrgLength = static_cast<int>(m_mrgFile.tellg());
         m_slusFile.seekg(0, m_mrgFile.beg);
 
         int slusChunks = slusLength / DATA_SIZE;
@@ -54,6 +60,27 @@ namespace FMLib
         writeWithCrc(m_mrgFile, mrgChunks);
 
         return 1;
+    }
+
+    void DiscPatcher::SetBin(std::string newPath)
+    {
+        if (m_binFile.is_open()) m_binFile.close();
+        m_binFile.open(newPath, std::ios::app | std::ios::binary);
+        if (!m_binFile.is_open()) throw std::exception("Given file was not found or corrupt!");
+    }
+
+    void DiscPatcher::SetSlus(std::string newPath)
+    {
+        if (m_slusFile.is_open()) m_slusFile.close();
+        m_slusFile.open(newPath, std::ios::app | std::ios::binary);
+        if (!m_slusFile.is_open()) throw std::exception("Given file was not found or corrupt!");
+    }
+
+    void DiscPatcher::SetMrg(std::string newPath)
+    {
+        if (m_mrgFile.is_open()) m_mrgFile.close();
+        m_mrgFile.open(newPath, std::ios::app | std::ios::binary);
+        if (!m_mrgFile.is_open()) throw std::exception("Given file was not found or corrupt!");
     }
 
     void DiscPatcher::writeWithCrc(std::fstream& f, int chunks)

@@ -11,7 +11,7 @@ namespace FMLib
         class EXPORT Fusion
         {
         public:
-            Fusion(int Card1, int Card2, int Result);
+            Fusion(int Card1 = 0, int Card2 = 0, int Result = 0);
             
             int Card1;
             int Card2;

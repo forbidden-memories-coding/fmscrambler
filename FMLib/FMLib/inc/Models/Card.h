@@ -17,6 +17,10 @@ namespace FMLib
         class EXPORT Card
         {
         public:
+            Card() = default;
+            ~Card() = default;
+        
+        public:
             int                 Id;
             std::string         Name;
             std::string         Description;

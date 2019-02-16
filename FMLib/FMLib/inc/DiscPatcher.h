@@ -83,9 +83,13 @@ namespace FMLib
     class EXPORT DiscPatcher
     {
     public:
-        explicit    DiscPatcher(std::string bin, std::string slus, std::string mrg);
+                    DiscPatcher(std::string bin, std::string slus = "", std::string mrg = "");
                     ~DiscPatcher();
-        int         PatchImage();
+        bool        PatchImage();
+
+        void        SetBin(std::string newPath);
+        void        SetSlus(std::string newPath);
+        void        SetMrg(std::string newPath);
 
     private:
         void        hex2bin(const char* src, char* target);

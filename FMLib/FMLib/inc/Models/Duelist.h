@@ -13,8 +13,8 @@ namespace FMLib
         class EXPORT Duelist
         {
         public:
-            Duelist(std::string name);
-
+            Duelist(std::string name = "");
+            
             std::string Name;
             int         Deck[722];
             Rank        Drop;

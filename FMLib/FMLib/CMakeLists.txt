@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 add_definitions(-DLIBEXPORT)
 
 add_library(
-    FMLib
+    FMLib SHARED
         "src/FMLib.cpp"
         "src/DataReader.cpp"
         "src/DiscPatcher.cpp"
@@ -14,6 +14,7 @@ add_library(
         "inc/Export.h"
         "inc/DataReader.h"
         "inc/DiscPatcher.h"
+        "inc/Data.h"
         "inc/Models/Card.h"
         "inc/Models/Duelist.h"
         "inc/Models/Fusion.h"
