@@ -17,7 +17,7 @@ namespace FMLib
         class EXPORT Card
         {
         public:
-            Card() = default;
+            Card();
             ~Card() = default;
         
         public:

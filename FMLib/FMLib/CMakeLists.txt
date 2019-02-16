@@ -7,6 +7,7 @@ add_library(
         "src/FMLib.cpp"
         "src/DataReader.cpp"
         "src/DiscPatcher.cpp"
+        "src/Data.cpp"
         "src/Models/Duelist.cpp"
         "src/Models/Fusion.cpp"
         "src/Models/Rank.cpp"
