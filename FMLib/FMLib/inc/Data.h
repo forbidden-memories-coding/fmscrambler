@@ -14,10 +14,8 @@
 #include "Export.h"
 
 #include <map>
-#include <bitset>
 
 using namespace FMLib::Models;
-
 
 typedef unsigned short BYTE;
 
@@ -26,7 +24,7 @@ namespace FMLib
     class EXPORT Data
     {
     public:
-        Data() = default;
+        Data();
         ~Data() = default;
         
     public:
