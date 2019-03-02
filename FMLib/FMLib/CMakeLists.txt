@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.10)
 
 add_definitions(-DLIBEXPORT)
 
@@ -30,3 +30,4 @@ target_include_directories(
         PUBLIC "inc"
         PUBLIC "Models"
 )
+

@@ -9,9 +9,8 @@ namespace FMLib
 {
     namespace Models
     {
-        class EXPORT Ritual
+        struct EXPORT Ritual
         {
-        public:
             int     RitualCard;
             int*    Cards;
             int     Result;

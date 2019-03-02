@@ -21,13 +21,9 @@ typedef unsigned short BYTE;
 
 namespace FMLib
 {
-    class EXPORT Data
+    struct Data
     {
-    public:
         Data();
-        ~Data() = default;
-        
-    public:
         Card                    Cards[722];
         Duelist                 Duelists[39];
         std::string             BinPath;

@@ -14,13 +14,11 @@ namespace FMLib
 {
     namespace Models
     {
-        class EXPORT Card
+        struct EXPORT Card
         {
-        public:
             Card() = default;
             ~Card() = default;
-        
-        public:
+
             int                 Id;
             std::string         Name;
             std::string         Description;

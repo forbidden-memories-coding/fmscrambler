@@ -7,25 +7,27 @@ namespace FMLib
 
     FMLib::FMLib(std::string binPath)
       : m_patcher(binPath),
-        m_bin(binPath, std::ios::binary | std::ios::app)
+        m_reader(),
+        m_bin(binPath, std::ios::binary | std::ios::in | std::ios::out)
     {
         ExtractFiles();
-        m_patcher.SetMrg(binPath);
-        m_patcher.SetSlus(binPath);
+        m_patcher.SetMrg(binPath.c_str());
+        m_patcher.SetSlus(binPath.c_str());
     }
 
     FMLib::FMLib(std::string slusPath, std::string mrgPath)
       : m_patcher("", slusPath, mrgPath),
-        m_mrg(mrgPath, std::ios::app | std::ios::binary),
-        m_slus(slusPath, std::ios::app | std::ios::binary)
+        m_reader(),
+        m_slus(slusPath, std::ios::in | std::ios::out | std::ios::binary),
+        m_mrg(mrgPath, std::ios::in | std::ios::out | std::ios::binary)
     {
 
     }
 
-    Data FMLib::LoadData()
+    Data* FMLib::LoadData()
     {
-        Data dat;
-        m_reader.LoadAllData(m_slus, m_mrg, dat);
+        Data* dat = new Data();
+        m_reader.LoadAllData(m_slus, m_mrg, *dat);
         return dat;
     }
 
@@ -35,12 +37,13 @@ namespace FMLib
         return false;
     }
 
-    void FMLib::SetBin(std::string newPath)
+    void FMLib::SetBin(const char* newPath)
     {
+        std::string nP(newPath);
         if (m_bin.is_open()) m_bin.close();
-        m_bin.open(newPath, std::ios::app | std::ios::binary);
+        m_bin.open(nP, std::ios::app | std::ios::binary);
         if (!m_bin.is_open()) throw std::exception("Given file was not found or corrupt!");
-        m_patcher.SetBin(newPath);
+        m_patcher.SetBin(nP.c_str());
     }
 
     FMLib::~FMLib()
@@ -101,5 +104,15 @@ namespace FMLib
 
         m_mrg.unsetf(std::ios::out);
         m_slus.setf(std::ios::app);
+    }
+
+    extern "C" EXPORT IFMLib* __cdecl GetLibBin(const char* binPath)
+    {
+        return new FMLib(std::string(binPath));
+    }
+
+    extern "C" EXPORT IFMLib* __cdecl GetLibMrgSlus(const char* slusPath, const char* mrgPath)
+    {
+        return new FMLib(std::string(slusPath), std::string(mrgPath));
     }
 }

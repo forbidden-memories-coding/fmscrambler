@@ -2,8 +2,6 @@
 #ifndef FMLIB_H
 #define FMLIB_H
 
-#pragma warning(disable:4251)
-
 #include "Models/Card.h"
 #include "Models/Duelist.h"
 #include "Models/Fusion.h"
@@ -18,20 +16,26 @@
 
 namespace FMLib
 {
-    class EXPORT FMLib
+    struct IFMLib
+    {
+        virtual Data* LoadData() = 0;
+        virtual bool PatchImage() = 0;
+        virtual void SetBin(const char* newPath) = 0;
+    };
+    class FMLib : public IFMLib
     {
     public:
-        explicit    FMLib(std::string binPath);
-                    FMLib(std::string slusPath, std::string mrgPath);
-                    ~FMLib();
+        explicit  FMLib(std::string binPath);
+        FMLib(std::string slusPath, std::string mrgPath);
+        ~FMLib();
 
-        Data        LoadData();
-        bool        PatchImage();
+        Data*  LoadData();
+        bool  PatchImage();
 
-        void        SetBin(std::string newPath);
+        void  SetBin(const char* newPath);
 
     private:
-        void        ExtractFiles();
+        void  ExtractFiles();
 
     private:
         struct Chunk
@@ -52,6 +56,9 @@ namespace FMLib
         std::fstream    m_slus;
         std::fstream    m_mrg;
     };
+
+    extern "C" EXPORT IFMLib* __cdecl GetLibBin(const char* binPath);
+    extern "C" EXPORT IFMLib* __cdecl GetLibMrgSlus(const char* slusPath, const char* mrgPath);
 }
 
 #endif // FMLIB_H

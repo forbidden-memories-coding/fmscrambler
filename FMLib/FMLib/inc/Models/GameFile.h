@@ -9,9 +9,8 @@ namespace FMLib
 {
     namespace Models
     {
-        class EXPORT GameFile
+        struct EXPORT GameFile
         {
-        public:
             int     Offset;
             int     Size;
             int     Name;

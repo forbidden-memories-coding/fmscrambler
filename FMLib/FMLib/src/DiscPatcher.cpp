@@ -6,20 +6,16 @@ namespace FMLib
 {
 
     DiscPatcher::DiscPatcher(std::string bin, std::string slus, std::string mrg)
-        : m_binFile(bin, std::ios::app | std::ios::binary),
+        : m_binFile(bin, std::ios::in | std::ios::out | std::ios::binary),
         m_edcTable{__EDCTABLE__}
     {
         if (slus != "")
         {
-            m_slusFile.open(slus, std::ios::app | std::ios::binary);
+            m_slusFile.open(slus, std::ios::in | std::ios::out | std::ios::binary);
         }
         if (mrg != "")
         {
-            m_mrgFile.open(mrg, std::ios::app | std::ios::binary);
-        }
-        if (!m_binFile.is_open())
-        {
-            throw std::exception("Specified file was not found!");
+            m_mrgFile.open(mrg, std::ios::in | std::ios::out | std::ios::binary);
         }
     }
 
@@ -62,24 +58,27 @@ namespace FMLib
         return 1;
     }
 
-    void DiscPatcher::SetBin(std::string newPath)
+    void DiscPatcher::SetBin(const char* newPath)
     {
+        std::string nP(newPath);
         if (m_binFile.is_open()) m_binFile.close();
-        m_binFile.open(newPath, std::ios::app | std::ios::binary);
+        m_binFile.open(nP, std::ios::app | std::ios::binary);
         if (!m_binFile.is_open()) throw std::exception("Given file was not found or corrupt!");
     }
 
-    void DiscPatcher::SetSlus(std::string newPath)
+    void DiscPatcher::SetSlus(const char* newPath)
     {
+        std::string nP(newPath);
         if (m_slusFile.is_open()) m_slusFile.close();
-        m_slusFile.open(newPath, std::ios::app | std::ios::binary);
+        m_slusFile.open(nP, std::ios::app | std::ios::binary);
         if (!m_slusFile.is_open()) throw std::exception("Given file was not found or corrupt!");
     }
 
-    void DiscPatcher::SetMrg(std::string newPath)
+    void DiscPatcher::SetMrg(const char* newPath)
     {
+        std::string nP(newPath);
         if (m_mrgFile.is_open()) m_mrgFile.close();
-        m_mrgFile.open(newPath, std::ios::app | std::ios::binary);
+        m_mrgFile.open(nP, std::ios::app | std::ios::binary);
         if (!m_mrgFile.is_open()) throw std::exception("Given file was not found or corrupt!");
     }
 
@@ -132,5 +131,10 @@ namespace FMLib
             *(target++) = char2int(*src)*16 + char2int(src[1]);
             src += 2;
         }
+    }
+
+    extern "C" EXPORT IDiscPatcher* GetPatcher(const char* bin, const char* slus, const char* mrg)
+    {
+        return new DiscPatcher(std::string(bin), std::string(slus), std::string(mrg));
     }
 }

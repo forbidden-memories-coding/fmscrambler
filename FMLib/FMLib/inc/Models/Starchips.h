@@ -10,9 +10,8 @@ namespace FMLib
 {
     namespace Models
     {
-        class Starchips
+        struct EXPORT Starchips
         {
-        public:
             int         Cost;
             int         Password;
             std::string PasswordStr;

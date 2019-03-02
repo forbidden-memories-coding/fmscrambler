@@ -1,5 +1,6 @@
 #include "DataReader.h"
 
+#include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <limits>
@@ -13,6 +14,9 @@ namespace FMLib
 
     void DataReader::LoadDataFromSlus(std::fstream& slus, Data& dat)
     {
+
+        std::cout << "\nSlus open? " << slus.is_open() << '\n';
+        std::cout << "Slus position: " << slus.tellg() << '\n';
 
         // General card data
         slus.seekg(0x1C4A44, slus.beg);
@@ -198,6 +202,9 @@ namespace FMLib
     {
         std::string res = "";
 
+        std::cout << "\nStream position is " << std::hex << f.tellg() << '\n';
+        std::cout << "File open? " << f.is_open() <<'\n';
+
         while (true)
         {
             char b;
@@ -208,13 +215,13 @@ namespace FMLib
             {
                 res += dic[b_num];
             }
-            else if (b_num == 254)
+            else if (b_num == 65534)
             {
                 res += "\r\n";
             }
             else
             {
-                if (b_num == 255)
+                if (b_num == 65535)
                     break;
 
                 std::stringstream ss;

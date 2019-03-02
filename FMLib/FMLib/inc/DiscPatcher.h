@@ -80,16 +80,23 @@
 
 namespace FMLib
 {
-    class EXPORT DiscPatcher
+    struct IDiscPatcher
+    {
+        virtual bool PatchImage() = 0;
+        virtual void SetBin(const char* newPath) = 0;
+        virtual void SetSlus(const char* newPath) = 0;
+        virtual void SetMrg(const char* newPath) = 0;
+    };
+    class DiscPatcher : public IDiscPatcher
     {
     public:
-                    DiscPatcher(std::string bin, std::string slus = "", std::string mrg = "");
-                    ~DiscPatcher();
-        bool        PatchImage();
+             DiscPatcher(std::string bin, std::string slus = "", std::string mrg = "");
+             ~DiscPatcher();
+        bool PatchImage();
 
-        void        SetBin(std::string newPath);
-        void        SetSlus(std::string newPath);
-        void        SetMrg(std::string newPath);
+        void SetBin(const char* newPath);
+        void SetSlus(const char* newPath);
+        void SetMrg(const char* newPath);
 
     private:
         void        hex2bin(const char* src, char* target);
@@ -101,6 +108,8 @@ namespace FMLib
         std::fstream                    m_mrgFile;
         const unsigned long             m_edcTable[256];
     };
+
+    extern "C" EXPORT IDiscPatcher* GetPatcher(const char* bin, const char* slus = "", const char* mrg = "");
 }
 
 #endif // DISCPATCHER_H

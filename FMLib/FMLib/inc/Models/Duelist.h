@@ -10,9 +10,8 @@ namespace FMLib
 {
     namespace Models
     {
-        class EXPORT Duelist
+        struct EXPORT Duelist
         {
-        public:
             Duelist(std::string name = "");
             
             std::string Name;

@@ -16,9 +16,8 @@ namespace FMLib
 
     namespace Models
     {
-        class EXPORT Rank
+        struct EXPORT Rank
         {
-        public:
             int SaPow[722];
             int SaTec[722];
             int BcdPow[722];

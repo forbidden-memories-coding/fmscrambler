@@ -8,9 +8,8 @@ namespace FMLib
 {
     namespace Models
     {
-        class EXPORT Fusion
+        struct EXPORT Fusion
         {
-        public:
             Fusion(int Card1 = 0, int Card2 = 0, int Result = 0);
             
             int Card1;
