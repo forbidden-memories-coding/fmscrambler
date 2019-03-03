@@ -86,6 +86,7 @@ namespace FMLib
         virtual void SetBin(const char* newPath) = 0;
         virtual void SetSlus(const char* newPath) = 0;
         virtual void SetMrg(const char* newPath) = 0;
+        virtual ~IDiscPatcher();
     };
     class DiscPatcher : public IDiscPatcher
     {

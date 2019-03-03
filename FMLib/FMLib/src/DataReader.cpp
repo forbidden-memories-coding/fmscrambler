@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include <limits>
+#include <climits>
 
 namespace FMLib
 {
@@ -15,17 +15,12 @@ namespace FMLib
     void DataReader::LoadDataFromSlus(std::fstream& slus, Data& dat)
     {
 
-        std::cout << "\nSlus open? " << slus.is_open() << '\n';
-        std::cout << "Slus position: " << slus.tellg() << '\n';
-
         // General card data
-        slus.seekg(0x1C4A44, slus.beg);
+        slus.seekg(0x1C4A44);
         for (int i = 0; i < 722; ++i)
         {
-            char card_info[4];
-            slus.read(card_info, 4);
+            int num_struct = ReadType<int>(slus);
 
-            int num_struct = (card_info[3] << 24) | (card_info[2] << 16) | (card_info[1] << 8) | card_info[0];
             dat.Cards[i].Id = i + 1;
             dat.Cards[i].Attack = (num_struct & 0x1FF) * 10;
             dat.Cards[i].Defense = (num_struct >> 9 & 0x1FF) * 10;
@@ -35,11 +30,10 @@ namespace FMLib
         }
 
         // Cards level and attribute
-        slus.seekg(0x1C5B33L, slus.beg);
+        slus.seekg(0x1C5B33L);
         for (int i = 0; i < 722; ++i)
         {
-            char str_num;
-            slus.read(&str_num, 1);
+            unsigned char str_num = ReadType<unsigned char>(slus);
             dat.Cards[i].Level = str_num & 0xF;
             dat.Cards[i].Attribute = str_num >> 4 & 0xF;
         }
@@ -47,34 +41,27 @@ namespace FMLib
         // Card name
         for(int i = 0; i < 722; ++i)
         {
-            slus.seekg(0x1C6002 + i * 2, slus.beg);
-            char str_num[2];
-            slus.read(str_num, 2);
-            unsigned short num = static_cast<unsigned short>(static_cast<unsigned int>(str_num[1] << 8) | str_num[0]);
-            num &= std::numeric_limits<unsigned short>::max();
-            slus.seekg(0x1C6800 + num - 0x6000, slus.beg);
+            slus.seekg(0x1C6002 + i * 2);
+            unsigned short num = ReadType<unsigned short>(slus);
+            slus.seekg(0x1C6800 + num - 0x6000);
             dat.Cards[i].Name = GetText(slus, dat.Dict);
         }
         
         // Card description
         for(int i = 0; i < 722; ++i)
         {
-            slus.seekg(0x1B0A02 + i * 2, slus.beg);
-            char str_num[2];
-            slus.read(str_num, 2);
-            unsigned short num = static_cast<unsigned short>(static_cast<unsigned int>(str_num[1] << 8) | str_num[0]);
-            slus.seekg(0x1B11F4 + (num - 0x9F4));
+            slus.seekg(0x1B0A02 + i * 2);
+            unsigned short off = ReadType<unsigned short>(slus);
+            slus.seekg(0x1B11F4 + (off - 0x9F4));
             dat.Cards[i].Description = GetText(slus, dat.Dict);
         }
 
         // Duelist names
+        slus.seekg(0x1C93DB);
         for(int i = 0; i < 39; ++i)
         {
             slus.seekg(0x1C6652 + i * 2);
-            char str_num[2];
-            slus.read(str_num, 2);
-            unsigned short num = static_cast<unsigned short>(static_cast<unsigned int>(str_num[1] << 8) | str_num[0]);
-            slus.seekg(0x1C6800 + num - 0x6000);
+            slus.seekg(0x1C6800 + ReadType<unsigned short>(slus) - 0x6000);
             dat.Duelists[i] = Duelist(GetText(slus, dat.Dict));
         }
         
@@ -83,28 +70,29 @@ namespace FMLib
     void DataReader::LoadDataFromWaMrg(std::fstream& mrg, Data& dat)
     {
         // Fusions
-        mrg.seekg(0xB87800, mrg.beg);
-        char fuseDat[0x10000];
-        mrg.read(fuseDat, 0x10000);
+        mrg.seekg(0xB87800);
+        unsigned char fuseDat[0x10000];
+        //mrg.read(fuseDat, 0x10000);
+        ReadType(mrg, fuseDat, sizeof(unsigned char) * 0x10000);
 
         for(int i = 0; i < 722; ++i)
         {
             long position = 2 + i * 2;
-            char posDat[2];
+            unsigned char posDat[2];
             posDat[0] = fuseDat[position];
             posDat[1] = fuseDat[position + 1];
-            unsigned short num = static_cast<unsigned short>(static_cast<unsigned int>(posDat[1] << 8) | posDat[0]);
-            position = num & std::numeric_limits<unsigned short>::max();
+            unsigned short num = static_cast<unsigned short>(posDat[1] << 8 | posDat[0]);
+            position = num & USHRT_MAX;
 
             if (position != 0)
             {
-                int num1 = fuseDat[position++];
-                if (num1 == 0)
+                int fusionAmt = fuseDat[position++];
+                if (fusionAmt == 0)
                 {
-                    num1 = 511 - fuseDat[position++];
+                    fusionAmt = 511 - fuseDat[position++];
                 }
 
-                int num2 = num1;
+                int num2 = fusionAmt;
 
                 while (num2 > 0)
                 {
@@ -130,49 +118,51 @@ namespace FMLib
         }
 
         // Equips
-        mrg.seekg(0xB85000, mrg.beg);
-        char equipDat[10240];
-        mrg.read(equipDat, 10240);
-        
+        mrg.seekg(0xB85000);
+        unsigned char equipDat[0x2800];
+        //mrg.read(equipDat, 0x2800);
+        ReadType(mrg, equipDat, sizeof(unsigned char) * 0x2800);
+
+        int position = 0;
         while (true)
         {
-            int position = 0;
-            char num[2];
+            unsigned char num[2];
             num[0] = equipDat[position++];
             num[1] = equipDat[position++];
-            int num6 = static_cast<unsigned short>(static_cast<unsigned int>(num[1] << 8) | num[0]);
+            unsigned short equipId = static_cast<unsigned short>(num[1] << 8 | num[0]);
 
-            if (num6 == 0)
+            if (equipId == 0)
                 break;
 
             num[0] = equipDat[position++];
             num[1] = equipDat[position++];
-            int num7 = static_cast<unsigned short>(static_cast<unsigned int>(num[1] << 8) | num[0]);
+            unsigned short monsterNum = static_cast<unsigned short>(num[1] << 8 | num[0]);
 
-            for(int num8 = 0; num8 < num7; ++num8)
+            for(int i = 0; i < monsterNum; ++i)
             {
                 num[0] = equipDat[position++];
                 num[1] = equipDat[position++];
-                int num9 = static_cast<unsigned short>(static_cast<unsigned int>(num[1] << 8) | num[0]);
-                dat.Cards[num6 - 1].Equips.push_back(num9 - 1);
+                unsigned short monsterId = static_cast<unsigned short>(num[1] << 8 | num[0]);
+                dat.Cards[equipId - 1].Equips.push_back(monsterId - 1);
             }
         }
 
         // Card costs/passwords
-        char starCost[722 * 8];
+        unsigned char starCost[722 * 8];
         mrg.seekg(0xFB9808, mrg.beg);
-        mrg.read(starCost, 722 * 8);
+        //mrg.read(starCost, 722 * 8);
+        ReadType(mrg, starCost, sizeof(unsigned char) * 722 * 8);
 
+        position = 0;
         for(int i = 0; i < 722; ++i)
         {
-            int position = 0;
-            char cost[4];
+            unsigned char cost[4];
             cost[0] = starCost[position++];
             cost[1] = starCost[position++];
             cost[2] = starCost[position++];
             cost[3] = starCost[position++];
             dat.Cards[i].Starchip.Cost = (cost[3] << 24) | (cost[2] << 16) | (cost[1] << 8) | cost[0];
-            char pass[4];
+            unsigned char pass[4];
             pass[0] = starCost[position++];
             pass[1] = starCost[position++];
             pass[2] = starCost[position++];
@@ -186,7 +176,8 @@ namespace FMLib
                 resPass += ss.str();
             }
             dat.Cards[i].Starchip.PasswordStr = resPass;
-            dat.Cards[i].Starchip.Password = (pass[3] << 24) | (pass[2] << 16) | (pass[1] << 8) | pass[0];
+            dat.Cards[i].Starchip.Password = (strcmp(resPass.c_str(), "fffffffe") != 0) ? std::stoi(resPass) : 0;
+                
         }
         
     }
@@ -201,9 +192,6 @@ namespace FMLib
     std::string DataReader::GetText(std::fstream& f, std::map<BYTE, char> dic)
     {
         std::string res = "";
-
-        std::cout << "\nStream position is " << std::hex << f.tellg() << '\n';
-        std::cout << "File open? " << f.is_open() <<'\n';
 
         while (true)
         {

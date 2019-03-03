@@ -21,6 +21,7 @@ namespace FMLib
         virtual Data* LoadData() = 0;
         virtual bool PatchImage() = 0;
         virtual void SetBin(const char* newPath) = 0;
+        virtual ~IFMLib();
     };
     class FMLib : public IFMLib
     {
