@@ -1,5 +1,5 @@
 # Yu-Gi-Oh! Forbidden Memories Scrambler (fmscrambler)
-## **Version 0.1.7 Alpha out now!**
+## **Version 0.1.9 Alpha out now!**
 
 [![alt](https://i.imgur.com/kj0PMYNl.jpg)](https://i.imgur.com/kj0PMYN.png)
 
@@ -38,6 +38,6 @@ If you wish to donate something to me, you can do so using the donation page: [h
 On rare occasions I also stream random stuff on Twitch. Maybe in the future I'll show some coding for the Scrambler there or other future projects I have in mind!
 
 ## Download for precompiled binaries
-You can find a precompiled binary under this direct link => [Download](https://github.com/duke1102/fmscrambler/releases/download/0.1.7/fmscrambler-alpha-017.zip)
+You can find a precompiled binary under this direct link => [Download](https://github.com/duke1102/fmscrambler/releases/download/0.1.9/fmscrambler-alpha-019.zip)
 
 Or by clicking on the "Releases" menu point.
