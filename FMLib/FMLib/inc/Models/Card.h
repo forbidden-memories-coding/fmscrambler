@@ -8,7 +8,7 @@
 #include "Ritual.h"
 #include "Starchips.h"
 #include <string>
-#include <list>
+#include <vector>
 
 namespace FMLib
 {
@@ -29,8 +29,8 @@ namespace FMLib
             int                 Type;
             int                 GuardianStar_Primary;
             int                 GuardianStar_Secondary;
-            std::list<Fusion>   Fusions;
-            std::list<int>      Equips;
+            std::vector<Fusion>   Fusions;
+            std::vector<int>      Equips;
             Ritual              Rituals;
             Starchips           Starchip;
         };

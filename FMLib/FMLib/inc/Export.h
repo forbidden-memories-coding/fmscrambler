@@ -16,5 +16,10 @@
     #define EXPORT
 #endif
 
+#if defined _WIN32 || defined __CYGWIN__
+    #define CALL_CONV __cdecl
+#else
+    #define CALL_CONV
+#endif
 
 #endif //EXPORTED_H

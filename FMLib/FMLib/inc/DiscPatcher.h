@@ -110,7 +110,7 @@ namespace FMLib
         const unsigned long             m_edcTable[256];
     };
 
-    extern "C" EXPORT IDiscPatcher* GetPatcher(const char* bin, const char* slus = "", const char* mrg = "");
+    extern "C" EXPORT IDiscPatcher* CALL_CONV GetPatcher(const char* bin, const char* slus = "", const char* mrg = "");
 }
 
 #endif // DISCPATCHER_H

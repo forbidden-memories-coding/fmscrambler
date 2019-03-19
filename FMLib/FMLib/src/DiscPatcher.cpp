@@ -1,7 +1,5 @@
 #include "DiscPatcher.h"
 
-#include <cstring>
-
 namespace FMLib
 {
 
@@ -55,7 +53,7 @@ namespace FMLib
         m_binFile.seekg(10102 * CHUNK_SIZE, m_binFile.beg);
         writeWithCrc(m_mrgFile, mrgChunks);
 
-        return 1;
+        return true;
     }
 
     void DiscPatcher::SetBin(const char* newPath)
@@ -63,7 +61,7 @@ namespace FMLib
         std::string nP(newPath);
         if (m_binFile.is_open()) m_binFile.close();
         m_binFile.open(nP, std::ios::app | std::ios::binary);
-        if (!m_binFile.is_open()) throw std::exception("Given file was not found or corrupt!");
+        if (!m_binFile.is_open()) throw std::string("Given file was not found or corrupt!");
     }
 
     void DiscPatcher::SetSlus(const char* newPath)
@@ -71,7 +69,7 @@ namespace FMLib
         std::string nP(newPath);
         if (m_slusFile.is_open()) m_slusFile.close();
         m_slusFile.open(nP, std::ios::app | std::ios::binary);
-        if (!m_slusFile.is_open()) throw std::exception("Given file was not found or corrupt!");
+        if (!m_slusFile.is_open()) throw std::string("Given file was not found or corrupt!");
     }
 
     void DiscPatcher::SetMrg(const char* newPath)
@@ -79,7 +77,7 @@ namespace FMLib
         std::string nP(newPath);
         if (m_mrgFile.is_open()) m_mrgFile.close();
         m_mrgFile.open(nP, std::ios::app | std::ios::binary);
-        if (!m_mrgFile.is_open()) throw std::exception("Given file was not found or corrupt!");
+        if (!m_mrgFile.is_open()) throw std::string("Given file was not found or corrupt!");
     }
 
     void DiscPatcher::writeWithCrc(std::fstream& f, int chunks)
@@ -133,7 +131,7 @@ namespace FMLib
         }
     }
 
-    extern "C" EXPORT IDiscPatcher* GetPatcher(const char* bin, const char* slus, const char* mrg)
+    extern "C" EXPORT IDiscPatcher* CALL_CONV GetPatcher(const char* bin, const char* slus, const char* mrg)
     {
         return new DiscPatcher(std::string(bin), std::string(slus), std::string(mrg));
     }

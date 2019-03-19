@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iomanip>
 #include <climits>
+#include <cstring>
 
 namespace FMLib
 {
