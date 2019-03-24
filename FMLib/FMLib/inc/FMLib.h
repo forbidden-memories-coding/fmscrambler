@@ -20,8 +20,12 @@ namespace FMLib
     {
         virtual Data* LoadData() = 0;
         virtual bool PatchImage() = 0;
+        virtual void SaveChanges() = 0;
         virtual void WriteData(const Data* dat) = 0;
         virtual void SetBin(const char* newPath) = 0;
+        virtual const char* GetBinPath() = 0;
+        virtual const char* GetSlusPath() = 0;
+        virtual const char* GetMrgPath() = 0;
     };
     class FMLib : public IFMLib
     {
@@ -33,12 +37,19 @@ namespace FMLib
         Data*   LoadData();
         bool    PatchImage();
         void    WriteData(const Data* dat);
+        void    SaveChanges();
 
         void  SetBin(const char* newPath);
 
+        const char* GetBinPath();
+        const char* GetSlusPath();
+        const char* GetMrgPath();
+
+        
+
     private:
-        void  ExtractFiles();
         void  hex2bin(const char* src, char* target);
+        void  ExtractFiles();
 
     private:
         struct Chunk
@@ -58,6 +69,9 @@ namespace FMLib
         std::fstream    m_bin;
         std::fstream    m_slus;
         std::fstream    m_mrg;
+        std::string     m_binPath;
+        std::string     m_slusPath;
+        std::string     m_mrgPath;
     };
 
     extern "C" EXPORT IFMLib* CALL_CONV GetLibBin(const char* binPath);

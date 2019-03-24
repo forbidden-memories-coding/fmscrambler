@@ -83,7 +83,7 @@ namespace FMLib
             posDat[0] = fuseDat[position];
             posDat[1] = fuseDat[position + 1];
             unsigned short num = static_cast<unsigned short>(posDat[1] << 8 | posDat[0]);
-            position = num & USHRT_MAX;
+            position = num & 0xFFFF;
 
             if (position != 0)
             {
@@ -181,6 +181,61 @@ namespace FMLib
                 
         }
         
+
+        // Read duelist decks and card drops
+        for(int i = 0; i < 39; ++i)
+        {
+            int num = 0xE9B000 + 0x1800 * i;
+            mrg.seekg(num);
+
+            unsigned char memStream[1444];
+
+            ReadType(mrg, memStream, 1444);
+            position = 0;
+            for(int j = 0; j < 722; ++j)
+            {
+                unsigned char num[2];
+                num[0] = memStream[position++];
+                num[1] = memStream[position++];
+                dat.Duelists[i].Deck[j] = static_cast<int>(num[1] << 8 | num[0]);
+            }
+
+            mrg.seekg(num + 0x5B4);
+
+            ReadType(mrg, memStream, 1444);
+            position = 0;
+            for(int j = 0; j < 722; ++j)
+            {
+                unsigned char num[2];
+                num[0] = memStream[position++];
+                num[1] = memStream[position++];
+                dat.Duelists[i].Drop.SaPow[j] = static_cast<int>(num[1] << 8 | num[0]);
+            }
+
+            mrg.seekg(num + 0xB68);
+
+            ReadType(mrg, memStream, 1444);
+            position = 0;
+            for(int j = 0; j < 722; ++j)
+            {
+                unsigned char num[2];
+                num[0] = memStream[position++];
+                num[1] = memStream[position++];
+                dat.Duelists[i].Drop.BcdPow[j] = static_cast<int>(num[1] << 8 | num[0]);
+            }
+
+            mrg.seekg(num + 0x111C);
+
+            ReadType(mrg, memStream, 1444);
+            position = 0;
+            for(int j = 0; j < 722; ++j)
+            {
+                unsigned char num[2];
+                num[0] = memStream[position++];
+                num[1] = memStream[position++];
+                dat.Duelists[i].Drop.SaTec[j] = static_cast<int>(num[1] << 8 | num[0]);
+            }
+        }
     }
 
     void DataReader::LoadAllData(std::fstream& slus, std::fstream& mrg, Data& dat)

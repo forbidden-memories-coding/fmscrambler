@@ -8,20 +8,29 @@ namespace FMLib
     FMLib::FMLib(std::string binPath)
       : m_patcher(binPath),
         m_reader(),
-        m_bin(binPath, std::ios::binary | std::ios::in | std::ios::out)
+        m_bin(binPath, std::ios::binary | std::ios::in | std::ios::out),
+        m_binPath(binPath),
+        m_slusPath(),
+        m_mrgPath()
     {
         ExtractFiles();
-        m_patcher.SetMrg(binPath.c_str());
-        m_patcher.SetSlus(binPath.c_str());
     }
 
     FMLib::FMLib(std::string slusPath, std::string mrgPath)
       : m_patcher("", slusPath, mrgPath),
         m_reader(),
         m_slus(slusPath, std::ios::in | std::ios::out | std::ios::binary),
-        m_mrg(mrgPath, std::ios::in | std::ios::out | std::ios::binary)
+        m_mrg(mrgPath, std::ios::in | std::ios::out | std::ios::binary),
+        m_binPath(),
+        m_slusPath(slusPath),
+        m_mrgPath(mrgPath)
     {
 
+    }
+
+    FMLib::~FMLib()
+    {
+        
     }
 
     Data* FMLib::LoadData()
@@ -33,17 +42,55 @@ namespace FMLib
 
     bool FMLib::PatchImage()
     {
-        if (m_bin.is_open()) return m_patcher.PatchImage();
+        m_slus.close();
+        m_mrg.close();
+        
+        m_patcher.SetBin(m_binPath.c_str());
+        m_patcher.SetMrg(m_mrgPath.c_str());
+        m_patcher.SetSlus(m_slusPath.c_str());
+        if (m_bin.is_open())
+        {
+            return m_patcher.PatchImage();
+        }
         return false;
+    }
+
+    void FMLib::SaveChanges()
+    {
+        m_bin.close();
+        m_slus.close();
+        m_mrg.close();
+        
+
+        m_bin.open(m_binPath, std::ios::in | std::ios::out | std::ios::binary);
+        m_slus.open(m_slusPath, std::ios::in | std::ios::out | std::ios::binary);
+        m_mrg.open(m_mrgPath, std::ios::in | std::ios::out | std::ios::binary);
     }
 
     void FMLib::SetBin(const char* newPath)
     {
+        if (newPath == m_binPath) return;
+        m_binPath = newPath;
         std::string nP(newPath);
         if (m_bin.is_open()) m_bin.close();
-        m_bin.open(nP, std::ios::app | std::ios::binary);
+        m_bin.open(nP, std::ios::in | std::ios::out | std::ios::binary);
         if (!m_bin.is_open()) throw std::string("Given file was not found or corrupt!");
         m_patcher.SetBin(nP.c_str());
+    }
+
+    const char* FMLib::GetBinPath()
+    {
+        return m_binPath.c_str();
+    }
+
+    const char* FMLib::GetMrgPath()
+    {
+        return m_mrgPath.c_str();
+    }
+
+    const char* FMLib::GetSlusPath()
+    {
+        return m_slusPath.c_str();
     }
 
     void FMLib::hex2bin(const char* src, char* target)
@@ -69,8 +116,7 @@ namespace FMLib
     void FMLib::WriteData(const Data* dat)
     {
 
-        // Field's fusions positions in WA_MRG?
-        int numArray[] = {
+        int fusionTables[] = {
             0xB87800,
             0xBFD000,
             0xC72800,
@@ -80,15 +126,15 @@ namespace FMLib
             0xE48800
         };
 
-        unsigned char memStream1[1444];
-        unsigned char memStream2[64092];
+        unsigned char memStream1[1446] = {0};
+        unsigned char memStream2[64090] = {0};
 
         // Write fusions
         int pos1 = 2;
-        int pos2 = 2;
-        for(auto card : dat->Cards)
+        int pos2 = 0;
+        for(Card card : dat->Cards)
         {
-            short num1 = card.Fusions.size() != 0 ? pos2 + 1444 : 0;
+            short num1 = card.Fusions.size() != 0 ? pos2 + sizeof(memStream1) : 0;
             memStream1[pos1++] = num1 & 0xFF; 
             memStream1[pos1++] = num1 >> 8 & 0xFF;
             if (card.Fusions.size() != 0)
@@ -128,12 +174,12 @@ namespace FMLib
                 }
             }
         }
-        while(pos2 < 64092)
+        while(pos2 < sizeof(memStream2))
         {
-            memStream2[pos2++] = 0xEE;
+            memStream2[pos2++] = 0xFF;
         }
 
-        for(int num : numArray)
+        for(int num : fusionTables)
         {
             m_mrg.seekg(num);
             m_mrg.write(reinterpret_cast<char*>(memStream1), sizeof(memStream1));
@@ -142,7 +188,7 @@ namespace FMLib
 
         // Write ATK/DEF, Guardian Start, Types, Attributes
         m_slus.seekg(0x1C4A44);
-        unsigned char memStream[2888];
+        unsigned char memStream[2888] = {0};
         int pos = 0;
         for(int i = 0; i < 722; ++i)
         {
@@ -162,8 +208,8 @@ namespace FMLib
             int num = 0xE9B000 + 0x1800 * i;
 
             m_mrg.seekg(num);
-            unsigned char memStream[1444];
-            int pos = 0;
+            unsigned char memStream[1444] = {0};
+            pos = 0;
             for(int t : dat->Duelists[i].Deck)
             {
                 short val = t;
@@ -173,6 +219,7 @@ namespace FMLib
             m_mrg.write(reinterpret_cast<char*>(memStream), sizeof(memStream));
 
             m_mrg.seekg(num + 0x5B4);
+            pos = 0;
             for(int t : dat->Duelists[i].Drop.SaPow)
             {
                 short val = t;
@@ -182,6 +229,7 @@ namespace FMLib
             m_mrg.write(reinterpret_cast<char*>(memStream), sizeof(memStream));
 
             m_mrg.seekg(num + 0xB68);
+            pos = 0;
             for(int t : dat->Duelists[i].Drop.BcdPow)
             {
                 short val = t;
@@ -191,6 +239,7 @@ namespace FMLib
             m_mrg.write(reinterpret_cast<char*>(memStream), sizeof(memStream));
 
             m_mrg.seekg(num + 0x111C);
+            pos = 0;
             for(int t : dat->Duelists[i].Drop.SaTec)
             {
                 short val = t;
@@ -221,18 +270,16 @@ namespace FMLib
             {
                 m_mrg.write(reinterpret_cast<char*>(&cost_arr[j]), 1);
             }
-            for(int j = 0; j < offset; ++j) m_mrg.write(0, 1);
+            char null_char = '\0';
+            for(int j = 0; j < offset; ++j) m_mrg.write(&null_char, 1);
             m_mrg.seekg(1, m_mrg.cur);
             for(int j = sizeof(pass_arr) - 1; j >= 0; --j)
             {
                 m_mrg.write(reinterpret_cast<char*>(&pass_arr[j]), 1);
             }
         }
-    }
 
-    FMLib::~FMLib()
-    {
-
+        
     }
 
     void FMLib::ExtractFiles()
@@ -245,7 +292,7 @@ namespace FMLib
 
         // Extract SLUS
         constexpr unsigned int slusChunkAmt = 0x1D0800 / DATA_SIZE;
-        Chunk slusChunks[slusChunkAmt];
+        Chunk* slusChunks = new Chunk[slusChunkAmt];
         for(int i = 0; i < slusChunkAmt; ++i)
         {
             m_bin.read(slusChunks[i].syncPattern, 12);
@@ -266,7 +313,7 @@ namespace FMLib
 
         // Extract MRG
         constexpr unsigned int mrgChunkAmt = 0x2400000 / DATA_SIZE;
-        Chunk mrgChunks[mrgChunkAmt];
+        Chunk* mrgChunks = new Chunk[mrgChunkAmt];
         for(int i = 0; i < mrgChunkAmt; ++i)
         {
             m_bin.read(mrgChunks[i].syncPattern, 12);
@@ -282,17 +329,22 @@ namespace FMLib
             m_mrg.write(mrgChunks[i].data, DATA_SIZE);
         }
         
-        // Set flags
+        // Reset flags to read-write
         m_slus.close();
         m_slus.open("SLUS_014.11", std::ios::out | std::ios::binary | std::ios::in);
 
         m_mrg.close();
         m_mrg.open("WA_MRG.MRG", std::ios::out | std::ios::binary | std::ios::in);
-        /*m_slus.unsetf(std::ios::o);
-        m_slus.setf(std::ios::app);
 
-        m_mrg.unsetf(std::ios::out);
-        m_slus.setf(std::ios::app);*/
+        m_slusPath = "SLUS_014.11";
+        m_mrgPath = "WA_MRG.MRG";
+
+        m_patcher.SetBin(m_binPath.c_str());
+        m_patcher.SetMrg(m_mrgPath.c_str());
+        m_patcher.SetSlus(m_slusPath.c_str());
+
+        delete[] mrgChunks;
+        delete[] slusChunks;
     }
 
     extern "C" EXPORT IFMLib* CALL_CONV GetLibBin(const char* binPath)

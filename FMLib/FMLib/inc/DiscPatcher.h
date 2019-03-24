@@ -100,7 +100,7 @@ namespace FMLib
 
     private:
         void        hex2bin(const char* src, char* target);
-        void        writeWithCrc(std::fstream& f, int chunks);
+        void        writeWithCrc(std::fstream& f, std::fstream& bin, int chunks);
 
     private:
         std::fstream                    m_binFile;

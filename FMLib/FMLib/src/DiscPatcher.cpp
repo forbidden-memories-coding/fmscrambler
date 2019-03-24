@@ -35,6 +35,14 @@ namespace FMLib
 
     bool DiscPatcher::PatchImage()
     {
+        if (!m_binFile.is_open() || !m_slusFile.is_open() || !m_mrgFile.is_open()) return false;
+
+        std::fstream newBin("FMRandomizer.bin", std::ios::out | std::ios::binary);
+
+        m_binFile.seekg(0, m_binFile.beg);
+
+        newBin << m_binFile.rdbuf();
+
         m_binFile.seekg(0, m_binFile.beg);
         
         m_slusFile.seekg(0, m_slusFile.end);
@@ -43,15 +51,26 @@ namespace FMLib
 
         m_mrgFile.seekg(0, m_mrgFile.end);
         int mrgLength = static_cast<int>(m_mrgFile.tellg());
-        m_slusFile.seekg(0, m_mrgFile.beg);
+        m_mrgFile.seekg(0, m_mrgFile.beg);
 
         int slusChunks = slusLength / DATA_SIZE;
         int mrgChunks = mrgLength / DATA_SIZE;
 
-        m_binFile.seekg(24 * CHUNK_SIZE, m_binFile.beg);
-        writeWithCrc(m_slusFile, slusChunks);
-        m_binFile.seekg(10102 * CHUNK_SIZE, m_binFile.beg);
-        writeWithCrc(m_mrgFile, mrgChunks);
+        newBin.seekg(24 * CHUNK_SIZE, newBin.beg);
+        writeWithCrc(m_slusFile, newBin, slusChunks);
+        newBin.seekg(10102 * CHUNK_SIZE, newBin.beg);
+        writeWithCrc(m_mrgFile, newBin, mrgChunks);
+
+        newBin.close();
+
+        std::fstream newCue("FMRandomizer.cue", std::ios::out);
+
+        const char* cueSheet[] = {"FILE \"FMRandomizer.bin\" BINARY\n", "  TRACK 01 MODE2/2352\n", "    INDEX 01 00:00:00\n"};
+        const int lineSize[] = {sizeof("FILE \"FMRandomizer.bin\" BINARY\n"), sizeof("  TRACK 01 MODE2/2352\n"), sizeof("    INDEX 01 00:00:00\n")};
+        for(int i = 0; i < 3; ++i)
+            newCue.write(cueSheet[i], lineSize[i]-1);
+
+        newCue.close();
 
         return true;
     }
@@ -60,7 +79,7 @@ namespace FMLib
     {
         std::string nP(newPath);
         if (m_binFile.is_open()) m_binFile.close();
-        m_binFile.open(nP, std::ios::app | std::ios::binary);
+        m_binFile.open(nP, std::ios::in | std::ios::out | std::ios::binary);
         if (!m_binFile.is_open()) throw std::string("Given file was not found or corrupt!");
     }
 
@@ -68,7 +87,7 @@ namespace FMLib
     {
         std::string nP(newPath);
         if (m_slusFile.is_open()) m_slusFile.close();
-        m_slusFile.open(nP, std::ios::app | std::ios::binary);
+        m_slusFile.open(nP, std::ios::in | std::ios::out | std::ios::binary);
         if (!m_slusFile.is_open()) throw std::string("Given file was not found or corrupt!");
     }
 
@@ -76,11 +95,11 @@ namespace FMLib
     {
         std::string nP(newPath);
         if (m_mrgFile.is_open()) m_mrgFile.close();
-        m_mrgFile.open(nP, std::ios::app | std::ios::binary);
+        m_mrgFile.open(nP, std::ios::in | std::ios::out | std::ios::binary);
         if (!m_mrgFile.is_open()) throw std::string("Given file was not found or corrupt!");
     }
 
-    void DiscPatcher::writeWithCrc(std::fstream& f, int chunks)
+    void DiscPatcher::writeWithCrc(std::fstream& f, std::fstream& bin, int chunks)
     {
         char crcCalc[2056];
         hex2bin("0000080000000800", crcCalc);
@@ -101,13 +120,13 @@ namespace FMLib
             crcCh[1] = static_cast<char>(crc >> 8);
             crcCh[2] = static_cast<char>(crc >> 16);
             crcCh[3] = static_cast<char>(crc >> 24);
-            m_binFile.seekg(12, m_binFile.cur);
-            m_binFile.seekg(3, m_binFile.cur);
-            m_binFile.seekg(1, m_binFile.cur);
-            m_binFile.seekg(8, m_binFile.cur);
-            m_binFile.write(postHeader, DATA_SIZE);
-            m_binFile.write(crcCh, 4);
-            m_binFile.seekg(276, m_binFile.cur);
+            bin.seekg(12, bin.cur);
+            bin.seekg(3, bin.cur);
+            bin.seekg(1, bin.cur);
+            bin.seekg(8, bin.cur);
+            bin.write(postHeader, DATA_SIZE);
+            bin.write(crcCh, 4);
+            bin.seekg(276, bin.cur);
         }
     }
 
