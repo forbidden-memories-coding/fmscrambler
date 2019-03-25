@@ -111,6 +111,7 @@ namespace FMLib
             unsigned int crc = 0;
             int len = 2056;
             f.read(pHead, DATA_SIZE);
+            pHead = crcCalc;
 
             while(len--)
                 crc = m_edcTable[(crc ^ *pHead++) & 0xFF] ^ (crc >> 8);

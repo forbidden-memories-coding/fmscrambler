@@ -90,5 +90,9 @@ namespace FMLib
         Dict[0x40] = '"';
         Dict[0x56] = '+';
         Dict[0x5B] = '%';
+        for(auto pair : Dict)
+        {
+            RDict[pair.second] = pair.first;
+        }
     }
 }

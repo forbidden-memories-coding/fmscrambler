@@ -30,7 +30,7 @@ namespace FMLib
         std::string             SlusPath;
         std::string             MrgPath;
         std::map<BYTE, char>    Dict;
-        std::map<BYTE, char>    RDict;
+        std::map<char, BYTE>    RDict;
     };
 }
 
