@@ -19,7 +19,7 @@ namespace FMLib
     struct IFMLib
     {
         virtual Data* LoadData() = 0;
-        virtual bool PatchImage() = 0;
+        virtual bool PatchImage(const char* imgName) = 0;
         virtual void SaveChanges() = 0;
         virtual void WriteData(const Data* dat) = 0;
         virtual void SetBin(const char* newPath) = 0;
@@ -35,7 +35,7 @@ namespace FMLib
         ~FMLib();
 
         Data*   LoadData();
-        bool    PatchImage();
+        bool    PatchImage(const char* imgName);
         void    WriteData(const Data* dat);
         void    SaveChanges();
 

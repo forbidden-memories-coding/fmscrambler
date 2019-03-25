@@ -33,11 +33,11 @@ namespace FMLib
         }
     }
 
-    bool DiscPatcher::PatchImage()
+    bool DiscPatcher::PatchImage(const char* imgName)
     {
         if (!m_binFile.is_open() || !m_slusFile.is_open() || !m_mrgFile.is_open()) return false;
 
-        std::fstream newBin("FMRandomizer.bin", std::ios::out | std::ios::binary);
+        std::fstream newBin(std::string(imgName)+".bin", std::ios::out | std::ios::binary);
 
         m_binFile.seekg(0, m_binFile.beg);
 
@@ -63,10 +63,10 @@ namespace FMLib
 
         newBin.close();
 
-        std::fstream newCue("FMRandomizer.cue", std::ios::out);
-
-        const char* cueSheet[] = {"FILE \"FMRandomizer.bin\" BINARY\n", "  TRACK 01 MODE2/2352\n", "    INDEX 01 00:00:00\n"};
-        const int lineSize[] = {sizeof("FILE \"FMRandomizer.bin\" BINARY\n"), sizeof("  TRACK 01 MODE2/2352\n"), sizeof("    INDEX 01 00:00:00\n")};
+        std::fstream newCue(std::string(imgName)+".cue", std::ios::out);
+        const std::string fName = "FILE \""+std::string(imgName)+".bin\" BINARY\n";
+        const char* cueSheet[] = {fName.c_str(), "  TRACK 01 MODE2/2352\n", "    INDEX 01 00:00:00\n"};
+        const int lineSize[] = {fName.size(), sizeof("  TRACK 01 MODE2/2352\n"), sizeof("    INDEX 01 00:00:00\n")};
         for(int i = 0; i < 3; ++i)
             newCue.write(cueSheet[i], lineSize[i]-1);
 
@@ -131,6 +131,7 @@ namespace FMLib
         }
     }
 
+    // Thanks to https://stackoverflow.com/a/40210047
     void DiscPatcher::hex2bin(const char* src, char* target)
     {
         auto char2int = [](char input)

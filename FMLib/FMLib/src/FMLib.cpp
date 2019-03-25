@@ -40,7 +40,7 @@ namespace FMLib
         return dat;
     }
 
-    bool FMLib::PatchImage()
+    bool FMLib::PatchImage(const char* imgName)
     {
         m_slus.close();
         m_mrg.close();
@@ -50,7 +50,7 @@ namespace FMLib
         m_patcher.SetSlus(m_slusPath.c_str());
         if (m_bin.is_open())
         {
-            return m_patcher.PatchImage();
+            return m_patcher.PatchImage(imgName);
         }
         return false;
     }
@@ -93,6 +93,7 @@ namespace FMLib
         return m_slusPath.c_str();
     }
 
+    // Thanks to https://stackoverflow.com/a/40210047
     void FMLib::hex2bin(const char* src, char* target)
     {
         auto char2int = [](char input)

@@ -82,7 +82,7 @@ namespace FMLib
 {
     struct IDiscPatcher
     {
-        virtual bool PatchImage() = 0;
+        virtual bool PatchImage(const char* imgName) = 0;
         virtual void SetBin(const char* newPath) = 0;
         virtual void SetSlus(const char* newPath) = 0;
         virtual void SetMrg(const char* newPath) = 0;
@@ -92,7 +92,7 @@ namespace FMLib
     public:
              DiscPatcher(std::string bin, std::string slus = "", std::string mrg = "");
              ~DiscPatcher();
-        bool PatchImage();
+        bool PatchImage(const char* imgName);
 
         void SetBin(const char* newPath);
         void SetSlus(const char* newPath);
