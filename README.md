@@ -1,4 +1,11 @@
 # Yu-Gi-Oh! Forbidden Memories Scrambler (fmscrambler)
+
+# PUBLIC SERVICE ANNOUNCEMENT
+## !! OLD VERSION, no longer maintained !!
+## For the new version, go to [https://github.com/forbidden-memories-coding/FMRandomizer](https://github.com/forbidden-memories-coding/FMRandomizer)
+
+## FOR ARCHIVAL PURPOSES  
+
 ## **Version 0.1.9 Alpha out now!**
 
 [![alt](https://i.imgur.com/kj0PMYNl.jpg)](https://i.imgur.com/kj0PMYN.png)
